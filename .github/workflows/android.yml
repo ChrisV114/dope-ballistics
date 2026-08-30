@@ -1,0 +1,59 @@
+name: Android CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+      - uses: gradle/actions/setup-gradle@v4
+      - run: chmod +x gradlew
+      - run: ./gradlew spotlessCheck
+      - run: ./gradlew lint
+      - run: ./gradlew detekt
+      - run: ./gradlew test
+      - run: ./gradlew :app:validateDebugScreenshotTest
+      - run: ./gradlew assembleDebug
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reports-and-debug-apk
+          path: |
+            **/build/reports/**
+            **/build/outputs/apk/debug/*.apk
+
+  instrumentation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+      - uses: gradle/actions/setup-gradle@v4
+      - run: chmod +x gradlew
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          script: ./gradlew connectedDebugAndroidTest
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: instrumentation-reports
+          path: "**/build/reports/androidTests/**"

@@ -1,0 +1,21 @@
+.gradle/
+.idea/
+.kotlin/
+.tools/
+**/build/
+local.properties
+*.iml
+captures/
+externalNativeBuild/
+.cxx/
+
+# Signing material and secrets
+*.jks
+*.keystore
+keystore.properties
+secrets.properties
+
+
+# Supplied source pack is preserved locally; canonical copies live under docs/.
+DOPE_Codex_Master_Build_Pack/
+DOPE_Codex_Master_Build_Pack.zip
