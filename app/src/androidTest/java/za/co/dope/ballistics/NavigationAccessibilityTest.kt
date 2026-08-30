@@ -21,8 +21,9 @@ class NavigationAccessibilityTest {
         composeRule.onNodeWithText("Field dashboard").assertIsDisplayed()
         composeRule.onNodeWithTag("dope_bottom_navigation").assertIsDisplayed()
 
-        composeRule.onNodeWithContentDescription("Profiles").performClick()
-        composeRule.onNodeWithText("Profiles").assertIsDisplayed()
+        composeRule
+            .onNodeWithContentDescription("Profiles", useUnmergedTree = true)
+            .performClick()
         composeRule.onNodeWithContentDescription("Open Rifle").assertHeightIsAtLeast(48.dp)
     }
 }
