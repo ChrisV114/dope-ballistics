@@ -14,8 +14,8 @@ Milestone 2 — Profiles and database.
 - [x] Connect functional profile and target creation screens to Room.
 - [x] Add unit, database CRUD, migration, safety and visual tests.
 - [x] Run the complete offline local quality/test/build gate.
-- [ ] Run the protected GitHub emulator quality/test/build gate.
+- [x] Run the protected GitHub emulator quality/test/build gate.
 - [x] Update required documentation.
-- [ ] Commit, push and stop for owner review.
+- [x] Commit, push and stop for owner review.
 
 Milestone 3 is recommended next but remains deferred until owner review. Camera ranging remains Milestone 6; match-plan, Wear OS, automatic shot counting, fixed-camera target sequencing and pistol drill cues remain documented future requirements.

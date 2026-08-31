@@ -7,7 +7,7 @@
 - Confirmed manual target distances can populate the target's DOPE distance flag; camera/range-finder execution remains Milestone 6.
 - Match plans, Wear OS display/shot counting, fixed-camera target sequencing and pistol drill cues are documented future requirements only.
 - Automatic acoustic shot counting is not implemented and will require confidence, manual correction and physical range testing.
-- GitHub emulator instrumentation passed for Milestone 1. Milestone 2 emulator migration/CRUD acceptance is recorded only after its CI run; no physical Samsung Galaxy S25 acceptance is claimed.
+- GitHub API 35 emulator instrumentation passed for Milestones 1 and 2, including Milestone 2 migration/CRUD acceptance. No physical Samsung Galaxy S25 acceptance is claimed.
 - The working package ID is not release-approved.
 - Android Compose Screenshot Testing is an isolated alpha16 build-time dependency because no stable AGP 9-compatible Android tool currently satisfies the required golden-test gate.
 
