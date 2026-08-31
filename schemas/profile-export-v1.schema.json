@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dope.local/schemas/profile-export-v1.schema.json",
+  "title": "DOPE profile export schema v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["metadata"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "appVersion",
+        "engineVersion",
+        "createdAtEpochMillis",
+        "internalUnits",
+        "preciseLocationIncluded"
+      ],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "appVersion": { "type": "string", "minLength": 1 },
+        "engineVersion": { "type": "string", "minLength": 1 },
+        "createdAtEpochMillis": { "type": "integer", "minimum": 0 },
+        "internalUnits": { "const": "SI" },
+        "preciseLocationIncluded": { "type": "boolean" }
+      }
+    },
+    "rifles": { "type": "array", "items": { "$ref": "#/$defs/profile" } },
+    "ammunition": { "type": "array", "items": { "$ref": "#/$defs/profile" } },
+    "chronographStrings": { "type": "array", "items": { "$ref": "#/$defs/profile" } },
+    "scopeProfiles": { "type": "array", "items": { "$ref": "#/$defs/profile" } },
+    "scopeVerifications": { "type": "array", "items": { "$ref": "#/$defs/identified" } },
+    "referenceAtmospheres": { "type": "array", "items": { "$ref": "#/$defs/profile" } },
+    "savedRanges": { "type": "array", "items": { "$ref": "#/$defs/profile" } },
+    "staticTargets": { "type": "array", "items": { "$ref": "#/$defs/profile" } },
+    "zeroProfiles": { "type": "array", "items": { "$ref": "#/$defs/profile" } }
+  },
+  "$defs": {
+    "identified": {
+      "type": "object",
+      "required": ["id"],
+      "properties": { "id": { "type": "string", "minLength": 1 } }
+    },
+    "profile": {
+      "allOf": [
+        { "$ref": "#/$defs/identified" },
+        {
+          "type": "object",
+          "required": ["createdAtEpochMillis", "modifiedAtEpochMillis", "revision", "archived", "favourite"],
+          "properties": {
+            "createdAtEpochMillis": { "type": "integer", "minimum": 0 },
+            "modifiedAtEpochMillis": { "type": "integer", "minimum": 0 },
+            "revision": { "type": "integer", "minimum": 1 },
+            "archived": { "type": "boolean" },
+            "favourite": { "type": "boolean" }
+          }
+        }
+      ]
+    }
+  }
+}

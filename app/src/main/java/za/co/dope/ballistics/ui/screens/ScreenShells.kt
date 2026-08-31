@@ -24,13 +24,17 @@ import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Straighten
 import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material.icons.outlined.WaterDrop
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +43,22 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
+import za.co.dope.ballistics.data.ProfileRepository
+import za.co.dope.ballistics.data.db.AmmunitionEntity
+import za.co.dope.ballistics.data.db.RifleEntity
+import za.co.dope.ballistics.data.db.ScopeFamilyEntity
+import za.co.dope.ballistics.data.db.ScopeProfileEntity
+import za.co.dope.ballistics.data.db.ScopeVariantEntity
+import za.co.dope.ballistics.data.db.ScopeVerificationEntity
+import za.co.dope.ballistics.data.db.StaticTargetEntity
+import za.co.dope.ballistics.domain.DataSource
+import za.co.dope.ballistics.domain.DragModel
+import za.co.dope.ballistics.domain.ProfileIdentity
+import za.co.dope.ballistics.domain.ReadingQuality
+import za.co.dope.ballistics.domain.StaticTargetClass
+import za.co.dope.ballistics.domain.TwistDirection
+import za.co.dope.ballistics.domain.VerificationStatus
 import za.co.dope.ballistics.ui.components.DopeCard
 import za.co.dope.ballistics.ui.components.DopeField
 import za.co.dope.ballistics.ui.components.DopeFieldConfig
@@ -144,91 +164,317 @@ fun DashboardScreen(onOpen: (String) -> Unit) {
 }
 
 @Composable
-fun ProfilesScreen(onOpen: (String) -> Unit) {
+fun ProfilesScreen(
+    onOpen: (String) -> Unit,
+    rifleCount: Int = 0,
+    ammunitionCount: Int = 0,
+    scopeCount: Int = 0,
+) {
     ScreenShell(title = "Profiles", eyebrow = "EQUIPMENT") {
-        ProfileCard("Rifle", "No active rifle", "Add calibre, barrel and sight height", Icons.Outlined.Flag) {
+        ProfileCard(
+            "Rifle",
+            countStatus(rifleCount, "rifle"),
+            "Add calibre, barrel length and twist data",
+            Icons.Outlined.Flag,
+        ) {
             onOpen("rifle")
         }
-        ProfileCard("Ammunition", "No active load", "Add projectile and verified velocity", Icons.Outlined.Tune) {
+        ProfileCard(
+            "Ammunition",
+            countStatus(ammunitionCount, "load"),
+            "Add projectile, BC and verified velocity",
+            Icons.Outlined.Tune,
+        ) {
             onOpen("ammo")
         }
-        ProfileCard("Scope", "Unverified", "Select family, variant and adjustment units", Icons.Outlined.Explore) {
+        ProfileCard(
+            "Scope",
+            countStatus(scopeCount, "scope"),
+            "Copy a built-in template, then verify the physical optic",
+            Icons.Outlined.Explore,
+        ) {
             onOpen("scope")
         }
-        StatusChip("Verification required", DopeStatus.WARNING)
+        StatusChip(
+            if (scopeCount == 0) "Verification required" else "Review physical verification",
+            DopeStatus.WARNING,
+        )
     }
 }
 
 @Composable
-fun RifleScreen() {
-    var name by remember { mutableStateOf("Field rifle") }
-    ScreenShell(title = "Rifle profile", eyebrow = "PROFILE SHELL") {
+@Suppress("LongMethod")
+fun RifleScreen(repository: ProfileRepository? = null) {
+    var name by remember { mutableStateOf("") }
+    var manufacturer by remember { mutableStateOf("") }
+    var model by remember { mutableStateOf("") }
+    var calibre by remember { mutableStateOf("") }
+    var barrelMillimetres by remember { mutableStateOf("") }
+    var twistMillimetres by remember { mutableStateOf("") }
+    var saveMessage by remember { mutableStateOf<String?>(null) }
+    val scope = rememberCoroutineScope()
+    ScreenShell(title = "Rifle profile", eyebrow = "LOCAL DATABASE · SI STORAGE") {
         DopeField("Profile name", name, { name = it })
-        DopeField("Calibre", ".308 Winchester", {}, config = DopeFieldConfig(readOnly = true))
+        DopeField("Manufacturer", manufacturer, { manufacturer = it })
+        DopeField("Model", model, { model = it })
+        DopeField("Calibre / cartridge", calibre, { calibre = it })
         DopeField(
             "Barrel length",
-            "508",
-            {},
-            config = DopeFieldConfig(suffix = "mm", readOnly = true),
+            barrelMillimetres,
+            { barrelMillimetres = it },
+            config = DopeFieldConfig(suffix = "mm"),
         )
         DopeField(
-            "Sight height",
-            "38",
-            {},
-            config = DopeFieldConfig(suffix = "mm", readOnly = true),
+            "Twist rate",
+            twistMillimetres,
+            { twistMillimetres = it },
+            config = DopeFieldConfig(suffix = "mm / turn"),
         )
-        DopePrimaryButton("Save rifle", {}, Modifier.fillMaxWidth(), Icons.Outlined.CheckCircle)
+        saveMessage?.let { StatusChip(it, if (it == "Rifle saved") DopeStatus.READY else DopeStatus.BLOCKED) }
+        DopePrimaryButton(
+            "Save rifle",
+            {
+                val barrel = barrelMillimetres.toDoubleOrNull()?.div(1000.0)
+                val twist = twistMillimetres.toDoubleOrNull()?.div(1000.0)
+                if (repository == null || barrel == null || twist == null) {
+                    saveMessage = "Complete valid dimensions"
+                } else {
+                    val now = System.currentTimeMillis()
+                    scope.launch {
+                        runCatching {
+                            repository.saveRifle(
+                                RifleEntity(
+                                    id = ProfileIdentity.newId(),
+                                    profileName = name,
+                                    manufacturer = manufacturer,
+                                    model = model,
+                                    calibreLabel = calibre,
+                                    barrelLengthMetres = barrel,
+                                    twistRateMetres = twist,
+                                    twistDirection = TwistDirection.RIGHT.name,
+                                    createdAtEpochMillis = now,
+                                    modifiedAtEpochMillis = now,
+                                ),
+                            )
+                        }.onSuccess { saveMessage = "Rifle saved" }
+                            .onFailure { saveMessage = it.message ?: "Invalid rifle" }
+                    }
+                }
+            },
+            Modifier.fillMaxWidth(),
+            Icons.Outlined.CheckCircle,
+        )
     }
 }
 
 @Composable
-fun AmmunitionScreen() {
-    ScreenShell(title = "Ammunition", eyebrow = "PROFILE SHELL") {
-        DopeField("Load name", "Training load", {}, config = DopeFieldConfig(readOnly = true))
-        DopeField("Projectile", "168 gr match", {}, config = DopeFieldConfig(readOnly = true))
+@Suppress("LongMethod")
+fun AmmunitionScreen(repository: ProfileRepository? = null) {
+    val rifles by repository?.observeRifles()?.collectAsState(emptyList()) ?: remember { mutableStateOf(emptyList()) }
+    var profileName by remember { mutableStateOf("") }
+    var bulletName by remember { mutableStateOf("") }
+    var bulletWeightGrains by remember { mutableStateOf("") }
+    var g7Bc by remember { mutableStateOf("") }
+    var velocity by remember { mutableStateOf("") }
+    var saveMessage by remember { mutableStateOf<String?>(null) }
+    val scope = rememberCoroutineScope()
+    ScreenShell(title = "Ammunition", eyebrow = "LOCAL DATABASE · NO FABRICATED VALUES") {
+        LabelValue("Linked rifle", rifles.firstOrNull()?.profileName ?: "Create a rifle first")
+        DopeField("Load profile name", profileName, { profileName = it })
+        DopeField("Bullet name", bulletName, { bulletName = it })
         DopeField(
-            "Muzzle velocity",
-            "—",
-            {},
-            config = DopeFieldConfig(suffix = "m/s", readOnly = true),
+            "Bullet weight",
+            bulletWeightGrains,
+            { bulletWeightGrains = it },
+            config = DopeFieldConfig(suffix = "gr"),
         )
+        DopeField("G7 ballistic coefficient", g7Bc, { g7Bc = it })
+        DopeField("Muzzle velocity", velocity, { velocity = it }, config = DopeFieldConfig(suffix = "m/s"))
         DopeCard {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 SectionHeading("Chronograph status")
-                StatusChip("Velocity required", DopeStatus.BLOCKED)
-                Text("A confident trajectory remains blocked until a velocity source is recorded.")
+                StatusChip(
+                    if (velocity.toDoubleOrNull() == null) "Velocity required" else "Manual velocity",
+                    DopeStatus.WARNING,
+                )
+                Text("Add individual readings later to calculate average, median, spread and sample deviation.")
             }
         }
-        DopePrimaryButton("Add chronograph string", {}, Modifier.fillMaxWidth())
+        saveMessage?.let { StatusChip(it, if (it == "Ammunition saved") DopeStatus.READY else DopeStatus.BLOCKED) }
+        DopePrimaryButton(
+            "Save ammunition",
+            {
+                val rifle = rifles.firstOrNull()
+                val weight = bulletWeightGrains.toDoubleOrNull()?.times(0.00006479891)
+                val bc = g7Bc.toDoubleOrNull()
+                val speed = velocity.toDoubleOrNull()
+                if (!validAmmunitionInput(repository, rifle, weight, bc, speed)) {
+                    saveMessage = "Complete rifle, weight, BC and velocity"
+                } else {
+                    val validRepository = requireNotNull(repository)
+                    val validRifle = requireNotNull(rifle)
+                    val validWeight = requireNotNull(weight)
+                    val validBc = requireNotNull(bc)
+                    val validSpeed = requireNotNull(speed)
+                    val now = System.currentTimeMillis()
+                    scope.launch {
+                        runCatching {
+                            validRepository.saveAmmunition(
+                                AmmunitionEntity(
+                                    id = ProfileIdentity.newId(),
+                                    rifleId = validRifle.id,
+                                    profileName = profileName,
+                                    manufacturer = "User entered",
+                                    productLoadName = profileName,
+                                    bulletManufacturer = "User entered",
+                                    bulletName = bulletName,
+                                    bulletWeightKilograms = validWeight,
+                                    g7BallisticCoefficient = validBc,
+                                    selectedDragModel = DragModel.G7.name,
+                                    muzzleVelocityMetresPerSecond = validSpeed,
+                                    createdAtEpochMillis = now,
+                                    modifiedAtEpochMillis = now,
+                                ),
+                            )
+                        }.onSuccess { saveMessage = "Ammunition saved" }
+                            .onFailure { saveMessage = it.message ?: "Invalid ammunition" }
+                    }
+                }
+            },
+            Modifier.fillMaxWidth(),
+            Icons.Outlined.CheckCircle,
+        )
     }
 }
 
 @Composable
-fun ScopeScreen(onOpen: (String) -> Unit) {
-    ScreenShell(title = "Scope profile", eyebrow = "PROFILE SHELL") {
-        DopeField("Family", "Select DNT or Arken", {}, config = DopeFieldConfig(readOnly = true))
-        DopeField("Variant", "Not selected", {}, config = DopeFieldConfig(readOnly = true))
-        DopeField("Adjustment", "MIL or MOA", {}, config = DopeFieldConfig(readOnly = true))
+fun ScopeScreen(
+    onOpen: (String) -> Unit,
+    repository: ProfileRepository? = null,
+) {
+    val families by
+        repository?.observeScopeFamilies()?.collectAsState(emptyList()) ?: remember {
+            mutableStateOf(emptyList())
+        }
+    val profiles by
+        repository?.observeScopeProfiles()?.collectAsState(emptyList()) ?: remember {
+            mutableStateOf(emptyList())
+        }
+    var variants by remember { mutableStateOf<List<ScopeVariantEntity>>(emptyList()) }
+    var message by remember { mutableStateOf<String?>(null) }
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(families) {
+        variants = families.flatMap { repository?.scopeVariants(it.id).orEmpty() }
+    }
+    ScreenShell(title = "Scope profile", eyebrow = "IMMUTABLE BUILT-INS · USER-OWNED COPIES") {
+        families.forEach { family ->
+            DopeCard {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    SectionHeading(family.displayName)
+                    variants.filter { it.familyId == family.id }.forEach { variant ->
+                        LabelValue(variant.reticleName, "${variant.turretUnit} · ${variant.reticleSystem}")
+                        DopeSecondaryButton(
+                            "Create unverified ${variant.reticleName} profile",
+                            {
+                                scope.launch {
+                                    runCatching {
+                                        requireNotNull(repository).createScopeFromTemplate(
+                                            variant.id,
+                                            "${family.model} · ${variant.reticleName}",
+                                            System.currentTimeMillis(),
+                                        )
+                                    }.onSuccess { message = "Unverified scope copy created" }
+                                        .onFailure { message = it.message ?: "Could not create scope" }
+                                }
+                            },
+                            Modifier.fillMaxWidth(),
+                        )
+                    }
+                }
+            }
+        }
+        if (families.isEmpty()) {
+            StatusChip("Templates load from Room on first open", DopeStatus.INFO)
+        }
+        LabelValue("User scope profiles", profiles.size.toString())
+        message?.let { StatusChip(it, DopeStatus.READY) }
         StatusChip("Physical verification required", DopeStatus.WARNING)
         DopePrimaryButton("Review scope details", { onOpen("scope_detail") }, Modifier.fillMaxWidth())
     }
 }
 
 @Composable
-fun ScopeDetailScreen() {
-    ScreenShell(title = "Scope verification", eyebrow = "DETAIL SHELL") {
+@Suppress("LongMethod")
+fun ScopeDetailScreen(repository: ProfileRepository? = null) {
+    val profiles by
+        repository?.observeScopeProfiles()?.collectAsState(emptyList()) ?: remember {
+            mutableStateOf(emptyList())
+        }
+    val selected = profiles.firstOrNull()
+    var checks by remember(selected?.id) { mutableStateOf(List(10) { false }) }
+    var message by remember { mutableStateOf<String?>(null) }
+    val scope = rememberCoroutineScope()
+    ScreenShell(title = "Scope verification", eyebrow = "PHYSICAL OPTIC CHECKLIST") {
         DopeCard {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 SectionHeading("Verify on the physical optic")
-                LabelValue("Turret unit", "Unconfirmed")
-                LabelValue("Click value", "Unconfirmed")
-                LabelValue("Total travel", "Unconfirmed")
-                LabelValue("Reticle", "Unconfirmed")
+                LabelValue("Profile", selected?.profileName ?: "Create a scope profile first")
+                VerificationChecklistLabels.forEachIndexed { index, label ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Checkbox(
+                            checked = checks[index],
+                            onCheckedChange = { checked ->
+                                checks = checks.toMutableList().also { it[index] = checked }
+                            },
+                        )
+                        Text(label, style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
             }
         }
         StatusChip("Do not assume variant data", DopeStatus.BLOCKED)
-        DopeSecondaryButton("Open verification checklist", {}, Modifier.fillMaxWidth())
-        DopePrimaryButton("Mark verified", {}, Modifier.fillMaxWidth(), enabled = false)
+        message?.let { StatusChip(it, DopeStatus.READY) }
+        DopePrimaryButton(
+            "Mark verified",
+            {
+                val profile = selected ?: return@DopePrimaryButton
+                val now = System.currentTimeMillis()
+                scope.launch {
+                    val result =
+                        runCatching {
+                            requireNotNull(repository).saveScopeVerification(
+                                ScopeVerificationEntity(
+                                    id = ProfileIdentity.newId(),
+                                    scopeProfileId = profile.id,
+                                    physicalModelConfirmed = checks[0],
+                                    turretUnitConfirmed = checks[1],
+                                    clickValueConfirmed = checks[2],
+                                    reticleConfirmed = checks[3],
+                                    focalPlaneConfirmed = checks[4],
+                                    elevationDialDirectionConfirmed = checks[5],
+                                    windageDialDirectionConfirmed = checks[6],
+                                    zeroStopConfirmed = checks[7],
+                                    sightHeightConfirmed = checks[8],
+                                    zeroDistanceConfirmed = checks[9],
+                                    verifiedAtEpochMillis = now,
+                                ),
+                            )
+                            repository.saveScopeProfile(
+                                profile.copy(
+                                    verificationStatus = VerificationStatus.USER_VERIFIED.name,
+                                    verificationDateEpochMillis = now,
+                                    modifiedAtEpochMillis = now,
+                                    revision = profile.revision + 1,
+                                ),
+                            )
+                        }
+                    message = result.fold({ "Scope verified" }, { it.message ?: "Verification failed" })
+                }
+            },
+            Modifier.fillMaxWidth(),
+            Icons.Outlined.CheckCircle,
+            enabled = selected != null && checks.all { it },
+        )
     }
 }
 
@@ -340,10 +586,18 @@ fun CameraCalibrationScreen() {
 }
 
 @Composable
-fun TargetRangeScreen(onOpen: (String) -> Unit) {
+@Suppress("LongMethod")
+fun TargetRangeScreen(
+    onOpen: (String) -> Unit,
+    repository: ProfileRepository? = null,
+) {
     var selected by remember { mutableStateOf(TargetPresets.first()) }
+    var targetName by remember { mutableStateOf("") }
     var width by remember { mutableStateOf("") }
     var height by remember { mutableStateOf("") }
+    var distance by remember { mutableStateOf("") }
+    var saveMessage by remember { mutableStateOf<String?>(null) }
+    val scope = rememberCoroutineScope()
     ScreenShell(title = "Target range", eyebrow = "STATIC TARGET · USER CONFIRMATION") {
         StatusChip("Camera ranging · Milestone 6", DopeStatus.INFO)
         TargetPresetSelector(selected = selected) { preset ->
@@ -351,6 +605,7 @@ fun TargetRangeScreen(onOpen: (String) -> Unit) {
             width = preset.width
             height = preset.height
         }
+        DopeField("Target name", targetName, { targetName = it })
         DopeField("Known width", width, { width = it }, config = DopeFieldConfig(suffix = "mm"))
         DopeField(
             "Known height / diameter",
@@ -358,13 +613,59 @@ fun TargetRangeScreen(onOpen: (String) -> Unit) {
             { height = it },
             config = DopeFieldConfig(suffix = "mm"),
         )
+        DopeField("Confirmed distance", distance, { distance = it }, config = DopeFieldConfig(suffix = "m"))
         DopeCard {
             Text(
                 "Measure the physical target when possible. Presets are starting values, never silent " +
-                    "assumptions; confirm the chosen dimensions before ranging.",
+                    "assumptions. A confirmed range is added to the target's DOPE distance list; " +
+                    "unconfirmed camera measurements remain inactive.",
             )
         }
-        DopePrimaryButton("Confirm target dimensions", {}, Modifier.fillMaxWidth(), Icons.Outlined.CheckCircle)
+        saveMessage?.let {
+            val status = if (it == "Target saved with DOPE distance") DopeStatus.READY else DopeStatus.BLOCKED
+            StatusChip(it, status)
+        }
+        DopePrimaryButton(
+            "Save target and DOPE distance",
+            {
+                val widthMetres = width.toDoubleOrNull()?.div(1000.0)
+                val heightMetres = height.toDoubleOrNull()?.div(1000.0)
+                val distanceMetres = distance.toDoubleOrNull()
+                if (!validTargetInput(repository, widthMetres, heightMetres, distanceMetres)) {
+                    saveMessage = "Complete confirmed dimensions and distance"
+                } else {
+                    val validRepository = requireNotNull(repository)
+                    val validWidth = requireNotNull(widthMetres)
+                    val validHeight = requireNotNull(heightMetres)
+                    val validDistance = requireNotNull(distanceMetres)
+                    val now = System.currentTimeMillis()
+                    scope.launch {
+                        runCatching {
+                            validRepository.saveStaticTarget(
+                                StaticTargetEntity(
+                                    id = ProfileIdentity.newId(),
+                                    name = targetName,
+                                    targetClass = targetClassFor(selected),
+                                    physicalWidthMetres = validWidth,
+                                    physicalHeightMetres = validHeight,
+                                    measuredDistanceMetres = validDistance,
+                                    distanceSource = DataSource.MANUAL.name,
+                                    distanceQuality = ReadingQuality.GOOD.name,
+                                    distanceMeasuredAtEpochMillis = now,
+                                    distanceConfirmed = true,
+                                    includeDistanceInDope = true,
+                                    createdAtEpochMillis = now,
+                                    modifiedAtEpochMillis = now,
+                                ),
+                            )
+                        }.onSuccess { saveMessage = "Target saved with DOPE distance" }
+                            .onFailure { saveMessage = it.message ?: "Invalid target" }
+                    }
+                }
+            },
+            Modifier.fillMaxWidth(),
+            Icons.Outlined.CheckCircle,
+        )
         DopeSecondaryButton(
             "Open camera calibration",
             { onOpen("camera_calibration") },
@@ -392,6 +693,56 @@ private val TargetPresets =
         TargetPreset("300 mm circular gong", "Common nominal size · confirm physical diameter", "300", "300"),
         TargetPreset("Custom gong", "Enter the measured width and height or diameter"),
     )
+
+private val VerificationChecklistLabels =
+    listOf(
+        "Physical model confirmed",
+        "Turret unit confirmed from markings",
+        "Click value confirmed from markings or manual",
+        "Reticle variant confirmed",
+        "Focal plane confirmed",
+        "Elevation dial direction confirmed",
+        "Windage dial direction confirmed",
+        "Zero stop confirmed or configured",
+        "Sight height measured",
+        "Zero distance confirmed",
+    )
+
+private fun countStatus(
+    count: Int,
+    singular: String,
+): String =
+    when (count) {
+        0 -> "No saved $singular"
+        1 -> "1 saved $singular"
+        else -> "$count saved ${singular}s"
+    }
+
+private fun validAmmunitionInput(
+    repository: ProfileRepository?,
+    rifle: RifleEntity?,
+    weightKilograms: Double?,
+    ballisticCoefficient: Double?,
+    velocityMetresPerSecond: Double?,
+): Boolean =
+    listOf(repository, rifle, weightKilograms, ballisticCoefficient, velocityMetresPerSecond).all {
+        it != null
+    }
+
+private fun validTargetInput(
+    repository: ProfileRepository?,
+    widthMetres: Double?,
+    heightMetres: Double?,
+    distanceMetres: Double?,
+): Boolean = listOf(repository, widthMetres, heightMetres, distanceMetres).all { it != null }
+
+private fun targetClassFor(preset: TargetPreset): String =
+    when {
+        "gong" in preset.label.lowercase() -> StaticTargetClass.PAINTED_STEEL.name
+        "IDPA" in preset.label -> StaticTargetClass.PRINTED_SILHOUETTE_RANGE_TARGET.name
+        "paper" in preset.label.lowercase() -> StaticTargetClass.RECTANGULAR_PAPER.name
+        else -> StaticTargetClass.CUSTOM_STATIC_RANGE_TARGET.name
+    }
 
 @Composable
 private fun TargetPresetSelector(

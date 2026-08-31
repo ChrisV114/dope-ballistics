@@ -35,3 +35,19 @@ Treat pistol drill prompts as a future, separate user-authored allowlist. They m
 ## M1-005 — Future fixed-camera target sequence
 
 Allow only user-pre-marked stationary target regions and deterministic digital crop changes between configured shot groups. No camera panning, live impact analysis, hit inference, correction, aim point or automatic low-confidence advance.
+
+## M2-001 — Database and schema baseline
+
+Use stable Room 2.8.4 with KSP2. The production database is version 2 and carries an explicit bootstrap migration from the pre-database milestone state. Export schema versioning is independent and starts at profile schema v1.
+
+## M2-002 — Built-in scope ownership
+
+Store DNT and Arken families/variants as immutable built-in rows. Any customisation creates a user-owned scope profile. All variants start unverified, and critical edits invalidate a previous verification.
+
+## M2-003 — Import duplicate policy
+
+Never overwrite silently. Import requires duplicate-with-new-UUIDs, safe non-conflicting merge, confirmed replace, or cancel.
+
+## M2-004 — Confirmed target distance handoff
+
+Store each marked static target's measured distance, source, quality, timestamp, uncertainty and confirmation state. A confirmed manual or future camera/range-finder distance may automatically populate the target's DOPE/match distance list. Unconfirmed or low-confidence measurements remain inactive.

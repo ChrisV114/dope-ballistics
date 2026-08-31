@@ -7,9 +7,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import za.co.dope.ballistics.data.ProfileRepository
+import za.co.dope.ballistics.data.db.DopeDatabase
 import za.co.dope.ballistics.ui.navigation.DopeApp
 
 class MainActivity : ComponentActivity() {
+    private val profileRepository by lazy { ProfileRepository(DopeDatabase.getInstance(this)) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
@@ -17,7 +21,7 @@ class MainActivity : ComponentActivity() {
             navigationBarStyle = SystemBarStyle.dark(Color.Transparent.toArgb()),
         )
         setContent {
-            DopeApp()
+            DopeApp(profileRepository = profileRepository)
         }
     }
 }

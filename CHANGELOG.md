@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Milestone 2
+
+- Added Room version-2 storage, schema export and a tested `1 -> 2` bootstrap migration.
+- Added UUID/revision/archive-aware rifle, ammunition, chronograph, scope, zero, atmosphere, saved-range and static-target records.
+- Added immutable DNT TheOne and Arken EP-8 templates, physical verification and critical-field invalidation.
+- Enforced the KLBOX BDC no-generic-hold rule.
+- Added schema-v1 profile JSON with privacy-safe export, strict validation and explicit duplicate policies.
+- Connected rifle, ammunition, scope verification and confirmed target-distance creation to Room-backed screens.
+- Added confirmed marked-target distance fields for future camera/range-finder to DOPE/match-list handoff.
+
 ### Milestone 1
 
 - Implemented locked colours, typography, spacing, wordmark and topographic treatment.

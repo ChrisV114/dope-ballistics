@@ -27,8 +27,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -41,6 +43,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import za.co.dope.ballistics.data.ProfileRepository
 import za.co.dope.ballistics.ui.screens.AmmunitionScreen
 import za.co.dope.ballistics.ui.screens.CameraCalibrationScreen
 import za.co.dope.ballistics.ui.screens.DashboardScreen
@@ -76,7 +79,10 @@ private val BottomDestinations =
     )
 
 @Composable
-fun DopeApp(startRoute: String = "splash") {
+fun DopeApp(
+    startRoute: String = "splash",
+    profileRepository: ProfileRepository? = null,
+) {
     var themeModeName by rememberSaveable { mutableStateOf(DopeThemeMode.DARK.name) }
     val themeMode = DopeThemeMode.valueOf(themeModeName)
     DopeTheme(mode = themeMode) {
@@ -113,6 +119,7 @@ fun DopeApp(startRoute: String = "splash") {
             DopeNavHost(
                 navController = navController,
                 startRoute = startRoute,
+                profileRepository = profileRepository,
                 openRoute = openRoute,
                 modifier = Modifier.padding(innerPadding),
                 onThemeChange = {
@@ -129,9 +136,11 @@ fun DopeApp(startRoute: String = "splash") {
 }
 
 @Composable
+@Suppress("LongParameterList")
 private fun DopeNavHost(
     navController: NavHostController,
     startRoute: String,
+    profileRepository: ProfileRepository?,
     openRoute: (String) -> Unit,
     onThemeChange: () -> Unit,
     modifier: Modifier = Modifier,
@@ -149,18 +158,31 @@ private fun DopeNavHost(
             }
         }
         composable("dashboard") { DashboardScreen(openRoute) }
-        composable("profiles") { ProfilesScreen(openRoute) }
-        composable("rifle") { RifleScreen() }
-        composable("ammo") { AmmunitionScreen() }
-        composable("scope") { ScopeScreen(openRoute) }
-        composable("scope_detail") { ScopeDetailScreen() }
+        composable("profiles") {
+            val rifles by profileRepository?.observeRifles()?.collectAsState(emptyList()) ?: remember {
+                mutableStateOf(emptyList())
+            }
+            val ammunition by
+                profileRepository?.observeAmmunition()?.collectAsState(emptyList()) ?: remember {
+                    mutableStateOf(emptyList())
+                }
+            val scopes by
+                profileRepository?.observeScopeProfiles()?.collectAsState(emptyList()) ?: remember {
+                    mutableStateOf(emptyList())
+                }
+            ProfilesScreen(openRoute, rifles.size, ammunition.size, scopes.size)
+        }
+        composable("rifle") { RifleScreen(profileRepository) }
+        composable("ammo") { AmmunitionScreen(profileRepository) }
+        composable("scope") { ScopeScreen(openRoute, profileRepository) }
+        composable("scope_detail") { ScopeDetailScreen(profileRepository) }
         composable("environment") { EnvironmentScreen(openRoute) }
         composable("wind") { WindScreen() }
         composable("results") { ResultsScreen() }
         composable("range_card") { RangeCardScreen() }
         composable("session") { SessionScreen() }
         composable("camera_calibration") { CameraCalibrationScreen() }
-        composable("target_range") { TargetRangeScreen(openRoute) }
+        composable("target_range") { TargetRangeScreen(openRoute, profileRepository) }
         composable("more") { MoreScreen(onOpen = openRoute, onThemeChange = onThemeChange) }
     }
 }
