@@ -4,7 +4,7 @@ DOPE (Data On Previous Engagements) is an offline-first Android application for 
 
 ## Milestone status
 
-Milestone 2 implements local Room-backed rifle, ammunition, chronograph, scope, zero, reference-atmosphere, saved-range and static-target profiles. Built-in DNT and Arken templates remain immutable and unverified; edits create user-owned copies. Schema-v1 JSON import/export validates SI values and requires an explicit duplicate policy. Ballistic calculations and camera ranging remain deliberately deferred.
+Milestone 3 adds runtime sensor diagnostics, barometer/orientation capture, one-shot foreground location, complete manual/offline environmental entry, atmospheric calculations, timestamped snapshots and an explicit user-triggered Open-Meteo adapter with cache/staleness labels. Built-in DNT and Arken templates remain immutable and unverified. Ballistic trajectory calculations and camera ranging remain deliberately deferred.
 
 ## Build
 

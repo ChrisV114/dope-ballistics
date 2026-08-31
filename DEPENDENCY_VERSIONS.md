@@ -1,6 +1,6 @@
 # Dependency Versions
 
-Selected on 2026-08-30 from stable upstream releases.
+Selected through 2026-08-31 from stable upstream releases.
 
 | Component | Version | Purpose |
 |---|---:|---|
@@ -24,5 +24,7 @@ Selected on 2026-08-30 from stable upstream releases.
 | Detekt | 1.23.8 | Kotlin static analysis |
 | Spotless | 8.10.1 | Formatting gate |
 | ktlint | 1.8.0 | Kotlin formatter |
+
+Milestone 3 adds no third-party runtime dependency. Sensors, foreground location and HTTPS use Android/JDK platform APIs; JSON continues to use the pinned kotlinx.serialization runtime. The production weather seam uses Open-Meteo's documented current `surface_pressure`, `pressure_msl`, temperature, humidity and wind fields and requires no API key.
 
 All versions are exact pins. The screenshot plugin is the sole pre-release exception: the master prompt requires golden tests and Android's AGP 9-compatible Compose screenshot tool is still alpha. It is isolated to screenshot-test build logic and does not ship in the APK. Future required stack dependencies will be added only with their implementing milestone and recorded here.

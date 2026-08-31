@@ -17,11 +17,13 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         ScopeProfileEntity::class,
         ScopeVerificationEntity::class,
         ReferenceAtmosphereEntity::class,
+        EnvironmentalSnapshotEntity::class,
+        WeatherCacheEntity::class,
         SavedRangeEntity::class,
         StaticTargetEntity::class,
         ZeroProfileEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
 )
 abstract class DopeDatabase : RoomDatabase() {
@@ -38,6 +40,13 @@ abstract class DopeDatabase : RoomDatabase() {
                 }
             }
 
+        val MIGRATION_2_3 =
+            object : Migration(2, 3) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    DopeSchemaV3.createStatements.forEach(db::execSQL)
+                }
+            }
+
         @Volatile private var instance: DopeDatabase? = null
 
         fun getInstance(context: Context): DopeDatabase =
@@ -45,7 +54,7 @@ abstract class DopeDatabase : RoomDatabase() {
                 instance
                     ?: Room
                         .databaseBuilder(context.applicationContext, DopeDatabase::class.java, DATABASE_NAME)
-                        .addMigrations(MIGRATION_1_2)
+                        .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                         .addCallback(
                             object : Callback() {
                                 override fun onCreate(db: SupportSQLiteDatabase) {
@@ -57,6 +66,49 @@ abstract class DopeDatabase : RoomDatabase() {
                         .also { instance = it }
             }
     }
+}
+
+internal object DopeSchemaV3 {
+    val createStatements =
+        listOf(
+            """
+            CREATE TABLE IF NOT EXISTS `environmental_snapshots` (
+                `id` TEXT NOT NULL, `name` TEXT NOT NULL, `temperatureKelvin` REAL NOT NULL,
+                `temperatureSource` TEXT NOT NULL, `temperatureQuality` TEXT NOT NULL,
+                `temperatureCapturedAtEpochMillis` INTEGER NOT NULL,
+                `stationPressurePascals` REAL NOT NULL, `pressureSource` TEXT NOT NULL,
+                `pressureQuality` TEXT NOT NULL, `pressureCapturedAtEpochMillis` INTEGER NOT NULL,
+                `relativeHumidityFraction` REAL NOT NULL, `humiditySource` TEXT NOT NULL,
+                `humidityQuality` TEXT NOT NULL, `humidityCapturedAtEpochMillis` INTEGER NOT NULL,
+                `altitudeMetres` REAL NOT NULL, `altitudeSource` TEXT NOT NULL,
+                `altitudeQuality` TEXT NOT NULL, `altitudeCapturedAtEpochMillis` INTEGER NOT NULL,
+                `latitudeDegrees` REAL, `longitudeDegrees` REAL, `horizontalAccuracyMetres` REAL,
+                `verticalAccuracyMetres` REAL, `approximateLocation` INTEGER NOT NULL,
+                `locationIncludedInExports` INTEGER NOT NULL, `magneticHeadingDegrees` REAL,
+                `trueHeadingDegrees` REAL, `pitchDegrees` REAL, `rollDegrees` REAL,
+                `orientationQuality` TEXT, `orientationStable` INTEGER,
+                `pressureSampleSummaryJson` TEXT, `airDensityKilogramsPerCubicMetre` REAL NOT NULL,
+                `densityRatio` REAL NOT NULL, `pressureAltitudeMetres` REAL NOT NULL,
+                `densityAltitudeMetres` REAL NOT NULL, `dewPointKelvin` REAL NOT NULL,
+                `waterVapourPressurePascals` REAL NOT NULL, `speedOfSoundMetresPerSecond` REAL NOT NULL,
+                `providerName` TEXT, `providerAttribution` TEXT, `capturedAtEpochMillis` INTEGER NOT NULL,
+                `notes` TEXT, PRIMARY KEY(`id`)
+            )
+            """.trimIndent(),
+            """
+            CREATE TABLE IF NOT EXISTS `weather_cache` (
+                `coordinateKey` TEXT NOT NULL, `latitudeDegrees` REAL NOT NULL,
+                `longitudeDegrees` REAL NOT NULL, `temperatureKelvin` REAL NOT NULL,
+                `surfacePressurePascals` REAL NOT NULL, `meanSeaLevelPressurePascals` REAL,
+                `relativeHumidityFraction` REAL NOT NULL, `windSpeedMetresPerSecond` REAL,
+                `windDirectionDegrees` REAL, `providerName` TEXT NOT NULL, `attribution` TEXT NOT NULL,
+                `modelElevationMetres` REAL, `fetchedAtEpochMillis` INTEGER NOT NULL,
+                PRIMARY KEY(`coordinateKey`)
+            )
+            """.trimIndent(),
+            "CREATE INDEX IF NOT EXISTS `index_weather_cache_fetchedAtEpochMillis` " +
+                "ON `weather_cache` (`fetchedAtEpochMillis`)",
+        )
 }
 
 internal object DopeSchemaV2 {

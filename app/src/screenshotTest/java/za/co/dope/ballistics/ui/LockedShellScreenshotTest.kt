@@ -67,3 +67,14 @@ fun SplashSamsungS25Preview() {
 fun TargetRangeChoicesPreview() {
     DopeGoldenScreen(route = "target_range")
 }
+
+@PreviewTest
+@Preview(
+    name = "Environment manual offline",
+    device = "spec:width=360dp,height=780dp,dpi=480",
+    showSystemUi = true,
+)
+@Composable
+fun EnvironmentManualOfflinePreview() {
+    DopeGoldenScreen(route = "environment")
+}

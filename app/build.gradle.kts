@@ -15,7 +15,9 @@ android {
         minSdk = 28
         targetSdk = 37
         versionCode = 1
-        versionName = "0.2.0-m2"
+        versionName = "0.3.0-m3"
+
+        buildConfigField("boolean", "OPEN_METEO_ENABLED", "true")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -1,20 +1,22 @@
 # Architecture
 
-## Milestone 2
+## Milestone 3
 
-Only `:app` exists because the current profile/database implementation remains cohesive and does not yet justify empty feature modules. Domain rules are pure Kotlin, Room persistence is isolated under `data/db`, import/export orchestration is under `data`, and Compose consumes a repository rather than SQL APIs.
+Only `:app` exists because the implemented profile and environment slices remain cohesive and do not justify empty modules. Environmental equations/source selection are pure Kotlin. Android sensors, one-shot location and network providers implement interfaces under `data/environment`; Compose does not call platform services through domain code.
 
 ```text
 Android app (:app)
-  -> Compose profile screens
-  -> ProfileRepository and schema-v1 import/export
-  -> Room database version 2 and migration 1 -> 2
-  -> Pure profile, verification, chronograph and BDC rules
+  -> Compose profile and environment screens
+  -> ProfileRepository, weather cache and schema-v1 profile import/export
+  -> Room database version 3 and migrations 1 -> 2 -> 3
+  -> Android SensorManager and foreground LocationManager adapters
+  -> Explicit Open-Meteo adapter behind OPEN_METEO_ENABLED
+  -> Pure environmental math, source policy and profile rules
   -> locked design tokens and reusable components
   -> Android platform
 ```
 
-Room stores physical quantities in SI units and UUIDs as strings. Mutable records carry creation/modification timestamps, revision, archive and favourite state. Referenced records are archived instead of silently hard-deleted. Built-in scope families and variants are immutable rows; customised scopes are separate user-owned profiles.
+Room stores physical quantities in SI units and UUIDs as strings. Environmental snapshots retain per-field provenance, quality and timestamps plus derived values. Weather cache entries are coordinate-bucketed and timestamped; stale cached data is explicitly labelled. Precise coordinates are stored in a snapshot only when its opt-in checkbox is selected.
 
 ## Planned dependency direction
 

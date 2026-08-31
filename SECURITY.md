@@ -7,4 +7,7 @@
 - Sensitive local keys use Android Keystore.
 - Backups and model packages require integrity checks.
 - General logs exclude precise coordinates and serial references.
+- The Open-Meteo adapter is HTTPS-only, has 10-second connect/read timeouts, uses no embedded secret, and is invoked only by an explicit user action.
+- Weather pressure fields are parsed separately: `surface_pressure` is the station-pressure estimate and `pressure_msl` is metadata only.
+- Environmental inputs are range-validated before persistence and calculation; missing optional sensors do not weaken manual input validation.
 - Release signing is blocked pending owner decisions.
