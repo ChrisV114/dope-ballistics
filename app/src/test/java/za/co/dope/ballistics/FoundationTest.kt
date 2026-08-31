@@ -5,7 +5,7 @@ import org.junit.Test
 
 class FoundationTest {
     @Test
-    fun packageIdentityMatchesMilestoneZeroDecision() {
-        assertEquals("za.co.dope.ballistics", BuildConfig.APPLICATION_ID)
+    fun applicationIdMatchesOwnerDecision() {
+        assertEquals("za.co.bdstudio.dope", BuildConfig.APPLICATION_ID)
     }
 }

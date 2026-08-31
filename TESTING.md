@@ -47,3 +47,11 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - Local instrumentation execution was not claimed because no local emulator or physical device is installed. No Samsung Galaxy S25 physical-device acceptance is claimed.
 - GitHub Actions run `33371064157` passed `build-and-test` in 4m55s and API 35 `instrumentation` in 14m19s on commit `c1f57b4`.
 - The GitHub emulator completed 3 instrumentation tests with 0 skipped and 0 failed, covering Room CRUD/archive, the complete `1 -> 2` migration with built-in scope templates, and navigation/accessibility behavior.
+
+## Post-Milestone-2 owner-review verification — 2026-08-31
+
+- The complete offline local gate passed after changing the application ID to `za.co.bdstudio.dope`: Spotless, lint, Detekt, JVM tests, screenshot validation, debug APK assembly and debug instrumentation-test APK assembly.
+- JVM tests: 11 run, 0 failures, 0 errors, 0 skipped; the foundation test asserts the approved application ID.
+- Six screenshot goldens remain unchanged and passed validation.
+- `apkanalyzer` confirmed that the packaged debug APK application ID is `za.co.bdstudio.dope`.
+- No local emulator or physical-device execution is claimed; the protected GitHub API 35 emulator job remains the external execution gate for this review update.
