@@ -1,18 +1,20 @@
 # Architecture
 
-## Milestone 4
+## Milestone 5
 
-The first specialised module is now implemented. `:ballistics` is pure Kotlin/JVM and contains stable input/output models, authoritative G1/G7 tables, the point-mass solver, uncertainty and deterministic trace. It has no Android imports. `:app` retains Room, Android adapters and UI, and maps verified persisted records into engine inputs.
+`:ballistics` remains pure Kotlin/JVM and now also owns the tested wind convention. `:app` maps verified persisted records into engine inputs, builds range-card documents, renders offline files and stores immutable session evidence in Room version 4. Session and verified-DOPE DAO surfaces expose insert/query only; corrections append a superseding verified record rather than changing historical evidence.
 
 ```text
 Android app (:app)
   -> Compose profile and environment screens
-  -> ProfileRepository, weather cache and schema-v1 profile import/export
-  -> Room database version 3 and migrations 1 -> 2 -> 3
+  -> ProfileRepository, SessionRepository and versioned export codecs
+  -> Room database version 4 and migrations 1 -> 2 -> 3 -> 4
   -> Android SensorManager and foreground LocationManager adapters
   -> Explicit Open-Meteo adapter behind OPEN_METEO_ENABLED
   -> Pure environmental math, source policy and profile rules
   -> BallisticsInputMapper validation boundary
+  -> range-card generator and offline CSV/PDF/PNG renderer
+  -> immutable session and verified-range evidence with SHA-256 content hashes
   -> Pure Kotlin/JVM ballistics engine (:ballistics)
   -> locked design tokens and reusable components
   -> Android platform

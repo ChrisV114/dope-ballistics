@@ -486,26 +486,6 @@ fun EnvironmentScreen(
 ) = LiveEnvironmentScreen(onOpen, repository, previewMode)
 
 @Composable
-fun WindScreen() {
-    ScreenShell(title = "Wind", eyebrow = "MANUAL INPUT SHELL") {
-        ResultPanel("0.0", "m/s", "Wind speed", status = DopeStatus.INFO)
-        DopeField("Direction", "12 o’clock", {}, config = DopeFieldConfig(readOnly = true))
-        DopeField(
-            "Reference",
-            "True / magnetic not selected",
-            {},
-            config = DopeFieldConfig(readOnly = true),
-        )
-        DopeCard {
-            Text(
-                "Wind provenance and convention must be explicit. This shell does not calculate a hold.",
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-        }
-    }
-}
-
-@Composable
 fun ResultsScreen() {
     ScreenShell(title = "Result", eyebrow = "BLOCKED PREVIEW") {
         ResultPanel("—", "MIL", "Elevation", status = DopeStatus.BLOCKED)
@@ -515,42 +495,10 @@ fun ResultsScreen() {
                 StatusChip("Cannot calculate", DopeStatus.BLOCKED)
                 Text("Rifle, ammunition, scope verification and zero are incomplete.")
                 LabelValue("Atmosphere", "No current snapshot")
-                LabelValue("Engine", "Not implemented · Milestone 4")
+                LabelValue("Engine", "Ready when verified inputs are complete")
             }
         }
         DopeSecondaryButton("Copy calculation details", {}, Modifier.fillMaxWidth())
-    }
-}
-
-@Composable
-fun RangeCardScreen() {
-    ScreenShell(title = "Range card", eyebrow = "EXPORT SHELL") {
-        DopeCard {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                SectionHeading("Distance table")
-                LabelValue("100 m", "—")
-                LabelValue("200 m", "—")
-                LabelValue("300 m", "—")
-                LabelValue("400 m", "—")
-            }
-        }
-        StatusChip("Awaiting valid calculation", DopeStatus.WARNING)
-        DopePrimaryButton("Generate range card", {}, Modifier.fillMaxWidth(), enabled = false)
-    }
-}
-
-@Composable
-fun SessionScreen() {
-    ScreenShell(title = "Sessions", eyebrow = "COMPLETED-STRING REVIEW") {
-        DopeCard {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                SectionHeading("No active session")
-                Text("Start a deliberate range log with immutable setup and environment snapshots.")
-                StatusChip("Analysis only after string ends", DopeStatus.READY)
-            }
-        }
-        DopePrimaryButton("Start session", {}, Modifier.fillMaxWidth(), Icons.Outlined.PlayArrow)
-        DopeSecondaryButton("Review completed session", {}, Modifier.fillMaxWidth(), Icons.Outlined.AddAPhoto)
     }
 }
 
@@ -763,10 +711,11 @@ fun MoreScreen(
 ) {
     ScreenShell(title = "More", eyebrow = "TOOLS & DISPLAY") {
         UtilityRow("Results shell", "Invalid inputs stay visibly blocked") { onOpen("results") }
-        UtilityRow("Range card shell", "Offline export layout") { onOpen("range_card") }
+        UtilityRow("Range cards", "Offline CSV, PDF and PNG") { onOpen("range_card") }
         UtilityRow("Camera calibration", "Physical-lens capability flow") { onOpen("camera_calibration") }
         UtilityRow("Target range", "Target presets or manual dimensions") { onOpen("target_range") }
-        UtilityRow("Wind shell", "Explicit source and convention") { onOpen("wind") }
+        UtilityRow("Wind wheel", "True/magnetic wind-from convention") { onOpen("wind") }
+        UtilityRow("Comparison", "Non-destructive what-if calculation") { onOpen("comparison") }
         DopeSecondaryButton("Cycle display mode", onThemeChange, Modifier.fillMaxWidth())
     }
 }

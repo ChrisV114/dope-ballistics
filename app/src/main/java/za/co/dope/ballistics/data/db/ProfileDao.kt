@@ -1,6 +1,8 @@
 package za.co.dope.ballistics.data.db
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
@@ -8,6 +10,30 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 @Suppress("TooManyFunctions")
 interface ProfileDao {
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertSessionSnapshot(value: SessionSnapshotEntity)
+
+    @Query("SELECT * FROM session_snapshots ORDER BY completedAtEpochMillis DESC")
+    fun observeSessionSnapshots(): Flow<List<SessionSnapshotEntity>>
+
+    @Query("SELECT * FROM session_snapshots WHERE id = :id")
+    suspend fun sessionSnapshot(id: String): SessionSnapshotEntity?
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertVerifiedDopeRecord(value: VerifiedDopeRecordEntity)
+
+    @Query("SELECT * FROM verified_dope_records ORDER BY createdAtEpochMillis DESC")
+    fun observeVerifiedDopeRecords(): Flow<List<VerifiedDopeRecordEntity>>
+
+    @Query("SELECT * FROM verified_dope_records WHERE id = :id")
+    suspend fun verifiedDopeRecord(id: String): VerifiedDopeRecordEntity?
+
+    @Query(
+        "SELECT * FROM verified_dope_records WHERE sessionSnapshotId = :sessionId " +
+            "ORDER BY createdAtEpochMillis",
+    )
+    suspend fun verifiedDopeRecordsForSession(sessionId: String): List<VerifiedDopeRecordEntity>
+
     @Upsert suspend fun upsertEnvironmentalSnapshot(value: EnvironmentalSnapshotEntity)
 
     @Query("SELECT * FROM environmental_snapshots ORDER BY capturedAtEpochMillis DESC")
@@ -144,6 +170,12 @@ interface ProfileDao {
     @Query("SELECT * FROM static_targets WHERE id = :id")
     suspend fun staticTarget(id: String): StaticTargetEntity?
 
+    @Query(
+        "SELECT * FROM static_targets WHERE archived = 0 AND distanceConfirmed = 1 " +
+            "AND includeDistanceInDope = 1 ORDER BY measuredDistanceMetres",
+    )
+    suspend fun confirmedDopeTargets(): List<StaticTargetEntity>
+
     @Upsert suspend fun upsertZeroProfile(value: ZeroProfileEntity)
 
     @Query("SELECT * FROM zero_profiles WHERE archived = 0 ORDER BY favourite DESC, modifiedAtEpochMillis DESC")
@@ -151,6 +183,12 @@ interface ProfileDao {
 
     @Query("SELECT * FROM zero_profiles WHERE id = :id")
     suspend fun zeroProfile(id: String): ZeroProfileEntity?
+
+    @Query(
+        "SELECT * FROM zero_profiles WHERE verified = 1 AND archived = 0 " +
+            "ORDER BY favourite DESC, modifiedAtEpochMillis DESC LIMIT 1",
+    )
+    suspend fun latestVerifiedZeroProfile(): ZeroProfileEntity?
 
     @Query(
         "UPDATE zero_profiles SET verified = 0, modifiedAtEpochMillis = :modifiedAt, " +

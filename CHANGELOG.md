@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Milestone 5
+
+- Added tested true/magnetic wind-from conventions, relative direction, signed cross/head components and min/average/max/gust brackets.
+- Added an interactive manual wind wheel with tap/drag, clock/numeric entry, fine adjustment, reset, source, timestamp, notes and lock state.
+- Added verified-profile range cards with confirmed saved-target distance inclusion and offline CSV, PDF and PNG sharing.
+- Added Room version 4 append-only session snapshots and verified range records with complete calculation/profile/environment evidence and SHA-256 hashes.
+- Kept theoretical and actual settings separate with explicit confidence and `CALCULATED`, `VERIFIED`, `BLENDED` and `DO_NOT_USE` states.
+- Added non-destructive baseline/alternative comparison and new phone/landscape visual baselines.
+
 ### Maintenance
 
 - Updated the GitHub-hosted CI actions to their current Node-runtime-compatible major releases: checkout v7, setup-java v6, setup-gradle v6 and upload-artifact v7.

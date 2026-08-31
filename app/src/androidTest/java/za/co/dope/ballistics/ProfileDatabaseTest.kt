@@ -16,10 +16,13 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import za.co.dope.ballistics.data.ProfileRepository
+import za.co.dope.ballistics.data.SessionRepository
 import za.co.dope.ballistics.data.db.DopeDatabase
 import za.co.dope.ballistics.data.db.EnvironmentalSnapshotEntity
 import za.co.dope.ballistics.data.db.RifleEntity
 import za.co.dope.ballistics.data.db.ScopeTemplates
+import za.co.dope.ballistics.data.db.SessionSnapshotEntity
+import za.co.dope.ballistics.data.db.VerifiedDopeRecordEntity
 import za.co.dope.ballistics.data.db.WeatherCacheEntity
 import java.io.IOException
 
@@ -57,13 +60,16 @@ class ProfileDatabaseTest {
         }
 
     @Test
-    fun migrationOneToTwoCreatesValidatedSchemaAndBuiltInTemplates() {
+    fun migrationOneToFourCreatesValidatedSchemaAndBuiltInTemplates() {
         createVersionOneDatabase()
         database =
             Room
                 .databaseBuilder(context, DopeDatabase::class.java, TEST_DATABASE)
-                .addMigrations(DopeDatabase.MIGRATION_1_2, DopeDatabase.MIGRATION_2_3)
-                .allowMainThreadQueries()
+                .addMigrations(
+                    DopeDatabase.MIGRATION_1_2,
+                    DopeDatabase.MIGRATION_2_3,
+                    DopeDatabase.MIGRATION_3_4,
+                ).allowMainThreadQueries()
                 .build()
 
         val writable = requireNotNull(database).openHelper.writableDatabase
@@ -85,7 +91,32 @@ class ProfileDatabaseTest {
         writable.query("SELECT name FROM sqlite_master WHERE type='table' AND name='environmental_snapshots'").use {
             assertTrue(it.moveToFirst())
         }
+        writable.query("SELECT name FROM sqlite_master WHERE type='table' AND name='session_snapshots'").use {
+            assertTrue(it.moveToFirst())
+        }
+        writable.query("SELECT name FROM sqlite_master WHERE type='table' AND name='verified_dope_records'").use {
+            assertTrue(it.moveToFirst())
+        }
     }
+
+    @Test
+    fun sessionAndVerifiedDopeAreAppendOnlyAndTraceable() =
+        runBlocking {
+            database =
+                Room
+                    .inMemoryDatabaseBuilder(context, DopeDatabase::class.java)
+                    .allowMainThreadQueries()
+                    .build()
+            val repository = SessionRepository(requireNotNull(database))
+            val session = repository.appendSession(sampleSession())
+            val verified = repository.appendVerifiedDope(sampleVerifiedDope(session.id))
+
+            assertEquals(64, session.contentSha256.length)
+            assertEquals(64, verified.evidenceSha256.length)
+            assertEquals(session, repository.observeSessions().first().single())
+            assertEquals(verified, repository.observeVerifiedDope().first().single())
+            assertTrue(runCatching { repository.appendSession(sampleSession()) }.isFailure)
+        }
 
     @Test
     fun environmentSnapshotAndWeatherCachePersist() =
@@ -192,6 +223,69 @@ class ProfileDatabaseTest {
             waterVapourPressurePascals = 900.0,
             speedOfSoundMetresPerSecond = 343.0,
             capturedAtEpochMillis = 1L,
+        )
+
+    private fun sampleSession() =
+        SessionSnapshotEntity(
+            id = "session-test",
+            sessionName = "Controlled range",
+            startedAtEpochMillis = 1L,
+            completedAtEpochMillis = 2L,
+            rifleId = "rifle-test",
+            rifleRevision = 1,
+            ammunitionId = "ammo-test",
+            ammunitionRevision = 1,
+            scopeProfileId = "scope-test",
+            scopeProfileRevision = 1,
+            zeroProfileId = "zero-test",
+            zeroProfileRevision = 1,
+            profileSnapshotJson = "{\"profile\":\"snapshot\"}",
+            referenceEnvironmentJson = "{\"reference\":true}",
+            currentEnvironmentJson = "{\"current\":true}",
+            fieldSourcesJson = "{\"distance\":\"MANUAL\"}",
+            distanceMetres = 500.0,
+            distanceSource = "MANUAL_CONFIRMED",
+            distanceUncertaintyMetres = 1.0,
+            inclinationDegrees = 0.0,
+            windSnapshotJson = "{\"from\":270}",
+            calculationResultJson = "{\"dial\":3.5}",
+            calculationTraceJson = "{\"deterministic\":true}",
+            engineVersion = "test-engine",
+            scopeRoundingJson = "{\"clicks\":35}",
+            warningsJson = "[]",
+            contentSha256 = "",
+        )
+
+    private fun sampleVerifiedDope(sessionId: String) =
+        VerifiedDopeRecordEntity(
+            id = "verified-test",
+            sessionSnapshotId = sessionId,
+            createdAtEpochMillis = 3L,
+            rifleId = "rifle-test",
+            rifleRevision = 1,
+            ammunitionId = "ammo-test",
+            ammunitionRevision = 1,
+            scopeProfileId = "scope-test",
+            scopeProfileRevision = 1,
+            zeroProfileId = "zero-test",
+            zeroProfileRevision = 1,
+            profileSnapshotJson = "{\"profile\":\"snapshot\"}",
+            distanceMetres = 500.0,
+            distanceSource = "MANUAL_CONFIRMED",
+            distanceUncertaintyMetres = 1.0,
+            calculatedUnit = "MIL",
+            calculatedRawValue = 3.46,
+            calculatedDialValue = 3.5,
+            calculatedClicks = 35,
+            actualDialUnit = "MIL",
+            actualDialValue = 3.6,
+            actualDialClicks = 36,
+            numberOfShots = 3,
+            conditionsJson = "{\"wind\":\"manual\"}",
+            confidence = "HIGH",
+            status = "VERIFIED",
+            engineVersion = "test-engine",
+            evidenceSha256 = "",
         )
 
     private companion object {

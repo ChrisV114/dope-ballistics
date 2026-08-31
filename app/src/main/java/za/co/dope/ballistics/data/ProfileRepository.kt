@@ -31,6 +31,15 @@ data class ChronographEntry(
     val notes: String? = null,
 )
 
+data class CalculationProfileContext(
+    val rifle: RifleEntity,
+    val ammunition: AmmunitionEntity,
+    val scope: ScopeProfileEntity,
+    val zero: ZeroProfileEntity,
+    val referenceAtmosphere: ReferenceAtmosphereEntity,
+    val currentEnvironment: EnvironmentalSnapshotEntity,
+)
+
 @Suppress("TooManyFunctions")
 class ProfileRepository(
     private val database: DopeDatabase,
@@ -162,11 +171,42 @@ class ProfileRepository(
         dao.upsertStaticTarget(value)
     }
 
+    suspend fun confirmedDopeTargets(): List<StaticTargetEntity> = dao.confirmedDopeTargets()
+
     suspend fun saveZeroProfile(value: ZeroProfileEntity) {
         require(value.zeroDistanceMetres > 0.0 && value.sightHeightAboveBoreMetres > 0.0) {
             "Zero distance and sight height must be positive"
         }
         dao.upsertZeroProfile(value)
+    }
+
+    suspend fun calculationContext(zeroProfileId: String? = null): CalculationProfileContext? {
+        val zero =
+            if (zeroProfileId == null) {
+                dao.latestVerifiedZeroProfile()
+            } else {
+                dao.zeroProfile(zeroProfileId)
+            }
+        return zero?.let { loadCalculationContext(it) }
+    }
+
+    private suspend fun loadCalculationContext(zero: ZeroProfileEntity): CalculationProfileContext? {
+        val rifle = dao.rifle(zero.rifleId)
+        val ammunition = dao.ammunition(zero.ammunitionId)
+        val scope = dao.scopeProfile(zero.scopeProfileId)
+        val atmosphere = dao.referenceAtmosphere(zero.referenceAtmosphereId)
+        val environment = dao.latestEnvironmentalSnapshot()
+        if (listOf(rifle, ammunition, scope, atmosphere, environment).any { it == null }) {
+            return null
+        }
+        return CalculationProfileContext(
+            requireNotNull(rifle),
+            requireNotNull(ammunition),
+            requireNotNull(scope),
+            zero,
+            requireNotNull(atmosphere),
+            requireNotNull(environment),
+        )
     }
 
     suspend fun archiveRifle(

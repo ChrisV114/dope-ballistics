@@ -78,3 +78,25 @@ fun TargetRangeChoicesPreview() {
 fun EnvironmentManualOfflinePreview() {
     DopeGoldenScreen(route = "environment")
 }
+
+@PreviewTest
+@Preview(
+    name = "Wind wheel",
+    device = "spec:width=360dp,height=780dp,dpi=480",
+    showSystemUi = true,
+)
+@Composable
+fun WindWheelPreview() {
+    DopeGoldenScreen(route = "wind")
+}
+
+@PreviewTest
+@Preview(
+    name = "Session log",
+    device = "spec:width=360dp,height=780dp,dpi=480",
+    showSystemUi = true,
+)
+@Composable
+fun SessionLogPreview() {
+    DopeGoldenScreen(route = "session")
+}
