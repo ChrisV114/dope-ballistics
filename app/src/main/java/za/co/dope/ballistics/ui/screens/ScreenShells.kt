@@ -479,25 +479,11 @@ fun ScopeDetailScreen(repository: ProfileRepository? = null) {
 }
 
 @Composable
-fun EnvironmentScreen(onOpen: (String) -> Unit) {
-    ScreenShell(title = "Environment", eyebrow = "SOURCE · AGE · VALUE") {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            StatusChip("Manual", DopeStatus.INFO)
-            StatusChip("No live source", DopeStatus.WARNING)
-        }
-        DopeCard {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                LabelValue("Temperature", "20 °C · manual")
-                LabelValue("Pressure", "1013.25 hPa · standard")
-                LabelValue("Humidity", "50 % · manual")
-                LabelValue("Altitude", "0 m · manual")
-                LabelValue("Updated", "Design preview")
-            }
-        }
-        DopePrimaryButton("Edit conditions", {}, Modifier.fillMaxWidth(), Icons.Outlined.WaterDrop)
-        DopeSecondaryButton("Open wind", { onOpen("wind") }, Modifier.fillMaxWidth(), Icons.Outlined.Explore)
-    }
-}
+fun EnvironmentScreen(
+    onOpen: (String) -> Unit,
+    repository: ProfileRepository? = null,
+    previewMode: Boolean = false,
+) = LiveEnvironmentScreen(onOpen, repository, previewMode)
 
 @Composable
 fun WindScreen() {
@@ -786,7 +772,7 @@ fun MoreScreen(
 }
 
 @Composable
-private fun ScreenShell(
+internal fun ScreenShell(
     title: String,
     eyebrow: String,
     content: @Composable ColumnScope.() -> Unit,

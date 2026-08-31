@@ -55,3 +55,11 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - Six screenshot goldens remain unchanged and passed validation.
 - `apkanalyzer` confirmed that the packaged debug APK application ID is `za.co.bdstudio.dope`.
 - No local emulator or physical-device execution is claimed; the protected GitHub API 35 emulator job remains the external execution gate for this review update.
+
+## Milestone 3 results — 2026-08-31
+
+- Final combined offline local gate passed: Spotless, lint, Detekt, 16 JVM tests, seven screenshot validations, debug APK assembly and debug instrumentation-test APK assembly.
+- Environmental JVM coverage includes source priority/staleness, Buck vapour pressure, moist-air density, dew point, pressure altitude, numerical density altitude, pressure-sample stability and strict separation of Open-Meteo surface and mean-sea-level pressure.
+- Seven instrumentation tests compile for manual/offline calculation, permission-denied location, optional sensor diagnostics, environment/cache persistence, Room CRUD/archive, complete `1 -> 2 -> 3` migration and navigation/accessibility.
+- The environment golden uses a 360 × 780 dp S25-equivalent viewport with system UI and confirms the scrollable controls remain above the app bottom navigation/system-control region.
+- Local instrumentation execution is not claimed because no emulator or physical device is installed. GitHub API 35 execution and physical Galaxy S25 sensor acceptance remain pending.

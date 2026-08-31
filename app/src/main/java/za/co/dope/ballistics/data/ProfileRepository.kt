@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import za.co.dope.ballistics.data.db.AmmunitionEntity
 import za.co.dope.ballistics.data.db.ChronographStringEntity
 import za.co.dope.ballistics.data.db.DopeDatabase
+import za.co.dope.ballistics.data.db.EnvironmentalSnapshotEntity
 import za.co.dope.ballistics.data.db.ReferenceAtmosphereEntity
 import za.co.dope.ballistics.data.db.RifleEntity
 import za.co.dope.ballistics.data.db.SavedRangeEntity
@@ -14,6 +15,7 @@ import za.co.dope.ballistics.data.db.ScopeTemplates
 import za.co.dope.ballistics.data.db.ScopeVariantEntity
 import za.co.dope.ballistics.data.db.ScopeVerificationEntity
 import za.co.dope.ballistics.data.db.StaticTargetEntity
+import za.co.dope.ballistics.data.db.WeatherCacheEntity
 import za.co.dope.ballistics.data.db.ZeroProfileEntity
 import za.co.dope.ballistics.domain.ChronographCalculator
 import za.co.dope.ballistics.domain.ProfileIdentity
@@ -44,6 +46,19 @@ class ProfileRepository(
     fun observeScopeProfiles(): Flow<List<ScopeProfileEntity>> = dao.observeScopeProfiles()
 
     fun observeReferenceAtmospheres(): Flow<List<ReferenceAtmosphereEntity>> = dao.observeReferenceAtmospheres()
+
+    fun observeEnvironmentalSnapshots(): Flow<List<EnvironmentalSnapshotEntity>> = dao.observeEnvironmentalSnapshots()
+
+    suspend fun saveEnvironmentalSnapshot(value: EnvironmentalSnapshotEntity) {
+        require(value.temperatureKelvin in 180.0..340.0)
+        require(value.stationPressurePascals in 30_000.0..110_000.0)
+        require(value.relativeHumidityFraction in 0.0..1.0)
+        dao.upsertEnvironmentalSnapshot(value)
+    }
+
+    suspend fun saveWeatherCache(value: WeatherCacheEntity) = dao.upsertWeatherCache(value)
+
+    suspend fun weatherCache(coordinateKey: String): WeatherCacheEntity? = dao.weatherCache(coordinateKey)
 
     fun observeSavedRanges(): Flow<List<SavedRangeEntity>> = dao.observeSavedRanges()
 

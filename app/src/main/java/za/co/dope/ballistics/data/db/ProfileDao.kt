@@ -8,6 +8,22 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 @Suppress("TooManyFunctions")
 interface ProfileDao {
+    @Upsert suspend fun upsertEnvironmentalSnapshot(value: EnvironmentalSnapshotEntity)
+
+    @Query("SELECT * FROM environmental_snapshots ORDER BY capturedAtEpochMillis DESC")
+    fun observeEnvironmentalSnapshots(): Flow<List<EnvironmentalSnapshotEntity>>
+
+    @Query("SELECT * FROM environmental_snapshots ORDER BY capturedAtEpochMillis DESC LIMIT 1")
+    suspend fun latestEnvironmentalSnapshot(): EnvironmentalSnapshotEntity?
+
+    @Upsert suspend fun upsertWeatherCache(value: WeatherCacheEntity)
+
+    @Query("SELECT * FROM weather_cache WHERE coordinateKey = :coordinateKey")
+    suspend fun weatherCache(coordinateKey: String): WeatherCacheEntity?
+
+    @Query("DELETE FROM weather_cache WHERE fetchedAtEpochMillis < :cutoffEpochMillis")
+    suspend fun deleteWeatherCacheOlderThan(cutoffEpochMillis: Long): Int
+
     @Upsert suspend fun upsertRifle(value: RifleEntity)
 
     @Query("SELECT * FROM rifles WHERE archived = 0 ORDER BY favourite DESC, profileName")

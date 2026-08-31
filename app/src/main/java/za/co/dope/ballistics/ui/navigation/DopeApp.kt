@@ -176,7 +176,7 @@ private fun DopeNavHost(
         composable("ammo") { AmmunitionScreen(profileRepository) }
         composable("scope") { ScopeScreen(openRoute, profileRepository) }
         composable("scope_detail") { ScopeDetailScreen(profileRepository) }
-        composable("environment") { EnvironmentScreen(openRoute) }
+        composable("environment") { EnvironmentScreen(openRoute, profileRepository) }
         composable("wind") { WindScreen() }
         composable("results") { ResultsScreen() }
         composable("range_card") { RangeCardScreen() }
@@ -213,6 +213,7 @@ fun DopeGoldenScreen(
                 when (route) {
                     "splash" -> SplashScreen(onContinue = {})
                     "profiles" -> ProfilesScreen(onOpen = {})
+                    "environment" -> EnvironmentScreen(onOpen = {}, previewMode = true)
                     "range_card" -> RangeCardScreen()
                     "target_range" -> TargetRangeScreen(onOpen = {})
                     else -> DashboardScreen(onOpen = {})

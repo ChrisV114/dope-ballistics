@@ -273,6 +273,69 @@ data class ReferenceAtmosphereEntity(
     val notes: String? = null,
 )
 
+@Entity(tableName = "environmental_snapshots")
+data class EnvironmentalSnapshotEntity(
+    @PrimaryKey val id: String,
+    val name: String,
+    val temperatureKelvin: Double,
+    val temperatureSource: String,
+    val temperatureQuality: String,
+    val temperatureCapturedAtEpochMillis: Long,
+    val stationPressurePascals: Double,
+    val pressureSource: String,
+    val pressureQuality: String,
+    val pressureCapturedAtEpochMillis: Long,
+    val relativeHumidityFraction: Double,
+    val humiditySource: String,
+    val humidityQuality: String,
+    val humidityCapturedAtEpochMillis: Long,
+    val altitudeMetres: Double,
+    val altitudeSource: String,
+    val altitudeQuality: String,
+    val altitudeCapturedAtEpochMillis: Long,
+    val latitudeDegrees: Double? = null,
+    val longitudeDegrees: Double? = null,
+    val horizontalAccuracyMetres: Double? = null,
+    val verticalAccuracyMetres: Double? = null,
+    val approximateLocation: Boolean = false,
+    val locationIncludedInExports: Boolean = false,
+    val magneticHeadingDegrees: Double? = null,
+    val trueHeadingDegrees: Double? = null,
+    val pitchDegrees: Double? = null,
+    val rollDegrees: Double? = null,
+    val orientationQuality: String? = null,
+    val orientationStable: Boolean? = null,
+    val pressureSampleSummaryJson: String? = null,
+    val airDensityKilogramsPerCubicMetre: Double,
+    val densityRatio: Double,
+    val pressureAltitudeMetres: Double,
+    val densityAltitudeMetres: Double,
+    val dewPointKelvin: Double,
+    val waterVapourPressurePascals: Double,
+    val speedOfSoundMetresPerSecond: Double,
+    val providerName: String? = null,
+    val providerAttribution: String? = null,
+    val capturedAtEpochMillis: Long,
+    val notes: String? = null,
+)
+
+@Entity(tableName = "weather_cache", indices = [Index(value = ["fetchedAtEpochMillis"])])
+data class WeatherCacheEntity(
+    @PrimaryKey val coordinateKey: String,
+    val latitudeDegrees: Double,
+    val longitudeDegrees: Double,
+    val temperatureKelvin: Double,
+    val surfacePressurePascals: Double,
+    val meanSeaLevelPressurePascals: Double?,
+    val relativeHumidityFraction: Double,
+    val windSpeedMetresPerSecond: Double?,
+    val windDirectionDegrees: Double?,
+    val providerName: String,
+    val attribution: String,
+    val modelElevationMetres: Double?,
+    val fetchedAtEpochMillis: Long,
+)
+
 @Serializable
 @Entity(tableName = "saved_ranges")
 data class SavedRangeEntity(

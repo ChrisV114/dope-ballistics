@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Milestone 3
+
+- Added optional-sensor diagnostics, bounded barometer statistics and stable rotation-vector orientation capture.
+- Added one-shot foreground location with permission-denied and approximate-location fallbacks.
+- Added offline manual environmental entry, per-field provenance/quality/time and persisted atmospheric snapshots.
+- Added Buck vapour pressure, moist-air density, dew point, pressure altitude, numerically solved density altitude and speed of sound.
+- Added provider-neutral weather/terrain seams, an explicitly invoked Open-Meteo adapter and timestamped weather cache.
+- Added Room migration `2 -> 3`, environment JVM/instrumentation coverage and a locked environment screen golden.
+
 ### Post-Milestone-2 owner review
 
 - Approved `za.co.bdstudio.dope` as the Android application ID for initial private sideloading.
