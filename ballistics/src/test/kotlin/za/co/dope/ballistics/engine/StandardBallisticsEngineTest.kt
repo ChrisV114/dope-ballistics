@@ -146,6 +146,19 @@ class StandardBallisticsEngineTest {
         assertEquals(listOf(100.0, 300.0, 500.0), result.rows.map { it.solution!!.rangeMeters })
     }
 
+    @Test
+    fun `owner Creedmoor standard-atmosphere predictions remain traceable beside field observations`() {
+        val fieldObservationsMil = mapOf(500.0 to 3.6, 800.0 to 8.0, 1_000.0 to 11.5)
+        val predictions =
+            fieldObservationsMil.keys.associateWith { distance ->
+                requireNotNull(engine.solve(creedmoorInput(distance)).solution).elevationScope.raw
+            }
+
+        predictions.forEach { (distance, prediction) ->
+            assertEquals(fieldObservationsMil.getValue(distance), prediction, 0.35)
+        }
+    }
+
     private fun StandardBallisticsEngine.solve223(targetRangeMeters: Double): TrajectoryResult =
         solve(
             TrajectoryInput(

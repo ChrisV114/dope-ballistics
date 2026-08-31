@@ -10,6 +10,8 @@
 - Added velocity, energy, Mach/state, MIL/MOA click rounding, residual, travel/revolution checks and sensitivity uncertainty v1.
 - Added deterministic calculation traces, invalid-input blocking and a verified Android profile-to-engine mapping boundary.
 - Added owner-provided Howa 6.5 Creedmoor/Lapua 139 gr and M&P15 Sport III/Hornady 53 gr regression fixtures without seeding private data as factory defaults.
+- Added source-labelled 500/800/1,000 m owner field-DOPE comparison coverage and recorded a future explicit, reversible truing workflow.
+- Specified the Milestone 5 per-target actual-setting log and evidence-gated equipment-specific learning rules.
 
 ### Milestone 3
 

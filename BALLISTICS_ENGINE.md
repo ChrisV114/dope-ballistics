@@ -41,3 +41,5 @@ The regression suite includes the owner-provided, editable load values:
 - Smith & Wesson M&P15 Sport III .223 Remington, 16-inch barrel, 1:8 twist, Arken EP-8, 50 m zero, 6 cm sight height, Hornady 53 gr V-MAX, G1 0.290, 920 m/s and 0.25 MOA clicks.
 
 These are private user profiles and test fixtures, not immutable factory defaults. Muzzle velocity remains editable load data. Twist direction remains unspecified and is not used by the point-mass core.
+
+Owner-observed 6.5 Creedmoor elevation settings are retained as independent field comparison points: 3.6 MIL at 500 m, 8.0 MIL at 800 m and 11.5 MIL at 1,000 m. Under the documented standard-atmosphere fixture, engine v1 predicts 3.497, 7.716 and 11.503 MIL respectively. The regression requires agreement within 0.35 MIL but does not alter BC, velocity or solver constants to force a match. The original observation atmosphere and other range metadata remain unknown.

@@ -14,3 +14,4 @@
 - Owner-provided muzzle velocities of 809 m/s for the Howa 6.5 Creedmoor/Lapua 139 gr load and 920 m/s for the M&P15 Sport III/Hornady 53 gr load are editable starting averages, not universal factory values.
 - Both owner rifles have a stated 1:8 twist rate. Twist direction is not yet confirmed and is not required by the Milestone 4 point-mass core.
 - Garmin Xero C2 data is manually entered for now; no proprietary Bluetooth integration or ShotView import is included.
+- Owner field observations of 3.6 MIL at 500 m, 8.0 MIL at 800 m and 11.5 MIL at 1,000 m are treated as historical comparison data. Their atmosphere, date, direction, inclination and exact velocity string are not yet recorded, so they are not sufficient for automatic truing.

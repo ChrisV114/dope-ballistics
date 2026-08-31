@@ -69,8 +69,9 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 ## Milestone 4 results — 2026-08-31
 
 - Final combined local gate passed: Spotless, lint, Detekt, JVM tests, screenshot validation, debug APK assembly and debug instrumentation-test APK assembly.
-- JVM tests: 26 run, 0 failures, 0 errors, 0 skipped; 10 are pure `:ballistics` tests and 16 are app tests.
+- JVM tests: 27 run, 0 failures, 0 errors, 0 skipped; 11 are pure `:ballistics` tests and 16 are app tests.
 - Ballistics coverage includes exact BRL/JBM table values and interpolation, deterministic owner rifle/load fixtures, root-solved zero, RK4 step-halving convergence, G1/G7 paths, reference/current deviation, wind sign, MIL/MOA clicks/residual/travel/revolutions, uncertainty ordering, range ordering and invalid-input blocking.
+- The standard-atmosphere 6.5 Creedmoor fixture predicts 3.497, 7.716 and 11.503 MIL at 500, 800 and 1,000 m; all remain within 0.35 MIL of the owner's independent observed 3.6, 8.0 and 11.5 MIL settings without solver truing.
 - Seven existing screenshot goldens passed unchanged, preserving the reviewed phone system-control clearance.
 - Seven existing instrumentation tests compile into `app-debug-androidTest.apk`; no database schema or device behaviour changed in this milestone.
 - Local instrumentation execution is not claimed because no emulator or physical device is installed. Protected GitHub API 35 emulator execution remains required for the Milestone 4 commit.
