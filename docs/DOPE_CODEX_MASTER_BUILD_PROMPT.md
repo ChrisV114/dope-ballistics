@@ -34,13 +34,13 @@ Subtitle:
 
 **Ballistic Data & Environmental Calculator**
 
-Working Android application ID:
+Owner-approved Android application ID:
 
 ```text
-za.co.dope.ballistics
+za.co.bdstudio.dope
 ```
 
-Before the first signed public release, flag the application ID for owner confirmation because an Android application ID is a long-lived release decision.
+The owner approved this application ID on 2026-08-31 for private sideloading. Release signing, store distribution and final branding assets remain separate decisions before any public release.
 
 Primary target device:
 

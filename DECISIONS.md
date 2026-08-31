@@ -30,11 +30,11 @@ Provide design-shell choices for manual dimensions, official IDPA cardboard dime
 
 ## M1-004 — Future pistol drill cues
 
-Treat pistol drill prompts as a future, separate user-authored allowlist. They may cover movement, position, reload and timer events, but may not provide generated ballistic corrections, live aim instructions, target selection or spoken fire commands.
+Treat pistol drill prompts as a future, separate user-authored allowlist. The approved phrases are `Move left`, `Move right`, `Move forward`, `Move back`, `Reload`, `Kneel`, `Stand`, `Get down`, `Hold`, `Stop` and `Drill complete`. Live-fire audio plays from the phone through EARMOR Bluetooth hearing protection; dry-fire audio may use the phone speaker. The watch may mirror the cue and vibrate. The app may randomise only phrases explicitly enabled for the drill and may not provide generated ballistic corrections, live aim instructions, target selection or spoken fire commands.
 
 ## M1-005 — Future fixed-camera target sequence
 
-Allow only user-pre-marked stationary target regions and deterministic digital crop changes between configured shot groups. No camera panning, live impact analysis, hit inference, correction, aim point or automatic low-confidence advance.
+Allow only user-pre-marked stationary target regions in a fixed landscape wide frame. After a configured and confirmed shot group, move a border and sequence-number highlight to the next pre-marked target; crop/zoom is optional and not required. No camera panning, crosshair, live impact analysis, hit inference, correction, aim point or automatic low-confidence advance.
 
 ## M2-001 — Database and schema baseline
 
@@ -51,3 +51,15 @@ Never overwrite silently. Import requires duplicate-with-new-UUIDs, safe non-con
 ## M2-004 — Confirmed target distance handoff
 
 Store each marked static target's measured distance, source, quality, timestamp, uncertainty and confirmation state. A confirmed manual or future camera/range-finder distance may automatically populate the target's DOPE/match distance list. Unconfirmed or low-confidence measurements remain inactive.
+
+## R2-001 — Owner-approved application identity
+
+Use `za.co.bdstudio.dope` as the Android application ID. Keep the existing Kotlin namespace to avoid a non-functional source-tree rename. Initial distribution is private sideloading; keystore custody, release signing and public distribution remain deferred.
+
+## R2-002 — Wear OS hardware baseline
+
+Use the Samsung Galaxy Watch7 44 mm paired with the Samsung Galaxy S25 as the primary future Wear OS baseline. The watch experience must expose shot-count confidence and manual correction, and must not silently advance an unconfirmed match stage.
+
+## R2-003 — Owner scope verification baselines
+
+Record owner-specific physical verification for a DNT TheOne 7–35×56 FFP MIL/TOR-MIL scope and an Arken EP-8 1–8×28 FFP MOA/KLBOX scope. Do not change immutable built-in templates to globally verified: owner measurements belong to user-owned profiles.

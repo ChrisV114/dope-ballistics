@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Post-Milestone-2 owner review
+
+- Approved `za.co.bdstudio.dope` as the Android application ID for initial private sideloading.
+- Recorded the Galaxy Watch7 44 mm, EARMOR/phone cue playback, fixed wide-frame target highlighting and closed pistol-drill vocabulary baselines.
+- Recorded owner-specific DNT TheOne and Arken EP-8 physical verification values without changing immutable built-in templates to globally verified.
+
 ### Milestone 2
 
 - Added Room version-2 storage, schema export and a tested `1 -> 2` bootstrap migration.

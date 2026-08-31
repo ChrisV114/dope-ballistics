@@ -11,7 +11,7 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "za.co.dope.ballistics"
+        applicationId = "za.co.bdstudio.dope"
         minSdk = 28
         targetSdk = 37
         versionCode = 1

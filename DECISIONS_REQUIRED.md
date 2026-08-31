@@ -2,29 +2,34 @@
 
 ## DR-001 — Release application ID
 
-- Current working value: `za.co.dope.ballistics`
-- Required by: before the first signed public release
-- Owner decision: confirm or replace the application ID
-- Safety state: no signed public release may proceed without confirmation because this identifier is long-lived and difficult to change.
+- Status: resolved 2026-08-31.
+- Owner-approved value: `za.co.bdstudio.dope`.
+- Initial distribution: private sideloading.
+- Kotlin namespace remains independent at `za.co.dope.ballistics`.
 
 ## DR-002 — Release signing and distribution
 
-Select keystore custody, signing process, and intended distribution channel before Milestone 11 release work. No signing secrets belong in Git.
+- Status: deferred while the application remains private and sideloaded.
+- Select keystore custody, signing process, and intended public distribution channel before Milestone 11 release work. No signing secrets belong in Git.
 
 ## DR-003 — Wear OS companion scope
 
 - Requested capability: match plan with target/range DOPE, shot-count progression, next-setting wake display and shot timer.
-- Required before implementation: select supported watch hardware/Wear OS baseline and decide whether the companion is a separate module or application.
+- Hardware resolved 2026-08-31: Samsung Galaxy Watch7 44 mm paired with Samsung Galaxy S25; layouts must tolerate the smaller 40 mm display.
+- Packaging still required before implementation: confirm the companion module/application packaging when the Wear OS milestone is scheduled.
 - Safety/reliability gate: acoustic shot counting must expose confidence, support manual correction and never silently advance an unconfirmed match stage.
 
 ## DR-004 — Pistol drill cue vocabulary
 
 - Requested capability: user-programmed Bluetooth cues for pistol practice movements and reload/position drills.
-- Required before implementation: owner approves the exact closed vocabulary and whether cues play from phone, watch or both.
+- Status: resolved 2026-08-31.
+- Approved vocabulary: `Move left`, `Move right`, `Move forward`, `Move back`, `Reload`, `Kneel`, `Stand`, `Get down`, `Hold`, `Stop`, `Drill complete`.
+- Playback: EARMOR Bluetooth hearing protection for live fire; phone speaker for dry fire; optional watch display/vibration.
 - Locked boundary: no generated cues, ballistic corrections, aim points, target selection, spoken fire commands or impact-derived instructions.
 
 ## DR-005 — Fixed-camera sequencing hardware acceptance
 
-- Requested capability: pre-mark target order and switch digital crop after the configured shots per target.
-- Required before implementation: physical-device tests for microphone shot-count confidence, camera thermal limits, screen wake behaviour and supported zoom/crop transitions.
+- Owner baseline resolved 2026-08-31: Samsung S25 on a rigid landscape stand, all targets in one fixed wide frame, with user-marked borders and sequence numbers advancing after confirmed shot groups.
+- Crop/zoom is optional and not required; physical camera panning is unsupported.
+- Required before implementation acceptance: physical-device tests for microphone shot-count confidence, camera thermal limits, screen wake behaviour and highlight visibility at target distance.
 - Locked boundary: no live hit detection, impact analysis, ballistic correction or aim overlay.

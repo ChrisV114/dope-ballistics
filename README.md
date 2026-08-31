@@ -19,6 +19,6 @@ Requirements: JDK 17 and Android SDK Platform 37 with Build Tools 36.0.0.
 ./gradlew assembleDebug
 ```
 
-The working application ID is `za.co.dope.ballistics`; owner confirmation is required before the first signed public release.
+The owner-approved application ID is `za.co.bdstudio.dope`. Initial distribution is private sideloading; release signing and public distribution remain deferred.
 
 See `docs/DOPE_CODEX_MASTER_BUILD_PROMPT.md` for the authoritative specification.
