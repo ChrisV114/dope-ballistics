@@ -24,6 +24,10 @@ Selected through 2026-08-31 from stable upstream releases.
 | Detekt | 1.23.8 | Kotlin static analysis |
 | Spotless | 8.10.1 | Formatting gate |
 | ktlint | 1.8.0 | Kotlin formatter |
+| actions/checkout | v7 | GitHub-hosted source checkout |
+| actions/setup-java | v6 | GitHub-hosted Temurin JDK 17 setup and Gradle cache |
+| gradle/actions/setup-gradle | v6 | GitHub-hosted Gradle setup, wrapper validation and cache |
+| actions/upload-artifact | v7 | GitHub-hosted report and APK retention |
 
 Milestone 4 adds the Kotlin/JVM Gradle plugin at the existing Kotlin 2.4.10 pin and no third-party runtime library. The `:ballistics` module uses only the Kotlin/JDK standard library; JUnit 4.13.2 remains test-only. Sensors, foreground location and HTTPS use Android/JDK platform APIs; JSON continues to use the pinned kotlinx.serialization runtime.
 

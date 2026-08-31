@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Maintenance
+
+- Updated the GitHub-hosted CI actions to their current Node-runtime-compatible major releases: checkout v7, setup-java v6, setup-gradle v6 and upload-artifact v7.
+
 ### Milestone 4
 
 - Added the pure Kotlin/JVM `:ballistics` module and stable solve/range-card contracts.
