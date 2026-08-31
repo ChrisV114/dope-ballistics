@@ -44,8 +44,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import za.co.dope.ballistics.data.ProfileRepository
+import za.co.dope.ballistics.data.SessionRepository
 import za.co.dope.ballistics.ui.screens.AmmunitionScreen
 import za.co.dope.ballistics.ui.screens.CameraCalibrationScreen
+import za.co.dope.ballistics.ui.screens.ComparisonScreen
 import za.co.dope.ballistics.ui.screens.DashboardScreen
 import za.co.dope.ballistics.ui.screens.EnvironmentScreen
 import za.co.dope.ballistics.ui.screens.MoreScreen
@@ -58,6 +60,7 @@ import za.co.dope.ballistics.ui.screens.ScopeScreen
 import za.co.dope.ballistics.ui.screens.SessionScreen
 import za.co.dope.ballistics.ui.screens.SplashScreen
 import za.co.dope.ballistics.ui.screens.TargetRangeScreen
+import za.co.dope.ballistics.ui.screens.WindFormState
 import za.co.dope.ballistics.ui.screens.WindScreen
 import za.co.dope.ballistics.ui.theme.DopeDesignTokens
 import za.co.dope.ballistics.ui.theme.DopeTheme
@@ -82,11 +85,13 @@ private val BottomDestinations =
 fun DopeApp(
     startRoute: String = "splash",
     profileRepository: ProfileRepository? = null,
+    sessionRepository: SessionRepository? = null,
 ) {
     var themeModeName by rememberSaveable { mutableStateOf(DopeThemeMode.DARK.name) }
     val themeMode = DopeThemeMode.valueOf(themeModeName)
     DopeTheme(mode = themeMode) {
         val navController = rememberNavController()
+        val windState = remember { WindFormState() }
         val backStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = backStackEntry?.destination
         val currentRoute = currentDestination?.route
@@ -120,6 +125,8 @@ fun DopeApp(
                 navController = navController,
                 startRoute = startRoute,
                 profileRepository = profileRepository,
+                sessionRepository = sessionRepository,
+                windState = windState,
                 openRoute = openRoute,
                 modifier = Modifier.padding(innerPadding),
                 onThemeChange = {
@@ -141,6 +148,8 @@ private fun DopeNavHost(
     navController: NavHostController,
     startRoute: String,
     profileRepository: ProfileRepository?,
+    sessionRepository: SessionRepository?,
+    windState: WindFormState,
     openRoute: (String) -> Unit,
     onThemeChange: () -> Unit,
     modifier: Modifier = Modifier,
@@ -177,10 +186,11 @@ private fun DopeNavHost(
         composable("scope") { ScopeScreen(openRoute, profileRepository) }
         composable("scope_detail") { ScopeDetailScreen(profileRepository) }
         composable("environment") { EnvironmentScreen(openRoute, profileRepository) }
-        composable("wind") { WindScreen() }
+        composable("wind") { WindScreen(windState) }
         composable("results") { ResultsScreen() }
-        composable("range_card") { RangeCardScreen() }
-        composable("session") { SessionScreen() }
+        composable("range_card") { RangeCardScreen(profileRepository, windState, openRoute) }
+        composable("session") { SessionScreen(profileRepository, sessionRepository, windState, openRoute) }
+        composable("comparison") { ComparisonScreen(profileRepository, windState) }
         composable("camera_calibration") { CameraCalibrationScreen() }
         composable("target_range") { TargetRangeScreen(openRoute, profileRepository) }
         composable("more") { MoreScreen(onOpen = openRoute, onThemeChange = onThemeChange) }
@@ -197,6 +207,17 @@ fun DopeGoldenScreen(
     themeMode: DopeThemeMode = DopeThemeMode.DARK,
 ) {
     DopeTheme(mode = themeMode) {
+        val windState =
+            remember {
+                WindFormState().apply {
+                    windFromDegrees = "312"
+                    directionOfFireDegrees = "87"
+                    minimumSpeedMps = "2.7"
+                    averageSpeedMps = "4.5"
+                    maximumSpeedMps = "6.3"
+                    gustSpeedMps = "8.0"
+                }
+            }
         Scaffold(
             contentWindowInsets =
                 WindowInsets.safeDrawing.only(
@@ -214,7 +235,10 @@ fun DopeGoldenScreen(
                     "splash" -> SplashScreen(onContinue = {})
                     "profiles" -> ProfilesScreen(onOpen = {})
                     "environment" -> EnvironmentScreen(onOpen = {}, previewMode = true)
-                    "range_card" -> RangeCardScreen()
+                    "range_card" -> RangeCardScreen(null, windState, {}, previewMode = true)
+                    "wind" -> WindScreen(windState)
+                    "session" -> SessionScreen(null, null, windState, {})
+                    "comparison" -> ComparisonScreen(null, windState)
                     "target_range" -> TargetRangeScreen(onOpen = {})
                     else -> DashboardScreen(onOpen = {})
                 }

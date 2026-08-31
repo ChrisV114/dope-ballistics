@@ -273,6 +273,7 @@ data class ReferenceAtmosphereEntity(
     val notes: String? = null,
 )
 
+@Serializable
 @Entity(tableName = "environmental_snapshots")
 data class EnvironmentalSnapshotEntity(
     @PrimaryKey val id: String,

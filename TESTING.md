@@ -77,3 +77,13 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - Local instrumentation execution is not claimed because no emulator or physical device is installed.
 - GitHub Actions run `33405639742` passed `build-and-test` in 1m32s and API 35 `instrumentation` in 19m17s on commit `96f9ae0`.
 - The GitHub emulator executed seven instrumentation tests with 0 skipped and 0 failed.
+
+## Milestone 5 local results — 2026-08-31
+
+- Final combined offline local gate passed: Spotless, Android lint, Detekt, JVM tests, screenshot validation, debug APK assembly and debug instrumentation-test APK assembly.
+- JVM tests: 37 run, 0 failures, 0 errors, 0 skipped; 17 are pure `:ballistics` tests and 20 are app tests.
+- Wind coverage tests true/magnetic conversion, missing-declination behaviour, clock-relative direction, wind-from cross/head signs, selected speed and min/max/gust brackets.
+- Range-card coverage tests confirmed-distance inclusion, unconfirmed-distance rejection, reference/current selection, metric/imperial output, MIL/MOA display, column selection, offline CSV metadata and non-mutating comparison.
+- Nine visual goldens passed, including new wind/session portrait baselines and the updated landscape range-card controls. Reviewed content remains scrollable behind a fixed app navigation bar that is clear of the Android system-control inset.
+- Nine instrumentation tests compile, including complete `1 -> 2 -> 3 -> 4` migration, append-only session/verified-record hashing and offline CSV/PDF/PNG generation with a content-URI share intent.
+- Local instrumentation execution is not claimed because no local emulator or physical device is installed. The protected GitHub API 35 emulator job remains the external Milestone 5 execution gate.

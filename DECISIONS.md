@@ -80,9 +80,9 @@ Record editable private fixtures for: (1) Howa 6.5 Creedmoor, 26-inch 1:8 barrel
 
 Retain the owner's observed 6.5 Creedmoor settings of 3.6 MIL at 500 m, 8.0 MIL at 800 m and 11.5 MIL at 1,000 m as source-labelled comparison points. Do not silently tune the solver to them. Unknown atmosphere and session metadata must remain explicit.
 
-## R5-001 — Future truing workflow
+## R5-001 — Future guided truing workflow
 
-Milestone 5 must allow verified observed DOPE to be compared with a traceable prediction and may propose bounded muzzle-velocity or BC adjustments separately. It must preserve the original profile, observation, residual, environment and calculation trace; require explicit user acceptance into a derived profile; support rollback; and never silently change, jointly overfit or invent G1/G7 data.
+A later guided workflow may compare verified observed DOPE with a traceable prediction and propose bounded muzzle-velocity or BC adjustments separately. It must preserve the original profile, observation, residual, environment and calculation trace; require explicit user acceptance into a derived profile; support rollback; and never silently change, jointly overfit or invent G1/G7 data.
 
 ## R5-002 — Full DOPE log and learning boundary
 
@@ -95,3 +95,11 @@ Model rifle/load/scope/zero at the individual engagement level so a single stage
 ## R5-004 — Body-carried match phone
 
 During multi-gun match sessions the Galaxy S25 is carried on the user and may remain locked; it is not on the landscape stand. Match plans and the Watch7 must work without camera input. Any future background timing/counting requires an explicit foreground session and user-controlled status. Fixed-camera sequencing remains a separate mode and would require a separate device to operate concurrently.
+
+## M5-001 — Wind convention
+
+Bearings run clockwise from north and describe where wind comes from. Relative direction is normalized to `[-180, 180)`. Positive headwind travels from target toward shooter; positive crosswind moves the projectile right. Magnetic input remains usable for relative components without declination, but true bearings are withheld until an east-positive declination is supplied.
+
+## M5-002 — Immutable range evidence
+
+Completed sessions and verified range observations are append-only and content hashed. A session freezes profile revisions, reference/current environments, per-field sources, distance/uncertainty, direction, inclination, wind, result, trace, engine, rounding and warnings. Calculated and actual values remain distinct; no record changes a ballistic profile.

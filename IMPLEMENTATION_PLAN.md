@@ -2,20 +2,19 @@
 
 ## Current milestone
 
-Milestone 4 — Ballistics engine.
+Milestone 5 — wind, range cards and sessions.
 
-- [x] Add a pure Kotlin/JVM `:ballistics` module with stable solver interfaces and no Android imports.
-- [x] Add provenance-labelled BRL/JBM G1 and G7 Cd-versus-Mach tables with interpolation.
-- [x] Add air-relative drag, gravity, wind, inclination, sight height and line-of-sight geometry.
-- [x] Root-solve the bore angle for the verified zero under the reference atmosphere.
-- [x] Add reference/current comparison and explicit environmental/inclination contributions.
-- [x] Add time of flight, velocity, energy, Mach and flight-state output.
-- [x] Add MIL/MOA clicks, rounding residual, travel and revolution checks.
-- [x] Add sensitivity uncertainty v1 and deterministic versioned traces.
-- [x] Add the verified-profile mapping boundary and blocked invalid/unverified inputs.
-- [x] Add deterministic fixtures, drag-table values, convergence and invalid-input tests.
+- [x] Implement a manual wind wheel with drag/tap, clock, numeric and fine-adjust controls.
+- [x] Define and test true/magnetic, wind-from, relative, headwind and crosswind signs.
+- [x] Capture min/average/max/gust values, selected wind and a calculation bracket.
+- [x] Generate range cards from verified profiles and confirmed saved-target distances.
+- [x] Export and share range cards offline as CSV, PDF and PNG.
+- [x] Add immutable complete session snapshots and append-only verified range records.
+- [x] Keep calculated and actual settings separate with explicit confidence/status.
+- [x] Add comparison/what-if without mutating persisted profiles.
+- [x] Add Room `3 -> 4`, export, convention, immutability and screenshot coverage.
 - [x] Run the complete local quality/build gate.
-- [x] Run the protected GitHub quality and emulator jobs.
-- [x] Stop for owner review.
+- [ ] Run the protected GitHub quality and emulator jobs.
+- [ ] Stop for owner review.
 
-Milestone 5 — wind UI, engagement-level multi-rifle match plans, full immutable DOPE log, range-card presentation/export, sessions and explicit reversible truing — remains blocked until Milestone 4 review. It must capture actual settings per target and improve only through accepted equipment-specific true profiles with before/after validation. The Watch7 companion and automatic shot-count progression remain future work, governed by `MATCH_PLAN.md`; camera ranging remains Milestone 6, and fixed-camera sequencing/pistol drill cues remain later requirements.
+Milestone 6 camera ranging and calibration remains blocked until Milestone 5 review. Guided profile truing is a later optional workflow under the master prompt and `DOPE_LOG.md`; engagement-level match plans, Watch7 shot progression, fixed-camera sequencing and pistol-drill cues remain separately governed future work.

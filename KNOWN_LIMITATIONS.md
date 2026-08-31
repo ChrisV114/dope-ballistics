@@ -1,13 +1,13 @@
 # Known Limitations
 
-- Milestone 4 provides a deterministic point-mass G1/G7 engine. Wind UI, range-card presentation/export, camera, AR, Range Analyst, voice and ML remain deferred.
+- Milestone 5 provides manual wind, offline range cards, immutable sessions, verified range records and non-mutating comparison. Camera, AR, Range Analyst, voice, Wear OS and ML remain deferred.
 - G1/G7 accuracy is limited by the supplied manufacturer BC and its validity across velocity bands; the engine does not invent or convert coefficients.
 - The current solver excludes spin drift, Coriolis, aerodynamic jump, custom Doppler drag curves and verified BDC holds.
 - Uncertainty v1 is one-sided local sensitivity with root-sum-square combination; it does not yet model input correlation or Monte Carlo distributions.
 - The ballistic benchmark fixtures protect deterministic behaviour and convergence but have not yet been independently validated by live-fire drop data or a certified reference solver across the full operating envelope.
-- Three owner-observed 6.5 Creedmoor DOPE points agree closely with the standard-atmosphere fixture, but their original environment/session metadata is unknown and no truing workflow is implemented until Milestone 5.
-- Actual per-target match settings, the immutable DOPE log and learning/true-profile workflow are specified in `DOPE_LOG.md` but deliberately not implemented inside the Milestone 4 engine.
-- Engagement-level multi-rifle plans and Watch7 equipment-change confirmation are specified in `MATCH_PLAN.md` but are not implemented in Milestone 4.
+- Three owner-observed 6.5 Creedmoor DOPE points agree closely with the standard-atmosphere fixture, but their original environment/session metadata is unknown and they are not imported as verified records.
+- Verified range entries never silently alter BC, velocity, zero or click value. Guided, reversible profile truing is not implemented.
+- The current verified-range form records one elevation dial setting per controlled exercise. Match-target elevation/windage settings, ordered stages and multi-rifle transitions remain future `MATCH_PLAN.md` work.
 - One Galaxy S25 cannot provide fixed-stand camera sequencing while it is body-carried for match timing/audio; concurrent operation would require a separate paired camera device and is not planned.
 - No physical Galaxy S25 sensor validation has yet confirmed barometer stability, compass calibration behaviour, GPS vertical accuracy or landscape field ergonomics.
 - Open-Meteo values are model estimates, not on-site measurements. Weather wind never overwrites the manual wind screen.
@@ -18,10 +18,12 @@
 - Import/export logic is implemented, but Android Storage Access Framework file selection remains deferred to the milestone that adds the full backup/export UI.
 - Zero, atmosphere and saved-range records have repository CRUD but do not yet have complete dedicated editing screens.
 - Target-size choices do not perform camera ranging. IDPA/A-series values and nominal gong sizes require confirmation against the physical target.
-- Confirmed manual target distances can populate the target's DOPE distance flag; camera/range-finder execution remains Milestone 6.
+- Confirmed manual target distances with the DOPE inclusion flag automatically populate generated range cards; camera/range-finder execution remains Milestone 6 and will require user confirmation.
+- Range-card exports are generated offline in app cache and shared through Android's chooser. A persistent export library and Storage Access Framework destination picker are not yet implemented.
+- Session correction UI is not yet implemented; the append-only schema supports a `supersedesRecordId` for a later reviewed correction flow.
 - Match plans, Wear OS display/shot counting, fixed-camera target sequencing and pistol drill cues are documented future requirements only.
 - Automatic acoustic shot counting is not implemented and will require confidence, manual correction and physical range testing.
-- GitHub API 35 emulator instrumentation passed for Milestones 1, 2 and 3. No physical Samsung Galaxy S25 acceptance is claimed.
+- GitHub API 35 emulator instrumentation passed for Milestones 1 through 4. Milestone 5 external CI is pending until its review branch is pushed. No physical Samsung Galaxy S25 acceptance is claimed.
 - The application ID is owner-approved as `za.co.bdstudio.dope`; release signing, keystore custody and public distribution remain undecided.
 - Android Compose Screenshot Testing is an isolated alpha16 build-time dependency because no stable AGP 9-compatible Android tool currently satisfies the required golden-test gate.
 

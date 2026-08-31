@@ -4,7 +4,7 @@ DOPE (Data On Previous Engagements) is an offline-first Android application for 
 
 ## Milestone status
 
-Milestone 4 adds a pure Kotlin/JVM deterministic point-mass engine with BRL/JBM G1/G7 drag tables, root-solved zero, reference/current atmosphere comparison, MIL/MOA scope output, uncertainty v1 and calculation traces. Android maps only physically verified profile data into the engine. Built-in DNT and Arken templates remain immutable; owner verification belongs to user-owned profiles. Camera ranging remains deliberately deferred.
+Milestone 5 adds a manual wind wheel with explicit wind-from/true/magnetic conventions, selected and bracketed wind, offline range cards with PDF/CSV/PNG sharing, immutable calculation sessions, verified range observations and non-destructive comparison. Confirmed saved-target distances are added to range cards automatically. Profile truing, match planning, Watch7, and camera ranging remain deliberately deferred.
 
 ## Build
 

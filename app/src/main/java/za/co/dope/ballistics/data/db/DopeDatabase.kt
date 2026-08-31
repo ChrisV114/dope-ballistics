@@ -22,8 +22,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         SavedRangeEntity::class,
         StaticTargetEntity::class,
         ZeroProfileEntity::class,
+        SessionSnapshotEntity::class,
+        VerifiedDopeRecordEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = true,
 )
 abstract class DopeDatabase : RoomDatabase() {
@@ -47,6 +49,13 @@ abstract class DopeDatabase : RoomDatabase() {
                 }
             }
 
+        val MIGRATION_3_4 =
+            object : Migration(3, 4) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    DopeSchemaV4.createStatements.forEach(db::execSQL)
+                }
+            }
+
         @Volatile private var instance: DopeDatabase? = null
 
         fun getInstance(context: Context): DopeDatabase =
@@ -54,7 +63,7 @@ abstract class DopeDatabase : RoomDatabase() {
                 instance
                     ?: Room
                         .databaseBuilder(context.applicationContext, DopeDatabase::class.java, DATABASE_NAME)
-                        .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                         .addCallback(
                             object : Callback() {
                                 override fun onCreate(db: SupportSQLiteDatabase) {
@@ -66,6 +75,63 @@ abstract class DopeDatabase : RoomDatabase() {
                         .also { instance = it }
             }
     }
+}
+
+internal object DopeSchemaV4 {
+    val createStatements =
+        listOf(
+            """
+            CREATE TABLE IF NOT EXISTS `session_snapshots` (
+                `id` TEXT NOT NULL, `schemaVersion` INTEGER NOT NULL, `sessionName` TEXT NOT NULL,
+                `startedAtEpochMillis` INTEGER NOT NULL, `completedAtEpochMillis` INTEGER NOT NULL,
+                `savedRangeId` TEXT, `savedRangeName` TEXT, `preciseLocationIncluded` INTEGER NOT NULL,
+                `locationSnapshotJson` TEXT, `rifleId` TEXT NOT NULL, `rifleRevision` INTEGER NOT NULL,
+                `ammunitionId` TEXT NOT NULL, `ammunitionRevision` INTEGER NOT NULL,
+                `scopeProfileId` TEXT NOT NULL, `scopeProfileRevision` INTEGER NOT NULL,
+                `zeroProfileId` TEXT NOT NULL, `zeroProfileRevision` INTEGER NOT NULL,
+                `profileSnapshotJson` TEXT NOT NULL, `referenceEnvironmentJson` TEXT NOT NULL,
+                `currentEnvironmentJson` TEXT NOT NULL, `fieldSourcesJson` TEXT NOT NULL,
+                `distanceMetres` REAL NOT NULL, `distanceSource` TEXT NOT NULL,
+                `distanceUncertaintyMetres` REAL NOT NULL, `directionOfFireTrueDegrees` REAL,
+                `inclinationDegrees` REAL NOT NULL, `windSnapshotJson` TEXT NOT NULL,
+                `calculationResultJson` TEXT NOT NULL, `calculationTraceJson` TEXT NOT NULL,
+                `engineVersion` TEXT NOT NULL, `scopeRoundingJson` TEXT NOT NULL,
+                `warningsJson` TEXT NOT NULL, `notes` TEXT, `photoUrisJson` TEXT NOT NULL,
+                `trainingVideoUrisJson` TEXT NOT NULL, `rangeAnalystStringsJson` TEXT NOT NULL,
+                `contentSha256` TEXT NOT NULL, PRIMARY KEY(`id`)
+            )
+            """.trimIndent(),
+            "CREATE INDEX IF NOT EXISTS `index_session_snapshots_completedAtEpochMillis` " +
+                "ON `session_snapshots` (`completedAtEpochMillis`)",
+            "CREATE INDEX IF NOT EXISTS `index_session_snapshots_rifleId` ON `session_snapshots` (`rifleId`)",
+            "CREATE INDEX IF NOT EXISTS `index_session_snapshots_savedRangeId` ON `session_snapshots` (`savedRangeId`)",
+            """
+            CREATE TABLE IF NOT EXISTS `verified_dope_records` (
+                `id` TEXT NOT NULL, `schemaVersion` INTEGER NOT NULL, `sessionSnapshotId` TEXT,
+                `supersedesRecordId` TEXT, `createdAtEpochMillis` INTEGER NOT NULL,
+                `rifleId` TEXT NOT NULL, `rifleRevision` INTEGER NOT NULL,
+                `ammunitionId` TEXT NOT NULL, `ammunitionRevision` INTEGER NOT NULL,
+                `scopeProfileId` TEXT NOT NULL, `scopeProfileRevision` INTEGER NOT NULL,
+                `zeroProfileId` TEXT NOT NULL, `zeroProfileRevision` INTEGER NOT NULL,
+                `profileSnapshotJson` TEXT NOT NULL, `distanceMetres` REAL NOT NULL,
+                `distanceSource` TEXT NOT NULL, `distanceUncertaintyMetres` REAL NOT NULL,
+                `calculatedUnit` TEXT NOT NULL, `calculatedRawValue` REAL NOT NULL,
+                `calculatedDialValue` REAL NOT NULL, `calculatedClicks` INTEGER NOT NULL,
+                `actualDialUnit` TEXT NOT NULL, `actualDialValue` REAL NOT NULL,
+                `actualDialClicks` INTEGER, `observedGroupCentreVerticalMetres` REAL,
+                `observedGroupCentreHorizontalMetres` REAL, `groupSizeMetres` REAL,
+                `numberOfShots` INTEGER NOT NULL, `conditionsJson` TEXT NOT NULL,
+                `confidence` TEXT NOT NULL, `status` TEXT NOT NULL, `engineVersion` TEXT NOT NULL,
+                `notes` TEXT, `evidenceSha256` TEXT NOT NULL, PRIMARY KEY(`id`)
+            )
+            """.trimIndent(),
+            "CREATE INDEX IF NOT EXISTS `index_verified_dope_records_createdAtEpochMillis` " +
+                "ON `verified_dope_records` (`createdAtEpochMillis`)",
+            "CREATE INDEX IF NOT EXISTS `index_verified_dope_records_rifleId` " +
+                "ON `verified_dope_records` (`rifleId`)",
+            "CREATE INDEX IF NOT EXISTS `index_verified_dope_records_sessionSnapshotId` " +
+                "ON `verified_dope_records` (`sessionSnapshotId`)",
+        )
 }
 
 internal object DopeSchemaV3 {
