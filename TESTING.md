@@ -74,4 +74,6 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - The standard-atmosphere 6.5 Creedmoor fixture predicts 3.497, 7.716 and 11.503 MIL at 500, 800 and 1,000 m; all remain within 0.35 MIL of the owner's independent observed 3.6, 8.0 and 11.5 MIL settings without solver truing.
 - Seven existing screenshot goldens passed unchanged, preserving the reviewed phone system-control clearance.
 - Seven existing instrumentation tests compile into `app-debug-androidTest.apk`; no database schema or device behaviour changed in this milestone.
-- Local instrumentation execution is not claimed because no emulator or physical device is installed. Protected GitHub API 35 emulator execution remains required for the Milestone 4 commit.
+- Local instrumentation execution is not claimed because no emulator or physical device is installed.
+- GitHub Actions run `33405639742` passed `build-and-test` in 1m32s and API 35 `instrumentation` in 19m17s on commit `96f9ae0`.
+- The GitHub emulator executed seven instrumentation tests with 0 skipped and 0 failed.
