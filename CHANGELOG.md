@@ -4,6 +4,10 @@
 
 ### Milestone 5
 
+- Added review fixes for a complete fresh-install path: explicit rifle/load/scope selection, G1 or G7 ammunition, physically confirmed dial directions, reference-atmosphere and zero creation, and a persistent active setup.
+- Replaced the blocked calculation preview with the offline engine result, exact missing-input guidance, confirmed-target distance shortcuts, and live wind speed/direction controls.
+- Restored the approved original calculation-results and wind-panel hierarchy as the production visual target: compact result grids, elevation dial, compass-first wind wheel, component tiles and speed tiles, with editors below the primary panels.
+- Added Room version 5 active-setup selection with a non-destructive `4 -> 5` migration and active multi-setup switching.
 - Added tested true/magnetic wind-from conventions, relative direction, signed cross/head components and min/average/max/gust brackets.
 - Added an interactive manual wind wheel with tap/drag, clock/numeric entry, fine adjustment, reset, source, timestamp, notes and lock state.
 - Added verified-profile range cards with confirmed saved-target distance inclusion and offline CSV, PDF and PNG sharing.

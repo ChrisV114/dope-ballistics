@@ -16,7 +16,8 @@
 - Cached weather is an offline fallback and displays age/staleness; it must not be mistaken for a current observation.
 - The speed-of-sound method currently applies temperature only; humidity correction remains deferred pending method validation and is shared by environment and trajectory calculations.
 - Import/export logic is implemented, but Android Storage Access Framework file selection remains deferred to the milestone that adds the full backup/export UI.
-- Zero, atmosphere and saved-range records have repository CRUD but do not yet have complete dedicated editing screens.
+- Zero/reference creation and active setup selection are available, but saved zero/reference records do not yet have full edit/archive screens. A changed setup is saved as a new linked zero/reference pair.
+- The dashboard summary remains a static entry surface; the calculation screen and profile setup screen are authoritative for active-input readiness.
 - Target-size choices do not perform camera ranging. IDPA/A-series values and nominal gong sizes require confirmation against the physical target.
 - Confirmed manual target distances with the DOPE inclusion flag automatically populate generated range cards; camera/range-finder execution remains Milestone 6 and will require user confirmation.
 - Range-card exports are generated offline in app cache and shared through Android's chooser. A persistent export library and Storage Access Framework destination picker are not yet implemented.

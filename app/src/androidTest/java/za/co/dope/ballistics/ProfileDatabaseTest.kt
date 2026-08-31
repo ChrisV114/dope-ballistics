@@ -17,6 +17,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import za.co.dope.ballistics.data.ProfileRepository
 import za.co.dope.ballistics.data.SessionRepository
+import za.co.dope.ballistics.data.ZeroSetupEntry
+import za.co.dope.ballistics.data.db.AmmunitionEntity
 import za.co.dope.ballistics.data.db.DopeDatabase
 import za.co.dope.ballistics.data.db.EnvironmentalSnapshotEntity
 import za.co.dope.ballistics.data.db.RifleEntity
@@ -24,6 +26,7 @@ import za.co.dope.ballistics.data.db.ScopeTemplates
 import za.co.dope.ballistics.data.db.SessionSnapshotEntity
 import za.co.dope.ballistics.data.db.VerifiedDopeRecordEntity
 import za.co.dope.ballistics.data.db.WeatherCacheEntity
+import za.co.dope.ballistics.domain.VerificationStatus
 import java.io.IOException
 
 @RunWith(AndroidJUnit4::class)
@@ -60,7 +63,7 @@ class ProfileDatabaseTest {
         }
 
     @Test
-    fun migrationOneToFourCreatesValidatedSchemaAndBuiltInTemplates() {
+    fun migrationOneToFiveCreatesValidatedSchemaAndBuiltInTemplates() {
         createVersionOneDatabase()
         database =
             Room
@@ -69,6 +72,7 @@ class ProfileDatabaseTest {
                     DopeDatabase.MIGRATION_1_2,
                     DopeDatabase.MIGRATION_2_3,
                     DopeDatabase.MIGRATION_3_4,
+                    DopeDatabase.MIGRATION_4_5,
                 ).allowMainThreadQueries()
                 .build()
 
@@ -95,6 +99,9 @@ class ProfileDatabaseTest {
             assertTrue(it.moveToFirst())
         }
         writable.query("SELECT name FROM sqlite_master WHERE type='table' AND name='verified_dope_records'").use {
+            assertTrue(it.moveToFirst())
+        }
+        writable.query("SELECT name FROM sqlite_master WHERE type='table' AND name='active_profile_selection'").use {
             assertTrue(it.moveToFirst())
         }
     }
@@ -155,6 +162,40 @@ class ProfileDatabaseTest {
                     .id,
             )
             assertEquals(84_000.0, repository.weatherCache("-26.200,28.000")?.surfacePressurePascals)
+        }
+
+    @Test
+    fun zeroSetupCreatesReferenceAndUsesExplicitActiveSelection() =
+        runBlocking {
+            database =
+                Room
+                    .inMemoryDatabaseBuilder(context, DopeDatabase::class.java)
+                    .allowMainThreadQueries()
+                    .build()
+            val db = requireNotNull(database)
+            val repository = ProfileRepository(db)
+            val rifle = sampleRifle()
+            val family = ScopeTemplates.families.first()
+            val variant = ScopeTemplates.variants.first { it.familyId == family.id }
+            repository.saveRifle(rifle)
+            repository.saveAmmunition(sampleAmmunition(rifle.id))
+            db.profileDao().upsertScopeFamily(family)
+            db.profileDao().upsertScopeVariant(variant)
+            val scope =
+                ScopeTemplates.createUserProfile(family, variant, "Verified DNT", 1L).copy(
+                    verificationStatus = VerificationStatus.USER_VERIFIED.name,
+                )
+            repository.saveScopeProfile(scope)
+            repository.saveEnvironmentalSnapshot(sampleEnvironment())
+
+            val first = repository.createAndActivateZero(sampleZeroEntry(rifle.id, scope.id, 50.0, 2L))
+            val second = repository.createAndActivateZero(sampleZeroEntry(rifle.id, scope.id, 100.0, 3L))
+
+            assertEquals(64, first.dependencyFingerprint.length)
+            assertEquals(second.id, repository.observeActiveProfileSelection().first()?.zeroProfileId)
+            assertEquals(100.0, repository.calculationContext()?.zero?.zeroDistanceMetres)
+            repository.activateZeroProfile(first.id, 4L)
+            assertEquals(50.0, repository.calculationContext()?.zero?.zeroDistanceMetres)
         }
 
     private fun createVersionOneDatabase() {
@@ -224,6 +265,43 @@ class ProfileDatabaseTest {
             speedOfSoundMetresPerSecond = 343.0,
             capturedAtEpochMillis = 1L,
         )
+
+    private fun sampleAmmunition(rifleId: String) =
+        AmmunitionEntity(
+            id = "ammo-test",
+            rifleId = rifleId,
+            profileName = "Test G7 load",
+            manufacturer = "Example",
+            productLoadName = "Test",
+            bulletManufacturer = "Example",
+            bulletName = "Test bullet",
+            bulletWeightKilograms = 0.009,
+            g7BallisticCoefficient = 0.3,
+            selectedDragModel = "G7",
+            muzzleVelocityMetresPerSecond = 800.0,
+            createdAtEpochMillis = 1L,
+            modifiedAtEpochMillis = 1L,
+        )
+
+    private fun sampleZeroEntry(
+        rifleId: String,
+        scopeId: String,
+        zeroDistanceMetres: Double,
+        now: Long,
+    ) = ZeroSetupEntry(
+        rifleId = rifleId,
+        ammunitionId = "ammo-test",
+        scopeProfileId = scopeId,
+        zeroDistanceMetres = zeroDistanceMetres,
+        sightHeightAboveBoreMetres = 0.06,
+        referenceName = "Test reference",
+        referenceTemperatureCelsius = 20.0,
+        referenceStationPressureHectopascals = 850.0,
+        referenceHumidityPercent = 40.0,
+        referenceAltitudeMetres = 1_700.0,
+        verified = true,
+        nowEpochMillis = now,
+    )
 
     private fun sampleSession() =
         SessionSnapshotEntity(

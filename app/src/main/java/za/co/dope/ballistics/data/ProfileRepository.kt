@@ -2,6 +2,7 @@ package za.co.dope.ballistics.data
 
 import androidx.room.withTransaction
 import kotlinx.coroutines.flow.Flow
+import za.co.dope.ballistics.data.db.ActiveProfileSelectionEntity
 import za.co.dope.ballistics.data.db.AmmunitionEntity
 import za.co.dope.ballistics.data.db.ChronographStringEntity
 import za.co.dope.ballistics.data.db.DopeDatabase
@@ -21,6 +22,22 @@ import za.co.dope.ballistics.domain.ChronographCalculator
 import za.co.dope.ballistics.domain.ProfileIdentity
 import za.co.dope.ballistics.domain.StaticTargetClass
 import za.co.dope.ballistics.domain.TargetClassRules
+import java.security.MessageDigest
+
+data class ZeroSetupEntry(
+    val rifleId: String,
+    val ammunitionId: String,
+    val scopeProfileId: String,
+    val zeroDistanceMetres: Double,
+    val sightHeightAboveBoreMetres: Double,
+    val referenceName: String,
+    val referenceTemperatureCelsius: Double,
+    val referenceStationPressureHectopascals: Double,
+    val referenceHumidityPercent: Double,
+    val referenceAltitudeMetres: Double,
+    val verified: Boolean,
+    val nowEpochMillis: Long,
+)
 
 data class ChronographEntry(
     val ammunitionId: String,
@@ -74,6 +91,8 @@ class ProfileRepository(
     fun observeStaticTargets(rangeId: String?): Flow<List<StaticTargetEntity>> = dao.observeStaticTargets(rangeId)
 
     fun observeZeroProfiles(): Flow<List<ZeroProfileEntity>> = dao.observeZeroProfiles()
+
+    fun observeActiveProfileSelection(): Flow<ActiveProfileSelectionEntity?> = dao.observeActiveProfileSelection()
 
     suspend fun saveRifle(value: RifleEntity) {
         require(value.profileName.isNotBlank()) { "Profile name is required" }
@@ -180,14 +199,104 @@ class ProfileRepository(
         dao.upsertZeroProfile(value)
     }
 
+    @Suppress("LongMethod")
+    suspend fun createAndActivateZero(entry: ZeroSetupEntry): ZeroProfileEntity =
+        database.withTransaction {
+            val rifle = requireNotNull(dao.rifle(entry.rifleId)) { "Select a rifle." }
+            val ammunition = requireNotNull(dao.ammunition(entry.ammunitionId)) { "Select ammunition." }
+            val scope = requireNotNull(dao.scopeProfile(entry.scopeProfileId)) { "Select a scope." }
+            require(ammunition.rifleId == rifle.id) { "The ammunition must belong to the selected rifle." }
+            require(scope.verificationStatus == "USER_VERIFIED") { "Physically verify the selected scope first." }
+            require(entry.zeroDistanceMetres > 0.0) { "Zero distance must be positive." }
+            require(entry.sightHeightAboveBoreMetres > 0.0) { "Sight height must be positive." }
+            require(entry.referenceTemperatureCelsius in -93.15..66.85) { "Reference temperature is invalid." }
+            require(entry.referenceStationPressureHectopascals in 300.0..1100.0) {
+                "Reference station pressure is invalid."
+            }
+            require(entry.referenceHumidityPercent in 0.0..100.0) { "Reference humidity is invalid." }
+            val atmosphereId = ProfileIdentity.newId()
+            val atmosphere =
+                ReferenceAtmosphereEntity(
+                    id = atmosphereId,
+                    name = entry.referenceName.ifBlank { "Zero reference" },
+                    temperatureKelvin = entry.referenceTemperatureCelsius + 273.15,
+                    temperatureSource = "MANUAL",
+                    stationPressurePascals = entry.referenceStationPressureHectopascals * 100.0,
+                    pressureSource = "MANUAL_STATION_PRESSURE",
+                    relativeHumidityFraction = entry.referenceHumidityPercent / 100.0,
+                    humiditySource = "MANUAL",
+                    altitudeMetres = entry.referenceAltitudeMetres,
+                    altitudeSource = "MANUAL",
+                    capturedAtEpochMillis = entry.nowEpochMillis,
+                    createdAtEpochMillis = entry.nowEpochMillis,
+                    modifiedAtEpochMillis = entry.nowEpochMillis,
+                )
+            dao.upsertReferenceAtmosphere(atmosphere)
+            val fingerprint =
+                dependencyFingerprint(
+                    rifle.id,
+                    rifle.revision,
+                    ammunition.id,
+                    ammunition.revision,
+                    scope.id,
+                    scope.revision,
+                    atmosphere.id,
+                    atmosphere.revision,
+                    entry.zeroDistanceMetres,
+                    entry.sightHeightAboveBoreMetres,
+                )
+            val zero =
+                ZeroProfileEntity(
+                    id = ProfileIdentity.newId(),
+                    rifleId = rifle.id,
+                    ammunitionId = ammunition.id,
+                    scopeProfileId = scope.id,
+                    zeroDistanceMetres = entry.zeroDistanceMetres,
+                    sightHeightAboveBoreMetres = entry.sightHeightAboveBoreMetres,
+                    zeroElevationOffsetRadians = 0.0,
+                    zeroWindageOffsetRadians = 0.0,
+                    zeroConfirmationDateEpochMillis = entry.nowEpochMillis,
+                    referenceAtmosphereId = atmosphere.id,
+                    verified = entry.verified,
+                    dependencyFingerprint = fingerprint,
+                    createdAtEpochMillis = entry.nowEpochMillis,
+                    modifiedAtEpochMillis = entry.nowEpochMillis,
+                    favourite = true,
+                )
+            dao.upsertZeroProfile(zero)
+            dao.upsertActiveProfileSelection(
+                ActiveProfileSelectionEntity(zeroProfileId = zero.id, updatedAtEpochMillis = entry.nowEpochMillis),
+            )
+            zero
+        }
+
+    suspend fun activateZeroProfile(
+        zeroProfileId: String,
+        nowEpochMillis: Long,
+    ) {
+        requireNotNull(dao.zeroProfile(zeroProfileId)) { "Unknown zero profile." }
+        dao.upsertActiveProfileSelection(
+            ActiveProfileSelectionEntity(zeroProfileId = zeroProfileId, updatedAtEpochMillis = nowEpochMillis),
+        )
+    }
+
     suspend fun calculationContext(zeroProfileId: String? = null): CalculationProfileContext? {
         val zero =
             if (zeroProfileId == null) {
-                dao.latestVerifiedZeroProfile()
+                dao.activeProfileSelection()?.let { dao.zeroProfile(it.zeroProfileId) }
+                    ?: dao.latestVerifiedZeroProfile()
             } else {
                 dao.zeroProfile(zeroProfileId)
             }
         return zero?.let { loadCalculationContext(it) }
+    }
+
+    private fun dependencyFingerprint(vararg values: Any): String {
+        val canonical = values.joinToString("|")
+        return MessageDigest
+            .getInstance("SHA-256")
+            .digest(canonical.toByteArray(Charsets.UTF_8))
+            .joinToString("") { "%02x".format(it) }
     }
 
     private suspend fun loadCalculationContext(zero: ZeroProfileEntity): CalculationProfileContext? {

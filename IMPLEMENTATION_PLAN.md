@@ -15,6 +15,9 @@ Milestone 5 — wind, range cards and sessions.
 - [x] Add Room `3 -> 4`, export, convention, immutability and screenshot coverage.
 - [x] Run the complete local quality/build gate.
 - [x] Run the protected GitHub quality and emulator jobs.
-- [ ] Stop for owner review.
+- [x] Complete initial owner review of controls, wind and range-card layout.
+- [x] Fix the fresh-install profile/zero path and calculation-screen blockers found during review.
+- [x] Rebuild and run the protected GitHub quality and emulator jobs for `0.5.1-m5-review`.
+- [ ] Stop for owner review of the review-fix APK.
 
 Milestone 6 camera ranging and calibration remains blocked until Milestone 5 review. Guided profile truing is a later optional workflow under the master prompt and `DOPE_LOG.md`; engagement-level match plans, Watch7 shot progression, fixed-camera sequencing and pistol-drill cues remain separately governed future work.

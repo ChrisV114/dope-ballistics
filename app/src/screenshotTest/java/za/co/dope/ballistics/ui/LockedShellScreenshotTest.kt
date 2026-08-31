@@ -92,6 +92,17 @@ fun WindWheelPreview() {
 
 @PreviewTest
 @Preview(
+    name = "Calculation quick controls",
+    device = "spec:width=360dp,height=780dp,dpi=480",
+    showSystemUi = true,
+)
+@Composable
+fun CalculationQuickControlsPreview() {
+    DopeGoldenScreen(route = "results")
+}
+
+@PreviewTest
+@Preview(
     name = "Session log",
     device = "spec:width=360dp,height=780dp,dpi=480",
     showSystemUi = true,
