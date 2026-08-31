@@ -15,7 +15,7 @@ android {
         minSdk = 28
         targetSdk = 37
         versionCode = 1
-        versionName = "0.3.0-m3"
+        versionName = "0.4.0-m4"
 
         buildConfigField("boolean", "OPEN_METEO_ENABLED", "true")
 
@@ -51,6 +51,7 @@ ksp {
 }
 
 dependencies {
+    implementation(project(":ballistics"))
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.ui)

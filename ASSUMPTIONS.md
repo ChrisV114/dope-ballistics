@@ -11,3 +11,9 @@
 - The future fixed-camera baseline is the owner's rigid landscape stand with every user-marked stationary target retained in one wide frame.
 - Milestone 2 stores target-distance provenance and the confirmed DOPE-inclusion flag, but camera measurement and automatic handoff execution remain Milestone 6.
 - Room 2.8.4 is retained as the mature Android-only database line; Room 3 is not required for the current non-KMP module.
+- Owner-provided muzzle velocities of 809 m/s for the Howa 6.5 Creedmoor/Lapua 139 gr load and 920 m/s for the M&P15 Sport III/Hornady 53 gr load are editable starting averages, not universal factory values.
+- Both owner rifles have a stated 1:8 twist rate. Twist direction is not yet confirmed and is not required by the Milestone 4 point-mass core.
+- Garmin Xero C2 data is manually entered for now; no proprietary Bluetooth integration or ShotView import is included.
+- Owner field observations of 3.6 MIL at 500 m, 8.0 MIL at 800 m and 11.5 MIL at 1,000 m are treated as historical comparison data. Their atmosphere, date, direction, inclination and exact velocity string are not yet recorded, so they are not sufficient for automatic truing.
+- A match or stage may contain multiple rifle/load combinations, including an equipment change between consecutive targets. Equipment selection therefore belongs to each engagement, not only to the match or stage.
+- In multi-gun match mode the Galaxy S25 is body-carried and may be locked; the rigid landscape stand is reserved for a separate fixed-camera mode.

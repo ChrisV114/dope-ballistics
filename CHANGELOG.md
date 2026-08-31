@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+### Milestone 4
+
+- Added the pure Kotlin/JVM `:ballistics` module and stable solve/range-card contracts.
+- Added BRL/JBM G1 and G7 drag tables, linear interpolation and air-relative fixed-step RK4 integration.
+- Added root-solved zero, inclined line-of-sight geometry, reference/current atmosphere comparison and environmental deviation.
+- Added velocity, energy, Mach/state, MIL/MOA click rounding, residual, travel/revolution checks and sensitivity uncertainty v1.
+- Added deterministic calculation traces, invalid-input blocking and a verified Android profile-to-engine mapping boundary.
+- Added owner-provided Howa 6.5 Creedmoor/Lapua 139 gr and M&P15 Sport III/Hornady 53 gr regression fixtures without seeding private data as factory defaults.
+- Added source-labelled 500/800/1,000 m owner field-DOPE comparison coverage and recorded a future explicit, reversible truing workflow.
+- Specified the Milestone 5 per-target actual-setting log and evidence-gated equipment-specific learning rules.
+- Specified engagement-level multi-rifle stages and explicit Watch7 equipment-change confirmation.
+- Separated body-carried phone/watch match operation from rigid-stand fixed-camera mode.
+
 ### Milestone 3
 
 - Added optional-sensor diagnostics, bounded barometer statistics and stable rotation-vector orientation capture.

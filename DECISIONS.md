@@ -63,3 +63,35 @@ Use the Samsung Galaxy Watch7 44 mm paired with the Samsung Galaxy S25 as the pr
 ## R2-003 — Owner scope verification baselines
 
 Record owner-specific physical verification for a DNT TheOne 7–35×56 FFP MIL/TOR-MIL scope and an Arken EP-8 1–8×28 FFP MOA/KLBOX scope. Do not change immutable built-in templates to globally verified: owner measurements belong to user-owned profiles.
+
+## M4-001 — Drag data and coefficient ownership
+
+Use the BRL standard-projectile Cd-versus-Mach G1/G7 tables published by JBM Ballistics and linear interpolation. The exact bullet profile owns its manufacturer-declared coefficient and selected drag model. Never infer, convert or substitute a missing coefficient.
+
+## M4-002 — Deterministic numerical baseline
+
+Use SI internal units, fixed-step RK4 with a 0.001 s default, and bracketed bisection for the bore-angle zero. Trace engine version, drag source/model, step and zero iterations. Advanced spin/Coriolis/aerodynamic-jump corrections remain off and outside the core release.
+
+## R4-001 — Owner rifle/load fixtures
+
+Record editable private fixtures for: (1) Howa 6.5 Creedmoor, 26-inch 1:8 barrel, DNT TheOne, 100 m zero, 6 cm sight height, Lapua 139 gr Scenar GB458 G7 0.290 at 809 m/s and 0.1 MIL/click; (2) Smith & Wesson M&P15 Sport III .223 Remington, 16-inch 1:8 barrel, Arken EP-8, 50 m zero, 6 cm sight height, Hornady 53 gr V-MAX G1 0.290 at 920 m/s and 0.25 MOA/click. Do not seed these user values as immutable global defaults.
+
+## R4-002 — Field DOPE observations
+
+Retain the owner's observed 6.5 Creedmoor settings of 3.6 MIL at 500 m, 8.0 MIL at 800 m and 11.5 MIL at 1,000 m as source-labelled comparison points. Do not silently tune the solver to them. Unknown atmosphere and session metadata must remain explicit.
+
+## R5-001 — Future truing workflow
+
+Milestone 5 must allow verified observed DOPE to be compared with a traceable prediction and may propose bounded muzzle-velocity or BC adjustments separately. It must preserve the original profile, observation, residual, environment and calculation trace; require explicit user acceptance into a derived profile; support rollback; and never silently change, jointly overfit or invent G1/G7 data.
+
+## R5-002 — Full DOPE log and learning boundary
+
+Store the calculated setting and actual elevation/windage setting used for every match target with immutable rifle/load/scope/zero revisions, verified range, conditions, engine trace and user confidence. Future calculations may use only an explicitly accepted, versioned true profile derived from matching trusted observations. Never mix equipment fingerprints, equate usage count with accuracy, or train silently from an unconfirmed entry. Detailed fields and acceptance rules are in `DOPE_LOG.md`.
+
+## R5-003 — Multi-rifle match stages
+
+Model rifle/load/scope/zero at the individual engagement level so a single stage can move from the M&P15 Sport III .223 to the Howa 6.5 Creedmoor or any later verified profile. Insert explicit equipment-change steps and require manual readiness confirmation; shot counting may not infer a completed swap. The phone owns plan editing and the future Watch7 companion displays the current identity, setting, count confidence and next step from an offline snapshot. Detailed behaviour is in `MATCH_PLAN.md`.
+
+## R5-004 — Body-carried match phone
+
+During multi-gun match sessions the Galaxy S25 is carried on the user and may remain locked; it is not on the landscape stand. Match plans and the Watch7 must work without camera input. Any future background timing/counting requires an explicit foreground session and user-controlled status. Fixed-camera sequencing remains a separate mode and would require a separate device to operate concurrently.

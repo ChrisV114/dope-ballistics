@@ -25,6 +25,6 @@ Selected through 2026-08-31 from stable upstream releases.
 | Spotless | 8.10.1 | Formatting gate |
 | ktlint | 1.8.0 | Kotlin formatter |
 
-Milestone 3 adds no third-party runtime dependency. Sensors, foreground location and HTTPS use Android/JDK platform APIs; JSON continues to use the pinned kotlinx.serialization runtime. The production weather seam uses Open-Meteo's documented current `surface_pressure`, `pressure_msl`, temperature, humidity and wind fields and requires no API key.
+Milestone 4 adds the Kotlin/JVM Gradle plugin at the existing Kotlin 2.4.10 pin and no third-party runtime library. The `:ballistics` module uses only the Kotlin/JDK standard library; JUnit 4.13.2 remains test-only. Sensors, foreground location and HTTPS use Android/JDK platform APIs; JSON continues to use the pinned kotlinx.serialization runtime.
 
 All versions are exact pins. The screenshot plugin is the sole pre-release exception: the master prompt requires golden tests and Android's AGP 9-compatible Compose screenshot tool is still alpha. It is isolated to screenshot-test build logic and does not ship in the APK. Future required stack dependencies will be added only with their implementing milestone and recorded here.
