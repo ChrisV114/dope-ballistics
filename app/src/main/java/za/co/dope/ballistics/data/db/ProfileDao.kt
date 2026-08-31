@@ -10,6 +10,14 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 @Suppress("TooManyFunctions")
 interface ProfileDao {
+    @Upsert suspend fun upsertActiveProfileSelection(value: ActiveProfileSelectionEntity)
+
+    @Query("SELECT * FROM active_profile_selection WHERE id = 'active'")
+    fun observeActiveProfileSelection(): Flow<ActiveProfileSelectionEntity?>
+
+    @Query("SELECT * FROM active_profile_selection WHERE id = 'active'")
+    suspend fun activeProfileSelection(): ActiveProfileSelectionEntity?
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertSessionSnapshot(value: SessionSnapshotEntity)
 

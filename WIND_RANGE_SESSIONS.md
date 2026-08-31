@@ -11,9 +11,13 @@
 
 The screen accepts tap/drag wheel input, numeric bearing, clock direction, direction of fire, minimum/average/maximum/gust speed, selected speed, source and notes. Lock freezes the reviewed observation for downstream calculation until the user unlocks it.
 
+The calculation screen reuses that same state and provides quick average-speed and wind-from adjustments. Every adjustment preserves an ordered minimum/average/maximum bracket and recalculates immediately; the full wheel remains available for deliberate entry.
+
 ## Range cards
 
 Range cards use the active verified rifle/ammunition/scope/zero chain and current environment. The regular start/end/increment series is merged with saved target distances only when their distance is confirmed and their DOPE inclusion flag is enabled. Unconfirmed measurements are rejected.
+
+The active chain is selected explicitly from saved zero setups. Creating one links one rifle, ammunition belonging to that rifle, one physically verified scope, the confirmed zero geometry and a manual zero-reference atmosphere. Room version 5 stores only the selected zero ID; migration does not rewrite existing profile or session records.
 
 Each row includes raw and dialled elevation, clicks, environmental deviation, selected/minimum/maximum windage, time of flight, remaining velocity/energy, Mach/flight state, uncertainty and warning state. CSV, PDF and PNG are generated locally without network access and shared through Android's chooser.
 

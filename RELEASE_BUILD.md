@@ -1,6 +1,6 @@
 # Release Build
 
-Milestone 5 verifies debug assembly only. A signed APK/AAB is out of scope.
+Milestone 5 and its review-fix build verify debug assembly only. A signed APK/AAB is out of scope.
 
 Before public release: reconfirm branding, define keystore custody and distribution, run all quality gates, verify migrations/backup/restore, complete physical-device acceptance, document known limitations, and keep secrets outside the repository. The owner-approved application ID is `za.co.bdstudio.dope`.
 
@@ -34,4 +34,12 @@ Milestone-5 local debug artifact:
 - Application ID: `za.co.bdstudio.dope`
 - Version name: `0.5.0-m5`
 - SHA-256: `256CAD384B7F56C86BDA9A97B5BA997B04D63C1905C20AE2ABD9409B146BC2EC`
+- Signing: automatically generated debug signing only; not a release artifact.
+
+Milestone-5 review-fix local debug artifact:
+
+- Path: `app/build/outputs/apk/debug/app-debug.apk`
+- Application ID: `za.co.bdstudio.dope`
+- Version name: `0.5.1-m5-review`
+- SHA-256: `14059B5F6C746BAE4ED15E7A4EBABBA520DD6C94BCBABE56E44843230804F296`
 - Signing: automatically generated debug signing only; not a release artifact.

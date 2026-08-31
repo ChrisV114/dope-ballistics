@@ -62,6 +62,7 @@ import za.co.dope.ballistics.ui.screens.SplashScreen
 import za.co.dope.ballistics.ui.screens.TargetRangeScreen
 import za.co.dope.ballistics.ui.screens.WindFormState
 import za.co.dope.ballistics.ui.screens.WindScreen
+import za.co.dope.ballistics.ui.screens.ZeroSetupScreen
 import za.co.dope.ballistics.ui.theme.DopeDesignTokens
 import za.co.dope.ballistics.ui.theme.DopeTheme
 import za.co.dope.ballistics.ui.theme.DopeThemeMode
@@ -179,15 +180,20 @@ private fun DopeNavHost(
                 profileRepository?.observeScopeProfiles()?.collectAsState(emptyList()) ?: remember {
                     mutableStateOf(emptyList())
                 }
-            ProfilesScreen(openRoute, rifles.size, ammunition.size, scopes.size)
+            val zeros by
+                profileRepository?.observeZeroProfiles()?.collectAsState(emptyList()) ?: remember {
+                    mutableStateOf(emptyList())
+                }
+            ProfilesScreen(openRoute, rifles.size, ammunition.size, scopes.size, zeros.size)
         }
         composable("rifle") { RifleScreen(profileRepository) }
         composable("ammo") { AmmunitionScreen(profileRepository) }
         composable("scope") { ScopeScreen(openRoute, profileRepository) }
         composable("scope_detail") { ScopeDetailScreen(profileRepository) }
+        composable("zero_setup") { ZeroSetupScreen(profileRepository) }
         composable("environment") { EnvironmentScreen(openRoute, profileRepository) }
         composable("wind") { WindScreen(windState) }
-        composable("results") { ResultsScreen() }
+        composable("results") { ResultsScreen(profileRepository, windState, openRoute) }
         composable("range_card") { RangeCardScreen(profileRepository, windState, openRoute) }
         composable("session") { SessionScreen(profileRepository, sessionRepository, windState, openRoute) }
         composable("comparison") { ComparisonScreen(profileRepository, windState) }
@@ -237,6 +243,7 @@ fun DopeGoldenScreen(
                     "environment" -> EnvironmentScreen(onOpen = {}, previewMode = true)
                     "range_card" -> RangeCardScreen(null, windState, {}, previewMode = true)
                     "wind" -> WindScreen(windState)
+                    "results" -> ResultsScreen(null, windState, {})
                     "session" -> SessionScreen(null, null, windState, {})
                     "comparison" -> ComparisonScreen(null, windState)
                     "target_range" -> TargetRangeScreen(onOpen = {})

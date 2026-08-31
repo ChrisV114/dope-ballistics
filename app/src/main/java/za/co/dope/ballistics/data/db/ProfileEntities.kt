@@ -433,3 +433,10 @@ data class ZeroProfileEntity(
     val favourite: Boolean = false,
     val notes: String? = null,
 )
+
+@Entity(tableName = "active_profile_selection")
+data class ActiveProfileSelectionEntity(
+    @PrimaryKey val id: String = "active",
+    val zeroProfileId: String,
+    val updatedAtEpochMillis: Long,
+)

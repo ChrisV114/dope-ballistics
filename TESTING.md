@@ -89,3 +89,11 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - Local instrumentation execution is not claimed because no local emulator or physical device is installed.
 - GitHub Actions run `33423772232` passed `build-and-test` in 3m44s and API 35 `instrumentation` in 22m14s on commit `21a01cb`.
 - The GitHub emulator executed nine instrumentation tests with 0 skipped and 0 failed, including Room `1 -> 4`, append-only session evidence and offline range-card file export.
+
+## Milestone 5 review-fix local results — 2026-08-31
+
+- The complete local gate passed: Spotless, Android lint, Detekt, all JVM tests, screenshot validation, debug APK assembly and debug instrumentation-test APK assembly.
+- JVM tests: 39 run, 0 failures, 0 errors and 0 skipped.
+- Ten screenshot goldens passed. The new phone-sized calculation golden covers quick distance and live-wind controls above the fixed navigation/system-control inset; enabling the dashboard calculation entry updated its two existing baselines.
+- Ten instrumentation tests compile. New coverage validates the complete Room `1 -> 5` migration and explicit active-zero switching while preserving linked profiles, reference atmosphere and current environment.
+- Local instrumentation execution is not claimed because no local emulator or physical device is installed. GitHub API 35 execution remains required for this review-fix commit.

@@ -22,10 +22,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         SavedRangeEntity::class,
         StaticTargetEntity::class,
         ZeroProfileEntity::class,
+        ActiveProfileSelectionEntity::class,
         SessionSnapshotEntity::class,
         VerifiedDopeRecordEntity::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = true,
 )
 abstract class DopeDatabase : RoomDatabase() {
@@ -56,6 +57,13 @@ abstract class DopeDatabase : RoomDatabase() {
                 }
             }
 
+        val MIGRATION_4_5 =
+            object : Migration(4, 5) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    DopeSchemaV5.createStatements.forEach(db::execSQL)
+                }
+            }
+
         @Volatile private var instance: DopeDatabase? = null
 
         fun getInstance(context: Context): DopeDatabase =
@@ -63,7 +71,7 @@ abstract class DopeDatabase : RoomDatabase() {
                 instance
                     ?: Room
                         .databaseBuilder(context.applicationContext, DopeDatabase::class.java, DATABASE_NAME)
-                        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                         .addCallback(
                             object : Callback() {
                                 override fun onCreate(db: SupportSQLiteDatabase) {
@@ -75,6 +83,18 @@ abstract class DopeDatabase : RoomDatabase() {
                         .also { instance = it }
             }
     }
+}
+
+internal object DopeSchemaV5 {
+    val createStatements =
+        listOf(
+            """
+            CREATE TABLE IF NOT EXISTS `active_profile_selection` (
+                `id` TEXT NOT NULL, `zeroProfileId` TEXT NOT NULL,
+                `updatedAtEpochMillis` INTEGER NOT NULL, PRIMARY KEY(`id`)
+            )
+            """.trimIndent(),
+        )
 }
 
 internal object DopeSchemaV4 {

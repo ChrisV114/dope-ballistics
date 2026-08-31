@@ -53,6 +53,7 @@ import za.co.dope.ballistics.data.db.ScopeVariantEntity
 import za.co.dope.ballistics.data.db.ScopeVerificationEntity
 import za.co.dope.ballistics.data.db.StaticTargetEntity
 import za.co.dope.ballistics.domain.DataSource
+import za.co.dope.ballistics.domain.DialDirection
 import za.co.dope.ballistics.domain.DragModel
 import za.co.dope.ballistics.domain.ProfileIdentity
 import za.co.dope.ballistics.domain.ReadingQuality
@@ -67,11 +68,12 @@ import za.co.dope.ballistics.ui.components.DopeSecondaryButton
 import za.co.dope.ballistics.ui.components.DopeStatus
 import za.co.dope.ballistics.ui.components.DopeWordmark
 import za.co.dope.ballistics.ui.components.LabelValue
-import za.co.dope.ballistics.ui.components.ResultPanel
 import za.co.dope.ballistics.ui.components.StatusChip
 import za.co.dope.ballistics.ui.components.TopographicBackground
 import za.co.dope.ballistics.ui.theme.DopeDesignTokens
 import za.co.dope.ballistics.ui.theme.LocalDopeColors
+import java.util.Locale
+import kotlin.math.PI
 
 @Composable
 fun SplashScreen(onContinue: () -> Unit) {
@@ -141,10 +143,9 @@ fun DashboardScreen(onOpen: (String) -> Unit) {
             onClick = { onOpen("results") },
             modifier = Modifier.fillMaxWidth(),
             icon = Icons.Outlined.Calculate,
-            enabled = false,
         )
         Text(
-            "Complete and verify profiles before a confident result can be calculated.",
+            "Calculation shows the exact missing setup or environmental input when it cannot run.",
             style = MaterialTheme.typography.bodyMedium,
             color = DopeDesignTokens.Colors.Warning,
         )
@@ -169,6 +170,7 @@ fun ProfilesScreen(
     rifleCount: Int = 0,
     ammunitionCount: Int = 0,
     scopeCount: Int = 0,
+    zeroCount: Int = 0,
 ) {
     ScreenShell(title = "Profiles", eyebrow = "EQUIPMENT") {
         ProfileCard(
@@ -194,6 +196,14 @@ fun ProfilesScreen(
             Icons.Outlined.Explore,
         ) {
             onOpen("scope")
+        }
+        ProfileCard(
+            "Active setup and zero",
+            countStatus(zeroCount, "zero"),
+            "Link a rifle, its ammunition, a verified scope and zero reference",
+            Icons.Outlined.CheckCircle,
+        ) {
+            onOpen("zero_setup")
         }
         StatusChip(
             if (scopeCount == 0) "Verification required" else "Review physical verification",
@@ -271,15 +281,31 @@ fun RifleScreen(repository: ProfileRepository? = null) {
 @Suppress("LongMethod")
 fun AmmunitionScreen(repository: ProfileRepository? = null) {
     val rifles by repository?.observeRifles()?.collectAsState(emptyList()) ?: remember { mutableStateOf(emptyList()) }
+    var selectedRifleId by remember { mutableStateOf<String?>(null) }
     var profileName by remember { mutableStateOf("") }
     var bulletName by remember { mutableStateOf("") }
     var bulletWeightGrains by remember { mutableStateOf("") }
-    var g7Bc by remember { mutableStateOf("") }
+    var dragModel by remember { mutableStateOf(DragModel.G7) }
+    var ballisticCoefficient by remember { mutableStateOf("") }
     var velocity by remember { mutableStateOf("") }
     var saveMessage by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
+    LaunchedEffect(rifles) {
+        if (rifles.none { it.id == selectedRifleId }) selectedRifleId = rifles.firstOrNull()?.id
+    }
     ScreenShell(title = "Ammunition", eyebrow = "LOCAL DATABASE · NO FABRICATED VALUES") {
-        LabelValue("Linked rifle", rifles.firstOrNull()?.profileName ?: "Create a rifle first")
+        SectionHeading("Linked rifle")
+        if (rifles.isEmpty()) {
+            StatusChip("Create a rifle first", DopeStatus.BLOCKED)
+        } else {
+            ChoiceRow(
+                rifles,
+                rifles.firstOrNull { it.id == selectedRifleId } ?: rifles.first(),
+                { selectedRifleId = it.id },
+            ) {
+                it.profileName
+            }
+        }
         DopeField("Load profile name", profileName, { profileName = it })
         DopeField("Bullet name", bulletName, { bulletName = it })
         DopeField(
@@ -288,7 +314,9 @@ fun AmmunitionScreen(repository: ProfileRepository? = null) {
             { bulletWeightGrains = it },
             config = DopeFieldConfig(suffix = "gr"),
         )
-        DopeField("G7 ballistic coefficient", g7Bc, { g7Bc = it })
+        SectionHeading("Ballistic coefficient model")
+        ChoiceRow(DragModel.entries, dragModel, { dragModel = it }) { it.name }
+        DopeField("${dragModel.name} ballistic coefficient", ballisticCoefficient, { ballisticCoefficient = it })
         DopeField("Muzzle velocity", velocity, { velocity = it }, config = DopeFieldConfig(suffix = "m/s"))
         DopeCard {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -304,9 +332,9 @@ fun AmmunitionScreen(repository: ProfileRepository? = null) {
         DopePrimaryButton(
             "Save ammunition",
             {
-                val rifle = rifles.firstOrNull()
+                val rifle = rifles.firstOrNull { it.id == selectedRifleId }
                 val weight = bulletWeightGrains.toDoubleOrNull()?.times(0.00006479891)
-                val bc = g7Bc.toDoubleOrNull()
+                val bc = ballisticCoefficient.toDoubleOrNull()
                 val speed = velocity.toDoubleOrNull()
                 if (!validAmmunitionInput(repository, rifle, weight, bc, speed)) {
                     saveMessage = "Complete rifle, weight, BC and velocity"
@@ -329,8 +357,9 @@ fun AmmunitionScreen(repository: ProfileRepository? = null) {
                                     bulletManufacturer = "User entered",
                                     bulletName = bulletName,
                                     bulletWeightKilograms = validWeight,
-                                    g7BallisticCoefficient = validBc,
-                                    selectedDragModel = DragModel.G7.name,
+                                    g1BallisticCoefficient = validBc.takeIf { dragModel == DragModel.G1 },
+                                    g7BallisticCoefficient = validBc.takeIf { dragModel == DragModel.G7 },
+                                    selectedDragModel = dragModel.name,
                                     muzzleVelocityMetresPerSecond = validSpeed,
                                     createdAtEpochMillis = now,
                                     modifiedAtEpochMillis = now,
@@ -410,15 +439,56 @@ fun ScopeDetailScreen(repository: ProfileRepository? = null) {
         repository?.observeScopeProfiles()?.collectAsState(emptyList()) ?: remember {
             mutableStateOf(emptyList())
         }
-    val selected = profiles.firstOrNull()
+    var selectedId by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(profiles) {
+        if (profiles.none { it.id == selectedId }) selectedId = profiles.firstOrNull()?.id
+    }
+    val selected = profiles.firstOrNull { it.id == selectedId } ?: profiles.firstOrNull()
     var checks by remember(selected?.id) { mutableStateOf(List(10) { false }) }
+    var elevationDirection by
+        remember(selected?.id) {
+            mutableStateOf(
+                runCatching { DialDirection.valueOf(selected?.elevationDialDirection.orEmpty()) }
+                    .getOrDefault(DialDirection.UNKNOWN),
+            )
+        }
+    var windageDirection by
+        remember(selected?.id) {
+            mutableStateOf(
+                runCatching { DialDirection.valueOf(selected?.windageDialDirection.orEmpty()) }
+                    .getOrDefault(DialDirection.UNKNOWN),
+            )
+        }
     var message by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
     ScreenShell(title = "Scope verification", eyebrow = "PHYSICAL OPTIC CHECKLIST") {
         DopeCard {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 SectionHeading("Verify on the physical optic")
-                LabelValue("Profile", selected?.profileName ?: "Create a scope profile first")
+                if (profiles.isEmpty()) {
+                    LabelValue("Profile", "Create a scope profile first")
+                } else {
+                    ChoiceRow(profiles, requireNotNull(selected), { selectedId = it.id }) { it.profileName }
+                    LabelValue("Turret", "${selected.turretUnit} · ${selected.reticleName}")
+                    LabelValue("Focal plane", selected.focalPlane)
+                    LabelValue(
+                        "Elevation click",
+                        scopeClickLabel(selected.elevationClickValueRadians, selected.turretUnit),
+                    )
+                    LabelValue("Windage click", scopeClickLabel(selected.windageClickValueRadians, selected.turretUnit))
+                    Text("ELEVATION DIAL DIRECTION", style = MaterialTheme.typography.labelLarge)
+                    ChoiceRow(
+                        DialDirection.entries.filterNot { it == DialDirection.UNKNOWN },
+                        elevationDirection,
+                        { elevationDirection = it },
+                    ) { it.name.replace('_', ' ') }
+                    Text("WINDAGE DIAL DIRECTION", style = MaterialTheme.typography.labelLarge)
+                    ChoiceRow(
+                        DialDirection.entries.filterNot { it == DialDirection.UNKNOWN },
+                        windageDirection,
+                        { windageDirection = it },
+                    ) { it.name.replace('_', ' ') }
+                }
                 VerificationChecklistLabels.forEachIndexed { index, label ->
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Checkbox(
@@ -461,6 +531,8 @@ fun ScopeDetailScreen(repository: ProfileRepository? = null) {
                             )
                             repository.saveScopeProfile(
                                 profile.copy(
+                                    elevationDialDirection = elevationDirection.name,
+                                    windageDialDirection = windageDirection.name,
                                     verificationStatus = VerificationStatus.USER_VERIFIED.name,
                                     verificationDateEpochMillis = now,
                                     modifiedAtEpochMillis = now,
@@ -473,7 +545,9 @@ fun ScopeDetailScreen(repository: ProfileRepository? = null) {
             },
             Modifier.fillMaxWidth(),
             Icons.Outlined.CheckCircle,
-            enabled = selected != null && checks.all { it },
+            enabled =
+                selected != null && checks.all { it } &&
+                    elevationDirection != DialDirection.UNKNOWN && windageDirection != DialDirection.UNKNOWN,
         )
     }
 }
@@ -484,23 +558,6 @@ fun EnvironmentScreen(
     repository: ProfileRepository? = null,
     previewMode: Boolean = false,
 ) = LiveEnvironmentScreen(onOpen, repository, previewMode)
-
-@Composable
-fun ResultsScreen() {
-    ScreenShell(title = "Result", eyebrow = "BLOCKED PREVIEW") {
-        ResultPanel("—", "MIL", "Elevation", status = DopeStatus.BLOCKED)
-        ResultPanel("—", "MIL", "Wind", status = DopeStatus.BLOCKED)
-        DopeCard {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                StatusChip("Cannot calculate", DopeStatus.BLOCKED)
-                Text("Rifle, ammunition, scope verification and zero are incomplete.")
-                LabelValue("Atmosphere", "No current snapshot")
-                LabelValue("Engine", "Ready when verified inputs are complete")
-            }
-        }
-        DopeSecondaryButton("Copy calculation details", {}, Modifier.fillMaxWidth())
-    }
-}
 
 @Composable
 fun CameraCalibrationScreen() {
@@ -642,6 +699,14 @@ private val VerificationChecklistLabels =
         "Zero distance confirmed",
     )
 
+private fun scopeClickLabel(
+    radians: Double,
+    unit: String,
+): String {
+    val value = if (unit == "MIL") radians * 1_000.0 else radians * 180.0 / PI * 60.0
+    return "${String.format(Locale.US, "%.3f", value).trimEnd('0').trimEnd('.')} $unit / click"
+}
+
 private fun countStatus(
     count: Int,
     singular: String,
@@ -749,7 +814,7 @@ internal fun ScreenShell(
 }
 
 @Composable
-private fun SectionHeading(text: String) {
+internal fun SectionHeading(text: String) {
     Text(
         text.uppercase(),
         modifier = Modifier.semantics { heading() },
