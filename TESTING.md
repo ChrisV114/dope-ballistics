@@ -86,4 +86,6 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - Range-card coverage tests confirmed-distance inclusion, unconfirmed-distance rejection, reference/current selection, metric/imperial output, MIL/MOA display, column selection, offline CSV metadata and non-mutating comparison.
 - Nine visual goldens passed, including new wind/session portrait baselines and the updated landscape range-card controls. Reviewed content remains scrollable behind a fixed app navigation bar that is clear of the Android system-control inset.
 - Nine instrumentation tests compile, including complete `1 -> 2 -> 3 -> 4` migration, append-only session/verified-record hashing and offline CSV/PDF/PNG generation with a content-URI share intent.
-- Local instrumentation execution is not claimed because no local emulator or physical device is installed. The protected GitHub API 35 emulator job remains the external Milestone 5 execution gate.
+- Local instrumentation execution is not claimed because no local emulator or physical device is installed.
+- GitHub Actions run `33423772232` passed `build-and-test` in 3m44s and API 35 `instrumentation` in 22m14s on commit `21a01cb`.
+- The GitHub emulator executed nine instrumentation tests with 0 skipped and 0 failed, including Room `1 -> 4`, append-only session evidence and offline range-card file export.

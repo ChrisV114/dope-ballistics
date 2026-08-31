@@ -23,7 +23,7 @@
 - Session correction UI is not yet implemented; the append-only schema supports a `supersedesRecordId` for a later reviewed correction flow.
 - Match plans, Wear OS display/shot counting, fixed-camera target sequencing and pistol drill cues are documented future requirements only.
 - Automatic acoustic shot counting is not implemented and will require confidence, manual correction and physical range testing.
-- GitHub API 35 emulator instrumentation passed for Milestones 1 through 4. Milestone 5 external CI is pending until its review branch is pushed. No physical Samsung Galaxy S25 acceptance is claimed.
+- GitHub API 35 emulator instrumentation passed for Milestones 1 through 5. No physical Samsung Galaxy S25 acceptance is claimed.
 - The application ID is owner-approved as `za.co.bdstudio.dope`; release signing, keystore custody and public distribution remain undecided.
 - Android Compose Screenshot Testing is an isolated alpha16 build-time dependency because no stable AGP 9-compatible Android tool currently satisfies the required golden-test gate.
 
