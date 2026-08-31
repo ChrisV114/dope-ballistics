@@ -62,4 +62,6 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - Environmental JVM coverage includes source priority/staleness, Buck vapour pressure, moist-air density, dew point, pressure altitude, numerical density altitude, pressure-sample stability and strict separation of Open-Meteo surface and mean-sea-level pressure.
 - Seven instrumentation tests compile for manual/offline calculation, permission-denied location, optional sensor diagnostics, environment/cache persistence, Room CRUD/archive, complete `1 -> 2 -> 3` migration and navigation/accessibility.
 - The environment golden uses a 360 × 780 dp S25-equivalent viewport with system UI and confirms the scrollable controls remain above the app bottom navigation/system-control region.
-- Local instrumentation execution is not claimed because no emulator or physical device is installed. GitHub API 35 execution and physical Galaxy S25 sensor acceptance remain pending.
+- Local instrumentation execution is not claimed because no emulator or physical device is installed. Physical Galaxy S25 sensor acceptance remains pending.
+- GitHub Actions run `33386061965` passed `build-and-test` in 2m47s and API 35 `instrumentation` in 21m02s on commit `18b426e`.
+- The GitHub emulator executed seven instrumentation tests with 0 skipped and 0 failed.

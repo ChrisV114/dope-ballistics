@@ -13,7 +13,7 @@ Milestone 3 — Sensors, environment and internet adapter.
 - [x] Separate station pressure from mean-sea-level pressure.
 - [x] Add timestamped weather caching/staleness and Room environmental snapshots.
 - [x] Add JVM, instrumentation, migration and visual tests.
-- [ ] Run the protected GitHub quality and emulator gates for the Milestone 3 commit.
-- [ ] Stop for owner review.
+- [x] Run the protected GitHub quality and emulator gates for the Milestone 3 commit.
+- [x] Stop for owner review.
 
 Milestone 4 — Ballistics engine — is recommended next but remains blocked until this review is complete. Camera ranging remains Milestone 6; match-plan, Wear OS, automatic shot counting, fixed-camera target sequencing and pistol drill cues remain future requirements.
