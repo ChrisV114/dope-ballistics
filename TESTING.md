@@ -96,4 +96,6 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - JVM tests: 39 run, 0 failures, 0 errors and 0 skipped.
 - Ten screenshot goldens passed. The new phone-sized calculation golden covers quick distance and live-wind controls above the fixed navigation/system-control inset; enabling the dashboard calculation entry updated its two existing baselines.
 - Ten instrumentation tests compile. New coverage validates the complete Room `1 -> 5` migration and explicit active-zero switching while preserving linked profiles, reference atmosphere and current environment.
-- Local instrumentation execution is not claimed because no local emulator or physical device is installed. GitHub API 35 execution remains required for this review-fix commit.
+- Local instrumentation execution is not claimed because no local emulator or physical device is installed.
+- GitHub Actions run `33434913641` passed `build-and-test` in 3m31s and API 35 `instrumentation` in 21m58s on commit `601731a`.
+- The GitHub emulator executed all ten instrumentation tests with 0 skipped and 0 failed, including Room `1 -> 5` migration and active-zero switching.
