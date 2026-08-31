@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package za.co.dope.ballistics.ui.screens
 
 import androidx.compose.foundation.Canvas
@@ -11,9 +13,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -51,7 +58,24 @@ fun WindScreen(state: WindFormState) {
         remember(state.observation(), state.windFromDegrees, state.directionOfFireDegrees) {
             state.observation()?.let { runCatching { WindConvention.resolve(it) }.getOrNull() }
         }
-    ScreenShell(title = "Wind", eyebrow = "MANUAL · WIND-FROM CONVENTION") {
+    ReferencePanelShell(title = "Wind") {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            IconButton(onClick = {}) {
+                Icon(Icons.Outlined.Info, contentDescription = "Wind convention information")
+            }
+            TextButton(
+                onClick = {
+                    if (!state.locked) {
+                        state.windFromDegrees = "0"
+                        state.clockDirection = "12"
+                    }
+                },
+            ) { Text("Reset") }
+        }
         WindWheel(
             windFromDegrees = state.windFromDegrees.toDoubleOrNull() ?: 0.0,
             directionOfFireDegrees = state.directionOfFireDegrees.toDoubleOrNull() ?: 0.0,
@@ -62,80 +86,10 @@ fun WindScreen(state: WindFormState) {
                 state.timestampEpochMillis = System.currentTimeMillis()
             },
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-            FilterChip(
-                selected = state.reference == BearingReference.TRUE,
-                onClick = { if (!state.locked) state.reference = BearingReference.TRUE },
-                label = { Text("True") },
-                modifier = Modifier.weight(1f),
-            )
-            FilterChip(
-                selected = state.reference == BearingReference.MAGNETIC,
-                onClick = { if (!state.locked) state.reference = BearingReference.MAGNETIC },
-                label = { Text("Magnetic") },
-                modifier = Modifier.weight(1f),
-            )
-        }
-        DopeField(
-            "Wind from",
-            state.windFromDegrees,
-            { value -> if (!state.locked) state.windFromDegrees = value },
-            config = DopeFieldConfig(suffix = "°"),
-        )
-        DopeField(
-            "Clock direction",
-            state.clockDirection,
-            { value ->
-                if (!state.locked) {
-                    state.clockDirection = value
-                    value.toIntOrNull()?.takeIf { it in 1..12 }?.let { clock ->
-                        state.windFromDegrees = formatWhole((clock % 12) * 30.0)
-                    }
-                }
-            },
-            config = DopeFieldConfig(suffix = "o’clock"),
-        )
-        DopeField(
-            "Direction of fire",
-            state.directionOfFireDegrees,
-            { if (!state.locked) state.directionOfFireDegrees = it },
-            config = DopeFieldConfig(suffix = "°"),
-        )
-        if (state.reference == BearingReference.MAGNETIC) {
-            DopeField(
-                "Magnetic declination",
-                state.magneticDeclinationDegrees,
-                { if (!state.locked) state.magneticDeclinationDegrees = it },
-                config = DopeFieldConfig(suffix = "° east +"),
-            )
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-            DopeSecondaryButton(
-                "−1°",
-                { adjustWind(state, -1.0) },
-                Modifier.weight(1f),
-            )
-            DopeSecondaryButton(
-                "+1°",
-                { adjustWind(state, 1.0) },
-                Modifier.weight(1f),
-            )
-            DopeSecondaryButton(
-                "Reset",
-                {
-                    if (!state.locked) {
-                        state.windFromDegrees = "0"
-                        state.clockDirection = "12"
-                    }
-                },
-                Modifier.weight(1f),
-            )
-        }
-        SpeedFields(state)
-        DopeField("Source", state.source, { if (!state.locked) state.source = it })
-        DopeField("Notes", state.notes, { if (!state.locked) state.notes = it })
-        resolved?.let { WindResult(it) }
+        resolved?.let { WindResultTiles(it) }
             ?: StatusChip("Complete valid wind values", DopeStatus.BLOCKED)
+        SpeedSelectionTiles(state)
+        WindInputEditor(state)
         DopePrimaryButton(
             if (state.locked) "Unlock wind" else "Lock wind",
             { state.locked = !state.locked },
@@ -145,10 +99,80 @@ fun WindScreen(state: WindFormState) {
 }
 
 @Composable
-private fun SpeedFields(state: WindFormState) {
+private fun SpeedSelectionTiles(state: WindFormState) {
+    val values =
+        listOf(
+            Triple(WindSpeedSelection.MINIMUM, "Min", state.minimumSpeedMps),
+            Triple(WindSpeedSelection.AVERAGE, "Avg", state.averageSpeedMps),
+            Triple(WindSpeedSelection.MAXIMUM, "Max", state.maximumSpeedMps),
+            Triple(WindSpeedSelection.GUST, "Gust", state.gustSpeedMps.ifBlank { "—" }),
+        )
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
+        values.forEach { (selection, label, value) ->
+            ReferenceMetricTile(
+                label = "$label · m/s",
+                value = value,
+                modifier = Modifier.weight(1f),
+                selected = state.selectedSpeed == selection,
+                onClick = { if (!state.locked) state.selectedSpeed = selection },
+            )
+        }
+    }
+}
+
+@Composable
+@Suppress("LongMethod", "CyclomaticComplexMethod")
+private fun WindInputEditor(state: WindFormState) {
     DopeCard {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text("WIND SPEED BRACKET", style = MaterialTheme.typography.titleMedium)
+            Text("WIND INPUTS", style = MaterialTheme.typography.titleMedium)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                FilterChip(
+                    selected = state.reference == BearingReference.TRUE,
+                    onClick = { if (!state.locked) state.reference = BearingReference.TRUE },
+                    label = { Text("True") },
+                    modifier = Modifier.weight(1f),
+                )
+                FilterChip(
+                    selected = state.reference == BearingReference.MAGNETIC,
+                    onClick = { if (!state.locked) state.reference = BearingReference.MAGNETIC },
+                    label = { Text("Magnetic") },
+                    modifier = Modifier.weight(1f),
+                )
+            }
+            DopeField(
+                "Wind from",
+                state.windFromDegrees,
+                { value -> if (!state.locked) state.windFromDegrees = value },
+                config = DopeFieldConfig(suffix = "°"),
+            )
+            DopeField(
+                "Clock direction",
+                state.clockDirection,
+                { value ->
+                    if (!state.locked) {
+                        state.clockDirection = value
+                        value.toIntOrNull()?.takeIf { it in 1..12 }?.let { clock ->
+                            state.windFromDegrees = formatWhole((clock % 12) * 30.0)
+                        }
+                    }
+                },
+                config = DopeFieldConfig(suffix = "o’clock"),
+            )
+            DopeField(
+                "Direction of fire",
+                state.directionOfFireDegrees,
+                { if (!state.locked) state.directionOfFireDegrees = it },
+                config = DopeFieldConfig(suffix = "°"),
+            )
+            if (state.reference == BearingReference.MAGNETIC) {
+                DopeField(
+                    "Magnetic declination",
+                    state.magneticDeclinationDegrees,
+                    { if (!state.locked) state.magneticDeclinationDegrees = it },
+                    config = DopeFieldConfig(suffix = "° east +"),
+                )
+            }
             DopeField(
                 "Minimum",
                 state.minimumSpeedMps,
@@ -173,48 +197,49 @@ private fun SpeedFields(state: WindFormState) {
                 { if (!state.locked) state.gustSpeedMps = it },
                 config = DopeFieldConfig(suffix = "m/s"),
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
-                listOf(
-                    WindSpeedSelection.MINIMUM to "Min",
-                    WindSpeedSelection.AVERAGE to "Avg",
-                    WindSpeedSelection.MAXIMUM to "Max",
-                    WindSpeedSelection.GUST to "Gust",
-                ).forEach { (selection, label) ->
-                    FilterChip(
-                        selected = state.selectedSpeed == selection,
-                        onClick = { if (!state.locked) state.selectedSpeed = selection },
-                        label = { Text(label) },
-                        modifier = Modifier.weight(1f),
-                    )
-                }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                DopeSecondaryButton("−1°", { adjustWind(state, -1.0) }, Modifier.weight(1f))
+                DopeSecondaryButton("+1°", { adjustWind(state, 1.0) }, Modifier.weight(1f))
             }
+            DopeField("Source", state.source, { if (!state.locked) state.source = it })
+            DopeField("Notes", state.notes, { if (!state.locked) state.notes = it })
         }
     }
 }
 
 @Composable
-private fun WindResult(result: ResolvedWind) {
-    DopeCard {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("RESOLVED COMPONENTS", style = MaterialTheme.typography.titleMedium)
-            LabelValue("Relative wind-from", format(result.relativeWindFromDegrees, "°"))
-            LabelValue("Crosswind", format(result.selected.crosswindMps, " m/s (${result.effect.name.lowercase()})"))
-            LabelValue("Headwind + / tailwind −", format(result.selected.headwindMps, " m/s"))
-            LabelValue(
-                "Bracket",
-                "${format(result.bracket.minimum.speedMps, "")} / ${format(result.bracket.expected.speedMps, "")} / " +
-                    format(result.bracket.maximum.speedMps, " m/s"),
-            )
-            if (result.bearingReference == BearingReference.MAGNETIC && result.windFromTrueDegrees == null) {
-                StatusChip("True bearing unavailable · declination missing", DopeStatus.WARNING)
-            } else {
-                StatusChip("Wind convention resolved", DopeStatus.READY)
-            }
-        }
+private fun WindResultTiles(result: ResolvedWind) {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+        ReferenceMetricTile(
+            "Direction of fire",
+            "${format(result.directionOfFireInputDegrees, "°")} (${cardinal(result.directionOfFireInputDegrees)})",
+            Modifier.weight(1f),
+        )
+        ReferenceMetricTile(
+            "Relative angle",
+            "${format(result.relativeWindFromDegrees, "°")} (${result.effect.name.lowercase()})",
+            Modifier.weight(1f),
+        )
+    }
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+        ReferenceMetricTile(
+            "Crosswind",
+            format(result.selected.crosswindMps, " m/s (${result.effect.name.first()})"),
+            Modifier.weight(1f),
+        )
+        ReferenceMetricTile(
+            "Headwind",
+            format(result.selected.headwindMps, " m/s"),
+            Modifier.weight(1f),
+        )
+    }
+    if (result.bearingReference == BearingReference.MAGNETIC && result.windFromTrueDegrees == null) {
+        StatusChip("True bearing unavailable · declination missing", DopeStatus.WARNING)
     }
 }
 
 @Composable
+@Suppress("LongMethod")
 private fun WindWheel(
     windFromDegrees: Double,
     directionOfFireDegrees: Double,
@@ -229,7 +254,7 @@ private fun WindWheel(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .height(300.dp)
+                .height(330.dp)
                 .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
                 .padding(18.dp)
                 .pointerInput(locked) {
@@ -247,6 +272,7 @@ private fun WindWheel(
         val radius = size.minDimension * 0.4f
         val centre = center
         drawCircle(Color(0xFF253B4E), radius, centre, style = Stroke(width = 3.dp.toPx()))
+        drawCircle(Color(0xFF253B4E), radius * 0.47f, centre, style = Stroke(width = 2.dp.toPx()))
         repeat(36) { index ->
             val angle = index * 10.0 * PI / 180.0
             val outer = Offset(centre.x + sin(angle).toFloat() * radius, centre.y - cos(angle).toFloat() * radius)
@@ -271,8 +297,25 @@ private fun WindWheel(
             drawText("E", centre.x + radius + 12.dp.toPx(), centre.y + 5.dp.toPx(), paint)
             drawText("S", centre.x, centre.y + radius + 18.dp.toPx(), paint)
             drawText("W", centre.x - radius - 12.dp.toPx(), centre.y + 5.dp.toPx(), paint)
-            paint.textSize = 24.dp.toPx()
-            drawText("${formatWhole(windFromDegrees)}°", centre.x, centre.y + 8.dp.toPx(), paint)
+            repeat(12) { index ->
+                val degrees = index * 30
+                if (degrees % 90 == 0) return@repeat
+                val angle = degrees * PI / 180.0
+                val labelRadius = radius + 22.dp.toPx()
+                paint.textSize = 10.dp.toPx()
+                drawText(
+                    degrees.toString(),
+                    centre.x + sin(angle).toFloat() * labelRadius,
+                    centre.y - cos(angle).toFloat() * labelRadius + 4.dp.toPx(),
+                    paint,
+                )
+            }
+            paint.textSize = 12.dp.toPx()
+            drawText("Wind From", centre.x, centre.y - 18.dp.toPx(), paint)
+            paint.textSize = 28.dp.toPx()
+            drawText("${formatWhole(windFromDegrees)}°", centre.x, centre.y + 12.dp.toPx(), paint)
+            paint.textSize = 14.dp.toPx()
+            drawText(cardinal(windFromDegrees), centre.x, centre.y + 34.dp.toPx(), paint)
         }
     }
 }
@@ -333,4 +376,10 @@ private fun format(
 private fun formatWhole(value: Double): String {
     val normalized = WindConvention.normalizeDegrees(value)
     return String.format(Locale.ROOT, "%.0f", normalized)
+}
+
+private fun cardinal(value: Double): String {
+    val points = listOf("N", "NE", "E", "SE", "S", "SW", "W", "NW")
+    val index = ((WindConvention.normalizeDegrees(value) + 22.5) / 45.0).toInt() % points.size
+    return points[index]
 }

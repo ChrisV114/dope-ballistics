@@ -94,7 +94,7 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 
 - The complete local gate passed: Spotless, Android lint, Detekt, all JVM tests, screenshot validation, debug APK assembly and debug instrumentation-test APK assembly.
 - JVM tests: 39 run, 0 failures, 0 errors and 0 skipped.
-- Ten screenshot goldens passed. The new phone-sized calculation golden covers quick distance and live-wind controls above the fixed navigation/system-control inset; enabling the dashboard calculation entry updated its two existing baselines.
+- Ten screenshot goldens passed. The calculation and wind goldens follow the approved original panel hierarchy while retaining scrollable live editors below the primary display; all visible controls remain above the fixed navigation/system-control inset.
 - Ten instrumentation tests compile. New coverage validates the complete Room `1 -> 5` migration and explicit active-zero switching while preserving linked profiles, reference atmosphere and current environment.
 - Local instrumentation execution is not claimed because no local emulator or physical device is installed.
 - GitHub Actions run `33434913641` passed `build-and-test` in 3m31s and API 35 `instrumentation` in 21m58s on commit `601731a`.

@@ -1,5 +1,9 @@
 # Design System
 
+## Calculation and wind reference panels
+
+The approved original calculation-results and wind-direction panels are layout targets, not loose inspiration. Production screens preserve their information hierarchy and compact field-panel proportions while using real engine state, SI field entry and the shared safe-area-aware navigation shell. Additional editable controls follow below the primary reference layout so they do not displace the field result or overlap phone system controls.
+
 The design authority is docs/design/DOPE_UI_REFERENCE_4K.png, supported by the original board and wordmark reference.
 
 ## Milestone 1 implementation

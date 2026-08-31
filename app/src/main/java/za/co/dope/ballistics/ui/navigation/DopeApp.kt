@@ -243,7 +243,7 @@ fun DopeGoldenScreen(
                     "environment" -> EnvironmentScreen(onOpen = {}, previewMode = true)
                     "range_card" -> RangeCardScreen(null, windState, {}, previewMode = true)
                     "wind" -> WindScreen(windState)
-                    "results" -> ResultsScreen(null, windState, {})
+                    "results" -> ResultsScreen(null, windState, {}, previewMode = true)
                     "session" -> SessionScreen(null, null, windState, {})
                     "comparison" -> ComparisonScreen(null, windState)
                     "target_range" -> TargetRangeScreen(onOpen = {})
