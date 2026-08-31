@@ -63,3 +63,15 @@ Use the Samsung Galaxy Watch7 44 mm paired with the Samsung Galaxy S25 as the pr
 ## R2-003 — Owner scope verification baselines
 
 Record owner-specific physical verification for a DNT TheOne 7–35×56 FFP MIL/TOR-MIL scope and an Arken EP-8 1–8×28 FFP MOA/KLBOX scope. Do not change immutable built-in templates to globally verified: owner measurements belong to user-owned profiles.
+
+## M4-001 — Drag data and coefficient ownership
+
+Use the BRL standard-projectile Cd-versus-Mach G1/G7 tables published by JBM Ballistics and linear interpolation. The exact bullet profile owns its manufacturer-declared coefficient and selected drag model. Never infer, convert or substitute a missing coefficient.
+
+## M4-002 — Deterministic numerical baseline
+
+Use SI internal units, fixed-step RK4 with a 0.001 s default, and bracketed bisection for the bore-angle zero. Trace engine version, drag source/model, step and zero iterations. Advanced spin/Coriolis/aerodynamic-jump corrections remain off and outside the core release.
+
+## R4-001 — Owner rifle/load fixtures
+
+Record editable private fixtures for: (1) Howa 6.5 Creedmoor, 26-inch 1:8 barrel, DNT TheOne, 100 m zero, 6 cm sight height, Lapua 139 gr Scenar GB458 G7 0.290 at 809 m/s and 0.1 MIL/click; (2) Smith & Wesson M&P15 Sport III .223 Remington, 16-inch 1:8 barrel, Arken EP-8, 50 m zero, 6 cm sight height, Hornady 53 gr V-MAX G1 0.290 at 920 m/s and 0.25 MOA/click. Do not seed these user values as immutable global defaults.

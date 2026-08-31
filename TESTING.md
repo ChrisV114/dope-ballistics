@@ -65,3 +65,12 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - Local instrumentation execution is not claimed because no emulator or physical device is installed. Physical Galaxy S25 sensor acceptance remains pending.
 - GitHub Actions run `33386061965` passed `build-and-test` in 2m47s and API 35 `instrumentation` in 21m02s on commit `18b426e`.
 - The GitHub emulator executed seven instrumentation tests with 0 skipped and 0 failed.
+
+## Milestone 4 results — 2026-08-31
+
+- Final combined local gate passed: Spotless, lint, Detekt, JVM tests, screenshot validation, debug APK assembly and debug instrumentation-test APK assembly.
+- JVM tests: 26 run, 0 failures, 0 errors, 0 skipped; 10 are pure `:ballistics` tests and 16 are app tests.
+- Ballistics coverage includes exact BRL/JBM table values and interpolation, deterministic owner rifle/load fixtures, root-solved zero, RK4 step-halving convergence, G1/G7 paths, reference/current deviation, wind sign, MIL/MOA clicks/residual/travel/revolutions, uncertainty ordering, range ordering and invalid-input blocking.
+- Seven existing screenshot goldens passed unchanged, preserving the reviewed phone system-control clearance.
+- Seven existing instrumentation tests compile into `app-debug-androidTest.apk`; no database schema or device behaviour changed in this milestone.
+- Local instrumentation execution is not claimed because no emulator or physical device is installed. Protected GitHub API 35 emulator execution remains required for the Milestone 4 commit.

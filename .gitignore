@@ -2,6 +2,7 @@
 .idea/
 .kotlin/
 .tools/
+.android/
 **/build/
 local.properties
 *.iml

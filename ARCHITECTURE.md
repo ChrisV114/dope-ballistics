@@ -1,8 +1,8 @@
 # Architecture
 
-## Milestone 3
+## Milestone 4
 
-Only `:app` exists because the implemented profile and environment slices remain cohesive and do not justify empty modules. Environmental equations/source selection are pure Kotlin. Android sensors, one-shot location and network providers implement interfaces under `data/environment`; Compose does not call platform services through domain code.
+The first specialised module is now implemented. `:ballistics` is pure Kotlin/JVM and contains stable input/output models, authoritative G1/G7 tables, the point-mass solver, uncertainty and deterministic trace. It has no Android imports. `:app` retains Room, Android adapters and UI, and maps verified persisted records into engine inputs.
 
 ```text
 Android app (:app)
@@ -12,6 +12,8 @@ Android app (:app)
   -> Android SensorManager and foreground LocationManager adapters
   -> Explicit Open-Meteo adapter behind OPEN_METEO_ENABLED
   -> Pure environmental math, source policy and profile rules
+  -> BallisticsInputMapper validation boundary
+  -> Pure Kotlin/JVM ballistics engine (:ballistics)
   -> locked design tokens and reusable components
   -> Android platform
 ```
@@ -25,7 +27,7 @@ feature modules -> domain -> core:model/core:common
 feature modules -> specialised core adapters
 app -> feature modules and core:designsystem
 core adapters -> domain interfaces
-ballistics -> pure Kotlin/JVM only
+ballistics -> Kotlin/JVM standard library only
 vision -> deterministic baseline plus optional signed model adapter
 ```
 
