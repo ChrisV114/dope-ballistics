@@ -12,6 +12,8 @@
 - Added owner-provided Howa 6.5 Creedmoor/Lapua 139 gr and M&P15 Sport III/Hornady 53 gr regression fixtures without seeding private data as factory defaults.
 - Added source-labelled 500/800/1,000 m owner field-DOPE comparison coverage and recorded a future explicit, reversible truing workflow.
 - Specified the Milestone 5 per-target actual-setting log and evidence-gated equipment-specific learning rules.
+- Specified engagement-level multi-rifle stages and explicit Watch7 equipment-change confirmation.
+- Separated body-carried phone/watch match operation from rigid-stand fixed-camera mode.
 
 ### Milestone 3
 

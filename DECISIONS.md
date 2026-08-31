@@ -87,3 +87,11 @@ Milestone 5 must allow verified observed DOPE to be compared with a traceable pr
 ## R5-002 — Full DOPE log and learning boundary
 
 Store the calculated setting and actual elevation/windage setting used for every match target with immutable rifle/load/scope/zero revisions, verified range, conditions, engine trace and user confidence. Future calculations may use only an explicitly accepted, versioned true profile derived from matching trusted observations. Never mix equipment fingerprints, equate usage count with accuracy, or train silently from an unconfirmed entry. Detailed fields and acceptance rules are in `DOPE_LOG.md`.
+
+## R5-003 — Multi-rifle match stages
+
+Model rifle/load/scope/zero at the individual engagement level so a single stage can move from the M&P15 Sport III .223 to the Howa 6.5 Creedmoor or any later verified profile. Insert explicit equipment-change steps and require manual readiness confirmation; shot counting may not infer a completed swap. The phone owns plan editing and the future Watch7 companion displays the current identity, setting, count confidence and next step from an offline snapshot. Detailed behaviour is in `MATCH_PLAN.md`.
+
+## R5-004 — Body-carried match phone
+
+During multi-gun match sessions the Galaxy S25 is carried on the user and may remain locked; it is not on the landscape stand. Match plans and the Watch7 must work without camera input. Any future background timing/counting requires an explicit foreground session and user-controlled status. Fixed-camera sequencing remains a separate mode and would require a separate device to operate concurrently.

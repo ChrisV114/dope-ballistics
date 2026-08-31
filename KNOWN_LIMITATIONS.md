@@ -7,6 +7,8 @@
 - The ballistic benchmark fixtures protect deterministic behaviour and convergence but have not yet been independently validated by live-fire drop data or a certified reference solver across the full operating envelope.
 - Three owner-observed 6.5 Creedmoor DOPE points agree closely with the standard-atmosphere fixture, but their original environment/session metadata is unknown and no truing workflow is implemented until Milestone 5.
 - Actual per-target match settings, the immutable DOPE log and learning/true-profile workflow are specified in `DOPE_LOG.md` but deliberately not implemented inside the Milestone 4 engine.
+- Engagement-level multi-rifle plans and Watch7 equipment-change confirmation are specified in `MATCH_PLAN.md` but are not implemented in Milestone 4.
+- One Galaxy S25 cannot provide fixed-stand camera sequencing while it is body-carried for match timing/audio; concurrent operation would require a separate paired camera device and is not planned.
 - No physical Galaxy S25 sensor validation has yet confirmed barometer stability, compass calibration behaviour, GPS vertical accuracy or landscape field ergonomics.
 - Open-Meteo values are model estimates, not on-site measurements. Weather wind never overwrites the manual wind screen.
 - Orientation currently requires a rotation-vector sensor; the accelerometer-plus-magnetometer fallback remains to be added before physical acceptance if the target device lacks rotation vector support.

@@ -18,4 +18,4 @@ Milestone 4 — Ballistics engine.
 - [ ] Run the protected GitHub quality and emulator jobs.
 - [ ] Stop for owner review.
 
-Milestone 5 — wind UI, match target plans, full immutable DOPE log, range-card presentation/export, sessions and explicit reversible truing — remains blocked until Milestone 4 review. It must capture actual settings per target and improve only through accepted equipment-specific true profiles with before/after validation. Camera ranging remains Milestone 6; Wear OS, automatic shot counting, fixed-camera target sequencing and pistol drill cues remain future requirements.
+Milestone 5 — wind UI, engagement-level multi-rifle match plans, full immutable DOPE log, range-card presentation/export, sessions and explicit reversible truing — remains blocked until Milestone 4 review. It must capture actual settings per target and improve only through accepted equipment-specific true profiles with before/after validation. The Watch7 companion and automatic shot-count progression remain future work, governed by `MATCH_PLAN.md`; camera ranging remains Milestone 6, and fixed-camera sequencing/pistol drill cues remain later requirements.
