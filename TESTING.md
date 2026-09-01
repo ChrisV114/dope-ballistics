@@ -125,3 +125,5 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - Twelve instrumentation tests compile. Migration coverage now validates Room `1 -> 8` and `6 -> 8`, including rifle-owned zero-distance/sight-height defaults and preservation of explicit estimated-reference provenance.
 - Local instrumentation execution is not claimed because no local emulator or physical device is installed. The protected GitHub API 35 emulator job remains the execution gate.
 - The build retains the known experimental screenshot-testing, Gradle 10 deprecation and unstripped debug native-library warnings.
+- GitHub Actions run `33509481413` passed `build-and-test` in 4m10s and API 35 `instrumentation` in 21m27s on commit `62dbc57`.
+- The GitHub emulator started and finished all twelve instrumentation tests with 0 skipped and 0 failed.
