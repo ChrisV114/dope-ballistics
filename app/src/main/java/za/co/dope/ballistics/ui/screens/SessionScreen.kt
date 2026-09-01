@@ -45,13 +45,14 @@ fun SessionScreen(
     profileRepository: ProfileRepository?,
     sessionRepository: SessionRepository?,
     windState: WindFormState,
+    sessionDraft: SessionDraftState,
     onOpen: (String) -> Unit,
 ) {
     var name by remember { mutableStateOf("") }
-    var distance by remember { mutableStateOf("") }
+    var distance by remember { mutableStateOf(sessionDraft.distanceMetres) }
     var distanceUncertainty by remember { mutableStateOf("1") }
     var inclination by remember { mutableStateOf("0") }
-    var actualDial by remember { mutableStateOf("") }
+    var actualDial by remember { mutableStateOf(sessionDraft.actualDialValue) }
     var shotCount by remember { mutableStateOf("3") }
     var verticalCentre by remember { mutableStateOf("") }
     var horizontalCentre by remember { mutableStateOf("") }
@@ -71,8 +72,17 @@ fun SessionScreen(
     }
     ScreenShell(title = "Sessions", eyebrow = "IMMUTABLE · VERIFIED DOPE") {
         DopeCard {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("SESSION TYPE", style = MaterialTheme.typography.titleMedium)
+                LabelValue("Free shoot", "Available now · log actual settings and groups")
+                LabelValue("Match", "Planned · ordered targets and rifle changes")
+                LabelValue("Shot timer / drills", "Planned · fixed owner-authored cue allowlist")
+                StatusChip("This build saves Free shoot sessions only", DopeStatus.INFO)
+            }
+        }
+        DopeCard {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text("COMPLETED RANGE EXERCISE", style = MaterialTheme.typography.titleMedium)
+                Text("FREE SHOOT · COMPLETED RANGE EXERCISE", style = MaterialTheme.typography.titleMedium)
                 DopeField("Session name", name, { name = it })
                 DopeField("Confirmed distance", distance, { distance = it }, config = DopeFieldConfig(suffix = "m"))
                 DopeField(

@@ -1,6 +1,7 @@
 # Known Limitations
 
 - Milestone 5 provides manual wind, offline range cards, immutable sessions, verified range records and non-mutating comparison. Camera, AR, Range Analyst, voice, Wear OS and ML remain deferred.
+- The calculator now shows elevation and windage in angular units and signed left/right clicks. These remain model outputs that require a verified profile, confirmed range and user judgement; the app does not provide live aim-point overlays.
 - G1/G7 accuracy is limited by the supplied manufacturer BC and its validity across velocity bands; the engine does not invent or convert coefficients.
 - The current solver excludes spin drift, Coriolis, aerodynamic jump, custom Doppler drag curves and verified BDC holds.
 - Uncertainty v1 is one-sided local sensitivity with root-sum-square combination; it does not yet model input correlation or Monte Carlo distributions.
@@ -21,12 +22,13 @@
 - When historical zero-day weather is unknown, the app can copy the latest saved conditions as an explicitly labelled estimate. Environmental deviation remains approximate until a better reference is saved.
 - The two owner-requested starter loads use the same G7 `0.290` Lapua and G1 `0.290` Hornady coefficients as the reviewed regression fixtures. They are labelled test data and require exact bullet-SKU, published-BC and chronograph confirmation before field use.
 - Starter scopes remain `REQUIRES_USER_VERIFICATION`. No zero/reference profile is pre-created because the reference atmosphere must be confirmed or explicitly estimated by the owner.
-- Version `0.5.4-m5-review` stores zero distance and sight height on the rifle profile and adds them to installed databases through `7 -> 8`; it does not overwrite other user-created rifle values or fabricate a zero/reference atmosphere.
-- Equipment cards currently use neutral local illustrations rather than owner-supplied product photographs. Profile-specific photos remain future work.
+- Version `0.5.5-m5-review` adds profile photos and optional load OAL through `8 -> 9`; it does not overwrite other user-created values or fabricate a zero/reference atmosphere.
+- Profile photos must be chosen from an owner-controlled local file. Public manufacturer images are not bundled or downloaded without confirmed redistribution rights; the neutral local illustration remains the fallback.
+- Rifle and load records can now be edited. A dedicated reference-only pistol record type is not yet implemented; pistol drill/session work remains a later governed milestone.
 - Target-size choices do not perform camera ranging. IDPA/A-series values and nominal gong sizes require confirmation against the physical target.
 - Confirmed manual target distances with the DOPE inclusion flag automatically populate generated range cards; camera/range-finder execution remains Milestone 6 and will require user confirmation.
 - Range-card exports are generated offline in app cache and shared through Android's chooser. A persistent export library and Storage Access Framework destination picker are not yet implemented.
-- Session correction UI is not yet implemented; the append-only schema supports a `supersedesRecordId` for a later reviewed correction flow.
+- Actual elevation can be handed from Calculations into a new immutable verified record. Correcting an already-saved record remains a later append-only `supersedesRecordId` workflow.
 - Match plans, Wear OS display/shot counting, fixed-camera target sequencing and pistol drill cues are documented future requirements only.
 - Automatic acoustic shot counting is not implemented and will require confidence, manual correction and physical range testing.
 - GitHub API 35 emulator instrumentation passed for Milestones 1 through 5. No physical Samsung Galaxy S25 acceptance is claimed.

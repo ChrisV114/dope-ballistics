@@ -280,9 +280,10 @@ fun ProfilesScreen(
 }
 
 @Composable
-@Suppress("LongMethod")
+@Suppress("LongMethod", "CyclomaticComplexMethod")
 fun RifleScreen(repository: ProfileRepository? = null) {
     val rifles by repository?.observeRifles()?.collectAsState(emptyList()) ?: remember { mutableStateOf(emptyList()) }
+    var editingId by remember { mutableStateOf<String?>(null) }
     var name by remember { mutableStateOf("") }
     var manufacturer by remember { mutableStateOf("") }
     var model by remember { mutableStateOf("") }
@@ -291,11 +292,31 @@ fun RifleScreen(repository: ProfileRepository? = null) {
     var twistMillimetres by remember { mutableStateOf("") }
     var zeroDistanceMetres by remember { mutableStateOf("") }
     var sightHeightMillimetres by remember { mutableStateOf("") }
+    var imageUri by remember { mutableStateOf<String?>(null) }
     var saveMessage by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
+    val editing = rifles.firstOrNull { it.id == editingId }
+    LaunchedEffect(editingId) {
+        editing?.let { rifle ->
+            name = rifle.profileName
+            manufacturer = rifle.manufacturer
+            model = rifle.model
+            calibre = rifle.calibreLabel
+            barrelMillimetres = rifle.barrelLengthMetres.times(1000).compactDashboard()
+            twistMillimetres = rifle.twistRateMetres.times(1000).compactDashboard()
+            zeroDistanceMetres = rifle.defaultZeroDistanceMetres?.compactDashboard().orEmpty()
+            sightHeightMillimetres =
+                rifle.sightHeightAboveBoreMetres
+                    ?.times(1000)
+                    ?.compactDashboard()
+                    .orEmpty()
+            imageUri = rifle.imageUri
+        }
+    }
     ScreenShell(title = "Rifle profile", eyebrow = "LOCAL DATABASE · SI STORAGE") {
-        SavedRifleProfiles(rifles)
-        SectionHeading("Add rifle")
+        SavedRifleProfiles(rifles) { editingId = it.id }
+        SectionHeading(if (editing == null) "Add rifle" else "Edit rifle")
+        ProfilePhotoEditor(imageUri, EquipmentIllustrationType.RIFLE) { imageUri = it }
         DopeField("Profile name", name, { name = it })
         DopeField("Manufacturer", manufacturer, { manufacturer = it })
         DopeField("Model", model, { model = it })
@@ -330,7 +351,7 @@ fun RifleScreen(repository: ProfileRepository? = null) {
         )
         saveMessage?.let { StatusChip(it, if (it == "Rifle saved") DopeStatus.READY else DopeStatus.BLOCKED) }
         DopePrimaryButton(
-            "Save rifle",
+            if (editing == null) "Save rifle" else "Save rifle changes",
             {
                 val barrel = barrelMillimetres.toDoubleOrNull()?.div(1000.0)
                 val twist = twistMillimetres.toDoubleOrNull()?.div(1000.0)
@@ -349,7 +370,7 @@ fun RifleScreen(repository: ProfileRepository? = null) {
                         runCatching {
                             repository.saveRifle(
                                 RifleEntity(
-                                    id = ProfileIdentity.newId(),
+                                    id = editing?.id ?: ProfileIdentity.newId(),
                                     profileName = name,
                                     manufacturer = manufacturer,
                                     model = model,
@@ -359,23 +380,41 @@ fun RifleScreen(repository: ProfileRepository? = null) {
                                     twistDirection = TwistDirection.RIGHT.name,
                                     defaultZeroDistanceMetres = validZeroDistance,
                                     sightHeightAboveBoreMetres = validSightHeight,
-                                    createdAtEpochMillis = now,
+                                    imageUri = imageUri,
+                                    createdAtEpochMillis = editing?.createdAtEpochMillis ?: now,
                                     modifiedAtEpochMillis = now,
+                                    revision = (editing?.revision ?: 0) + 1,
+                                    favourite = editing?.favourite ?: false,
+                                    notes = editing?.notes,
                                 ),
                             )
-                        }.onSuccess { saveMessage = "Rifle saved" }
-                            .onFailure { saveMessage = it.message ?: "Invalid rifle" }
+                        }.onSuccess {
+                            saveMessage = "Rifle saved"
+                            editingId = null
+                            name = ""
+                            manufacturer = ""
+                            model = ""
+                            calibre = ""
+                            barrelMillimetres = ""
+                            twistMillimetres = ""
+                            zeroDistanceMetres = ""
+                            sightHeightMillimetres = ""
+                            imageUri = null
+                        }.onFailure { saveMessage = it.message ?: "Invalid rifle" }
                     }
                 }
             },
             Modifier.fillMaxWidth(),
             Icons.Outlined.CheckCircle,
         )
+        if (editing != null) {
+            DopeSecondaryButton("Cancel editing", { editingId = null }, Modifier.fillMaxWidth())
+        }
     }
 }
 
 @Composable
-@Suppress("LongMethod")
+@Suppress("LongMethod", "CyclomaticComplexMethod")
 fun AmmunitionScreen(repository: ProfileRepository? = null) {
     val rifles by repository?.observeRifles()?.collectAsState(emptyList()) ?: remember { mutableStateOf(emptyList()) }
     val ammunition by
@@ -383,20 +422,45 @@ fun AmmunitionScreen(repository: ProfileRepository? = null) {
             mutableStateOf(emptyList())
         }
     var selectedRifleId by remember { mutableStateOf<String?>(null) }
+    var editingId by remember { mutableStateOf<String?>(null) }
     var profileName by remember { mutableStateOf("") }
     var bulletName by remember { mutableStateOf("") }
     var bulletWeightGrains by remember { mutableStateOf("") }
     var dragModel by remember { mutableStateOf(DragModel.G7) }
     var ballisticCoefficient by remember { mutableStateOf("") }
     var velocity by remember { mutableStateOf("") }
+    var overallLengthMillimetres by remember { mutableStateOf("") }
+    var imageUri by remember { mutableStateOf<String?>(null) }
     var saveMessage by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
+    val editing = ammunition.firstOrNull { it.id == editingId }
     LaunchedEffect(rifles) {
         if (rifles.none { it.id == selectedRifleId }) selectedRifleId = rifles.firstOrNull()?.id
     }
+    LaunchedEffect(editingId) {
+        editing?.let { load ->
+            selectedRifleId = load.rifleId
+            profileName = load.profileName
+            bulletName = load.bulletName
+            bulletWeightGrains = load.bulletWeightKilograms.div(0.00006479891).compactDashboard()
+            dragModel = runCatching { DragModel.valueOf(load.selectedDragModel) }.getOrDefault(DragModel.G7)
+            ballisticCoefficient =
+                (if (dragModel == DragModel.G1) load.g1BallisticCoefficient else load.g7BallisticCoefficient)
+                    ?.compactDashboard()
+                    .orEmpty()
+            velocity = load.muzzleVelocityMetresPerSecond.compactDashboard()
+            overallLengthMillimetres =
+                load.cartridgeOverallLengthMetres
+                    ?.times(1000)
+                    ?.compactDashboard()
+                    .orEmpty()
+            imageUri = load.imageUri
+        }
+    }
     ScreenShell(title = "Ammunition", eyebrow = "LOCAL DATABASE · NO FABRICATED VALUES") {
-        SavedAmmunitionProfiles(ammunition, rifles)
-        SectionHeading("Add ammunition")
+        SavedAmmunitionProfiles(ammunition, rifles) { editingId = it.id }
+        SectionHeading(if (editing == null) "Add ammunition / load" else "Edit ammunition / load")
+        ProfilePhotoEditor(imageUri, EquipmentIllustrationType.AMMUNITION) { imageUri = it }
         SectionHeading("Linked rifle")
         if (rifles.isEmpty()) {
             StatusChip("Create a rifle first", DopeStatus.BLOCKED)
@@ -421,6 +485,12 @@ fun AmmunitionScreen(repository: ProfileRepository? = null) {
         ChoiceRow(DragModel.entries, dragModel, { dragModel = it }) { it.name }
         DopeField("${dragModel.name} ballistic coefficient", ballisticCoefficient, { ballisticCoefficient = it })
         DopeField("Muzzle velocity", velocity, { velocity = it }, config = DopeFieldConfig(suffix = "m/s"))
+        DopeField(
+            "Cartridge overall length (optional)",
+            overallLengthMillimetres,
+            { overallLengthMillimetres = sanitiseDecimalInput(it) },
+            config = DopeFieldConfig(suffix = "mm", numeric = true),
+        )
         DopeCard {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 SectionHeading("Chronograph status")
@@ -433,7 +503,7 @@ fun AmmunitionScreen(repository: ProfileRepository? = null) {
         }
         saveMessage?.let { StatusChip(it, if (it == "Ammunition saved") DopeStatus.READY else DopeStatus.BLOCKED) }
         DopePrimaryButton(
-            "Save ammunition",
+            if (editing == null) "Save ammunition" else "Save load changes",
             {
                 val rifle = rifles.firstOrNull { it.id == selectedRifleId }
                 val weight = bulletWeightGrains.toDoubleOrNull()?.times(0.00006479891)
@@ -452,7 +522,7 @@ fun AmmunitionScreen(repository: ProfileRepository? = null) {
                         runCatching {
                             validRepository.saveAmmunition(
                                 AmmunitionEntity(
-                                    id = ProfileIdentity.newId(),
+                                    id = editing?.id ?: ProfileIdentity.newId(),
                                     rifleId = validRifle.id,
                                     profileName = profileName,
                                     manufacturer = "User entered",
@@ -464,23 +534,44 @@ fun AmmunitionScreen(repository: ProfileRepository? = null) {
                                     g7BallisticCoefficient = validBc.takeIf { dragModel == DragModel.G7 },
                                     selectedDragModel = dragModel.name,
                                     muzzleVelocityMetresPerSecond = validSpeed,
-                                    createdAtEpochMillis = now,
+                                    cartridgeOverallLengthMetres =
+                                        overallLengthMillimetres.toDoubleOrNull()?.div(1000.0),
+                                    imageUri = imageUri,
+                                    createdAtEpochMillis = editing?.createdAtEpochMillis ?: now,
                                     modifiedAtEpochMillis = now,
+                                    revision = (editing?.revision ?: 0) + 1,
+                                    favourite = editing?.favourite ?: false,
+                                    notes = editing?.notes,
                                 ),
                             )
-                        }.onSuccess { saveMessage = "Ammunition saved" }
-                            .onFailure { saveMessage = it.message ?: "Invalid ammunition" }
+                        }.onSuccess {
+                            saveMessage = "Ammunition saved"
+                            editingId = null
+                            profileName = ""
+                            bulletName = ""
+                            bulletWeightGrains = ""
+                            ballisticCoefficient = ""
+                            velocity = ""
+                            overallLengthMillimetres = ""
+                            imageUri = null
+                        }.onFailure { saveMessage = it.message ?: "Invalid ammunition" }
                     }
                 }
             },
             Modifier.fillMaxWidth(),
             Icons.Outlined.CheckCircle,
         )
+        if (editing != null) {
+            DopeSecondaryButton("Cancel editing", { editingId = null }, Modifier.fillMaxWidth())
+        }
     }
 }
 
 @Composable
-private fun SavedRifleProfiles(rifles: List<RifleEntity>) {
+private fun SavedRifleProfiles(
+    rifles: List<RifleEntity>,
+    onEdit: (RifleEntity) -> Unit,
+) {
     SectionHeading("Saved rifles")
     if (rifles.isEmpty()) {
         StatusChip("No saved rifles", DopeStatus.INFO)
@@ -489,7 +580,11 @@ private fun SavedRifleProfiles(rifles: List<RifleEntity>) {
     rifles.forEach { rifle ->
         DopeCard {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                EquipmentIllustration(EquipmentIllustrationType.RIFLE, Modifier.fillMaxWidth())
+                if (rifle.imageUri.isNullOrBlank()) {
+                    EquipmentIllustration(EquipmentIllustrationType.RIFLE, Modifier.fillMaxWidth())
+                } else {
+                    ProfilePhoto(rifle.imageUri)
+                }
                 SectionHeading(rifle.profileName)
                 LabelValue("Rifle", "${rifle.manufacturer} · ${rifle.model}")
                 LabelValue("Cartridge", rifle.calibreLabel)
@@ -503,6 +598,7 @@ private fun SavedRifleProfiles(rifles: List<RifleEntity>) {
                     "${rifle.defaultZeroDistanceMetres?.compactDashboard() ?: "—"} m · " +
                         "${rifle.sightHeightAboveBoreMetres?.times(1000)?.compactDashboard() ?: "—"} mm",
                 )
+                DopeSecondaryButton("Edit rifle", { onEdit(rifle) }, Modifier.fillMaxWidth())
             }
         }
     }
@@ -512,6 +608,7 @@ private fun SavedRifleProfiles(rifles: List<RifleEntity>) {
 private fun SavedAmmunitionProfiles(
     ammunition: List<AmmunitionEntity>,
     rifles: List<RifleEntity>,
+    onEdit: (AmmunitionEntity) -> Unit,
 ) {
     SectionHeading("Saved loads")
     if (ammunition.isEmpty()) {
@@ -523,7 +620,11 @@ private fun SavedAmmunitionProfiles(
         val coefficient = load.g7BallisticCoefficient ?: load.g1BallisticCoefficient
         DopeCard {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                EquipmentIllustration(EquipmentIllustrationType.AMMUNITION, Modifier.fillMaxWidth())
+                if (load.imageUri.isNullOrBlank()) {
+                    EquipmentIllustration(EquipmentIllustrationType.AMMUNITION, Modifier.fillMaxWidth())
+                } else {
+                    ProfilePhoto(load.imageUri)
+                }
                 SectionHeading(load.profileName)
                 LabelValue("Rifle", linkedRifle?.profileName ?: "Missing linked rifle")
                 LabelValue("Bullet", load.bulletName)
@@ -532,6 +633,10 @@ private fun SavedAmmunitionProfiles(
                     "${load.selectedDragModel} ${coefficient ?: "—"} · " +
                         "${load.muzzleVelocityMetresPerSecond.toInt()} m/s",
                 )
+                load.cartridgeOverallLengthMetres?.let {
+                    LabelValue("Overall length", "${it.times(1000).compactDashboard()} mm")
+                }
+                DopeSecondaryButton("Edit load", { onEdit(load) }, Modifier.fillMaxWidth())
             }
         }
     }
@@ -563,7 +668,11 @@ fun ScopeScreen(
             profiles.forEach { profile ->
                 DopeCard {
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        EquipmentIllustration(EquipmentIllustrationType.SCOPE, Modifier.fillMaxWidth())
+                        if (profile.imageUri.isNullOrBlank()) {
+                            EquipmentIllustration(EquipmentIllustrationType.SCOPE, Modifier.fillMaxWidth())
+                        } else {
+                            ProfilePhoto(profile.imageUri)
+                        }
                         SectionHeading(profile.profileName)
                         LabelValue("Optic", "${profile.manufacturer} · ${profile.model}")
                         LabelValue("Turret / reticle", "${profile.turretUnit} · ${profile.reticleName}")
@@ -631,6 +740,7 @@ fun ScopeDetailScreen(repository: ProfileRepository? = null) {
         if (profiles.none { it.id == selectedId }) selectedId = profiles.firstOrNull()?.id
     }
     val selected = profiles.firstOrNull { it.id == selectedId } ?: profiles.firstOrNull()
+    var imageUri by remember(selected?.id) { mutableStateOf(selected?.imageUri) }
     var checks by remember(selected?.id) { mutableStateOf(List(10) { false }) }
     var elevationDirection by
         remember(selected?.id) {
@@ -656,6 +766,27 @@ fun ScopeDetailScreen(repository: ProfileRepository? = null) {
                     LabelValue("Profile", "Create a scope profile first")
                 } else {
                     ChoiceRow(profiles, requireNotNull(selected), { selectedId = it.id }) { it.profileName }
+                    ProfilePhotoEditor(imageUri, EquipmentIllustrationType.SCOPE) { imageUri = it }
+                    DopeSecondaryButton(
+                        "Save scope photo",
+                        {
+                            val profile = requireNotNull(selected)
+                            scope.launch {
+                                val result =
+                                    runCatching {
+                                        requireNotNull(repository).saveScopeProfile(
+                                            profile.copy(
+                                                imageUri = imageUri,
+                                                modifiedAtEpochMillis = System.currentTimeMillis(),
+                                                revision = profile.revision + 1,
+                                            ),
+                                        )
+                                    }
+                                message = result.fold({ "Scope photo saved" }, { it.message ?: "Photo save failed" })
+                            }
+                        },
+                        Modifier.fillMaxWidth(),
+                    )
                     LabelValue("Turret", "${selected.turretUnit} · ${selected.reticleName}")
                     LabelValue("Focal plane", selected.focalPlane)
                     LabelValue(
@@ -720,6 +851,7 @@ fun ScopeDetailScreen(repository: ProfileRepository? = null) {
                                 profile.copy(
                                     elevationDialDirection = elevationDirection.name,
                                     windageDialDirection = windageDirection.name,
+                                    imageUri = imageUri,
                                     verificationStatus = VerificationStatus.USER_VERIFIED.name,
                                     verificationDateEpochMillis = now,
                                     modifiedAtEpochMillis = now,
@@ -754,12 +886,15 @@ fun CameraCalibrationScreen() {
                 SectionHeading("Selected lens")
                 LabelValue("Camera", "Not inspected")
                 LabelValue("Physical lens", "Not selected")
-                LabelValue("Calibration", "Required")
+                LabelValue("Calibration", "Milestone 6 · not available yet")
             }
         }
-        StatusChip("No digital-zoom assumption", DopeStatus.READY)
-        DopePrimaryButton("Inspect camera capabilities", {}, Modifier.fillMaxWidth(), Icons.Outlined.CameraAlt)
-        DopeSecondaryButton("Begin calibration", {}, Modifier.fillMaxWidth(), Icons.Outlined.Straighten)
+        StatusChip("Deferred — controls are intentionally disabled", DopeStatus.INFO)
+        Text(
+            "This review build does not pretend to inspect the lens or calibrate a target. Milestone 6 will " +
+                "add capability inspection, fixed-camera calibration and physical acceptance tests.",
+            style = MaterialTheme.typography.bodyMedium,
+        )
     }
 }
 

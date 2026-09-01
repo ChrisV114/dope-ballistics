@@ -140,40 +140,50 @@ object StarterProfiles {
     ) {
         ScopeTemplates.insertBuiltIns(database)
         val includeSetupDefaults = database.hasColumn("rifles", "defaultZeroDistanceMetres")
+        val includeProfileMedia = database.hasColumn("rifles", "imageUri")
         rifles(nowEpochMillis).forEach {
-            database.insert("rifles", SQLiteDatabase.CONFLICT_IGNORE, it.toValues(includeSetupDefaults))
+            database.insert(
+                "rifles",
+                SQLiteDatabase.CONFLICT_IGNORE,
+                it.toValues(includeSetupDefaults, includeProfileMedia),
+            )
         }
+        val includeLoadDetails = database.hasColumn("ammunition", "cartridgeOverallLengthMetres")
         ammunition(nowEpochMillis).forEach {
-            database.insert("ammunition", SQLiteDatabase.CONFLICT_IGNORE, it.toValues())
+            database.insert("ammunition", SQLiteDatabase.CONFLICT_IGNORE, it.toValues(includeLoadDetails))
         }
+        val includeScopeMedia = database.hasColumn("scope_profiles", "imageUri")
         scopes(nowEpochMillis).forEach {
-            database.insert("scope_profiles", SQLiteDatabase.CONFLICT_IGNORE, it.toValues())
+            database.insert("scope_profiles", SQLiteDatabase.CONFLICT_IGNORE, it.toValues(includeScopeMedia))
         }
     }
 
-    private fun RifleEntity.toValues(includeSetupDefaults: Boolean) =
-        ContentValues().apply {
-            put("id", id)
-            put("profileName", profileName)
-            put("manufacturer", manufacturer)
-            put("model", model)
-            put("calibreLabel", calibreLabel)
-            put("barrelLengthMetres", barrelLengthMetres)
-            put("twistRateMetres", twistRateMetres)
-            put("twistDirection", twistDirection)
-            if (includeSetupDefaults) {
-                put("defaultZeroDistanceMetres", defaultZeroDistanceMetres)
-                put("sightHeightAboveBoreMetres", sightHeightAboveBoreMetres)
-            }
-            put("internalReference", internalReference)
-            put("serialNumber", serialNumber)
-            put("createdAtEpochMillis", createdAtEpochMillis)
-            put("modifiedAtEpochMillis", modifiedAtEpochMillis)
-            put("revision", revision)
-            put("archived", archived)
-            put("favourite", favourite)
-            put("notes", notes)
+    private fun RifleEntity.toValues(
+        includeSetupDefaults: Boolean,
+        includeProfileMedia: Boolean,
+    ) = ContentValues().apply {
+        put("id", id)
+        put("profileName", profileName)
+        put("manufacturer", manufacturer)
+        put("model", model)
+        put("calibreLabel", calibreLabel)
+        put("barrelLengthMetres", barrelLengthMetres)
+        put("twistRateMetres", twistRateMetres)
+        put("twistDirection", twistDirection)
+        if (includeSetupDefaults) {
+            put("defaultZeroDistanceMetres", defaultZeroDistanceMetres)
+            put("sightHeightAboveBoreMetres", sightHeightAboveBoreMetres)
         }
+        if (includeProfileMedia) put("imageUri", imageUri)
+        put("internalReference", internalReference)
+        put("serialNumber", serialNumber)
+        put("createdAtEpochMillis", createdAtEpochMillis)
+        put("modifiedAtEpochMillis", modifiedAtEpochMillis)
+        put("revision", revision)
+        put("archived", archived)
+        put("favourite", favourite)
+        put("notes", notes)
+    }
 
     private fun SupportSQLiteDatabase.hasColumn(
         table: String,
@@ -184,7 +194,7 @@ object StarterProfiles {
             generateSequence { if (cursor.moveToNext()) cursor.getString(nameIndex) else null }.any { it == column }
         }
 
-    private fun AmmunitionEntity.toValues() =
+    private fun AmmunitionEntity.toValues(includeLoadDetails: Boolean) =
         ContentValues().apply {
             put("id", id)
             put("rifleId", rifleId)
@@ -206,6 +216,10 @@ object StarterProfiles {
             put("chronographDateEpochMillis", chronographDateEpochMillis)
             put("chronographType", chronographType)
             put("selectedChronographStringId", selectedChronographStringId)
+            if (includeLoadDetails) {
+                put("cartridgeOverallLengthMetres", cartridgeOverallLengthMetres)
+                put("imageUri", imageUri)
+            }
             put("createdAtEpochMillis", createdAtEpochMillis)
             put("modifiedAtEpochMillis", modifiedAtEpochMillis)
             put("revision", revision)
@@ -214,7 +228,7 @@ object StarterProfiles {
             put("notes", notes)
         }
 
-    private fun ScopeProfileEntity.toValues() =
+    private fun ScopeProfileEntity.toValues(includeProfileMedia: Boolean) =
         ContentValues().apply {
             put("id", id)
             put("familyId", familyId)
@@ -246,6 +260,7 @@ object StarterProfiles {
             put("zeroDistanceMetres", zeroDistanceMetres)
             put("zeroElevationOffsetRadians", zeroElevationOffsetRadians)
             put("zeroWindageOffsetRadians", zeroWindageOffsetRadians)
+            if (includeProfileMedia) put("imageUri", imageUri)
             put("manufacturerSpecificationSourceNote", manufacturerSpecificationSourceNote)
             put("verificationStatus", verificationStatus)
             put("verificationDateEpochMillis", verificationDateEpochMillis)

@@ -6,6 +6,12 @@ import org.junit.Test
 
 class CalculationControlsTest {
     @Test
+    fun windCorrectionNamesClickDirection() {
+        assertEquals("0.6 MIL · 6 clicks LEFT · 4.5 m/s", windCorrectionLabel(-0.6, -6, "MIL", "4.5"))
+        assertEquals("0.75 MOA · 3 clicks RIGHT · 2 m/s", windCorrectionLabel(0.75, 3, "MOA", "2"))
+    }
+
+    @Test
     fun quickWindSpeedKeepsBracketOrdered() {
         val state =
             WindFormState().apply {

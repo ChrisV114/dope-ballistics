@@ -9,3 +9,8 @@ class SetupDraftState {
     var ammunitionId by mutableStateOf<String?>(null)
     var scopeId by mutableStateOf<String?>(null)
 }
+
+class SessionDraftState {
+    var distanceMetres by mutableStateOf("")
+    var actualDialValue by mutableStateOf("")
+}

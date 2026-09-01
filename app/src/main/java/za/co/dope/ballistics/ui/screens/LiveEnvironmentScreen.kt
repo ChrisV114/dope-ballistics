@@ -70,6 +70,7 @@ internal fun LiveEnvironmentScreen(
     var pressureHpa by remember { mutableStateOf("1013.25") }
     var humidityPercent by remember { mutableStateOf("50") }
     var altitudeMetres by remember { mutableStateOf("0") }
+    var altitudeSource by remember { mutableStateOf(DataSource.MANUAL) }
     var pressureSource by remember { mutableStateOf(DataSource.MANUAL) }
     var pressureSummary by remember { mutableStateOf<PressureSampleSummary?>(null) }
     var location by remember { mutableStateOf<LocationReading?>(null) }
@@ -85,8 +86,16 @@ internal fun LiveEnvironmentScreen(
             requireNotNull(locationGateway).currentLocation().fold(
                 onSuccess = {
                     location = it
-                    it.altitudeMetres?.let { value -> altitudeMetres = value.format(1) }
-                    status = if (it.approximate) "Approximate location captured" else "Precise location captured"
+                    it.altitudeMetres?.let { value ->
+                        altitudeMetres = formatEnvironmentValue(value, 1)
+                        altitudeSource = DataSource.GPS
+                    }
+                    status =
+                        when {
+                            it.cachedFallback -> "Recent cached location loaded; retry outdoors for a fresh fix"
+                            it.approximate -> "Approximate location captured"
+                            else -> "Precise location captured"
+                        }
                 },
                 onFailure = { status = it.message ?: "Location unavailable" },
             )
@@ -112,7 +121,15 @@ internal fun LiveEnvironmentScreen(
                     pressureSource = DataSource.MANUAL
                 }, config = DopeFieldConfig(suffix = "hPa"))
                 DopeField("Relative humidity", humidityPercent, { humidityPercent = it }, config = DopeFieldConfig(suffix = "%"))
-                DopeField("Altitude", altitudeMetres, { altitudeMetres = it }, config = DopeFieldConfig(suffix = "m"))
+                DopeField(
+                    "Altitude",
+                    altitudeMetres,
+                    {
+                        altitudeMetres = it
+                        altitudeSource = DataSource.MANUAL
+                    },
+                    config = DopeFieldConfig(suffix = "m"),
+                )
                 Text(
                     "Station/surface pressure only. Do not enter mean-sea-level or altimeter pressure.",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -139,7 +156,7 @@ internal fun LiveEnvironmentScreen(
                     requireNotNull(sensors).samplePressure().fold(
                         onSuccess = {
                             pressureSummary = it
-                            pressureHpa = (it.stationPressurePascals / 100.0).format(2)
+                            pressureHpa = formatEnvironmentValue(it.stationPressurePascals / 100.0, 2)
                             pressureSource = DataSource.DEVICE_SENSOR
                             status =
                                 if (it.stable) "Stable barometer sample accepted" else "Barometer sample is unstable; retry or use manual"
@@ -194,11 +211,15 @@ internal fun LiveEnvironmentScreen(
                         busy = true
                         weather.currentWeather(coordinates.latitudeDegrees, coordinates.longitudeDegrees).fold(
                             onSuccess = {
-                                temperatureCelsius = (it.temperatureKelvin.value - 273.15).format(1)
-                                pressureHpa = (it.stationPressurePascals.value / 100.0).format(2)
-                                humidityPercent = (it.relativeHumidityFraction.value * 100.0).format(0)
+                                temperatureCelsius = formatEnvironmentValue(it.temperatureKelvin.value - 273.15, 1)
+                                pressureHpa = formatEnvironmentValue(it.stationPressurePascals.value / 100.0, 2)
+                                humidityPercent = formatEnvironmentValue(it.relativeHumidityFraction.value * 100.0, 0)
                                 pressureSource = DataSource.WEATHER_SERVICE
                                 providerAttribution = it.attribution
+                                if (coordinates.altitudeMetres == null && it.modelElevationMetres != null) {
+                                    altitudeMetres = formatEnvironmentValue(it.modelElevationMetres, 1)
+                                    altitudeSource = DataSource.WEATHER_SERVICE
+                                }
                                 repository?.saveWeatherCache(
                                     WeatherCacheEntity(
                                         coordinateKey = coordinates.cacheKey(),
@@ -223,11 +244,15 @@ internal fun LiveEnvironmentScreen(
                                 if (cached == null) {
                                     status = error.message ?: "Weather unavailable"
                                 } else {
-                                    temperatureCelsius = (cached.temperatureKelvin - 273.15).format(1)
-                                    pressureHpa = (cached.surfacePressurePascals / 100.0).format(2)
-                                    humidityPercent = (cached.relativeHumidityFraction * 100.0).format(0)
+                                    temperatureCelsius = formatEnvironmentValue(cached.temperatureKelvin - 273.15, 1)
+                                    pressureHpa = formatEnvironmentValue(cached.surfacePressurePascals / 100.0, 2)
+                                    humidityPercent = formatEnvironmentValue(cached.relativeHumidityFraction * 100.0, 0)
                                     pressureSource = DataSource.WEATHER_SERVICE
                                     providerAttribution = cached.attribution
+                                    if (coordinates.altitudeMetres == null && cached.modelElevationMetres != null) {
+                                        altitudeMetres = formatEnvironmentValue(cached.modelElevationMetres, 1)
+                                        altitudeSource = DataSource.WEATHER_SERVICE
+                                    }
                                     val ageMinutes = (System.currentTimeMillis() - cached.fetchedAtEpochMillis) / 60_000L
                                     status = "Offline cached weather · $ageMinutes min old · check staleness"
                                 }
@@ -244,6 +269,7 @@ internal fun LiveEnvironmentScreen(
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 LabelValue("Status", status)
                 LabelValue("Pressure source", pressureSource.name.replace('_', ' '))
+                LabelValue("Altitude source", altitudeSource.name.replace('_', ' '))
                 pressureSummary?.let {
                     LabelValue(
                         "Pressure quality",
@@ -254,18 +280,20 @@ internal fun LiveEnvironmentScreen(
                     LabelValue(
                         "Location",
                         if (it.approximate) {
-                            "Approximate · ±${it.horizontalAccuracyMetres.format(
+                            "Approximate · ±${formatEnvironmentValue(
+                                it.horizontalAccuracyMetres,
                                 0,
                             )} m"
                         } else {
-                            "Precise · ±${it.horizontalAccuracyMetres.format(0)} m"
+                            "Precise · ±${formatEnvironmentValue(it.horizontalAccuracyMetres, 0)} m"
                         },
                     )
                 }
                 orientation?.let {
                     LabelValue(
                         "Heading",
-                        "${it.magneticHeadingDegrees.format(1)}° magnetic · ${if (it.stable) "stable" else "unstable"}",
+                        "${formatEnvironmentValue(it.magneticHeadingDegrees, 1)}° magnetic · " +
+                            if (it.stable) "stable" else "unstable",
                     )
                 }
                 providerAttribution?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant) }
@@ -325,14 +353,7 @@ internal fun LiveEnvironmentScreen(
                                     humidityQuality = ReadingQuality.FAIR.name,
                                     humidityCapturedAtEpochMillis = now,
                                     altitudeMetres = altitude,
-                                    altitudeSource =
-                                        if (location?.altitudeMetres !=
-                                            null
-                                        ) {
-                                            DataSource.GPS.name
-                                        } else {
-                                            DataSource.MANUAL.name
-                                        },
+                                    altitudeSource = altitudeSource.name,
                                     altitudeQuality = ReadingQuality.FAIR.name,
                                     altitudeCapturedAtEpochMillis = now,
                                     latitudeDegrees =
@@ -375,6 +396,10 @@ internal fun LiveEnvironmentScreen(
     }
 }
 
-private fun Double.format(decimals: Int): String = String.format(Locale.US, ".${decimals}f", this)
+internal fun formatEnvironmentValue(
+    value: Double,
+    decimals: Int,
+): String = String.format(Locale.US, "%.${decimals}f", value)
 
-private fun LocationReading.cacheKey(): String = "${latitudeDegrees.format(3)},${longitudeDegrees.format(3)}"
+private fun LocationReading.cacheKey(): String =
+    "${formatEnvironmentValue(latitudeDegrees, 3)},${formatEnvironmentValue(longitudeDegrees, 3)}"

@@ -96,6 +96,17 @@ class ProfileRepository(
 
     fun observeActiveProfileSelection(): Flow<ActiveProfileSelectionEntity?> = dao.observeActiveProfileSelection()
 
+    suspend fun zeroSetupLabel(zeroProfileId: String): String? {
+        val zero = dao.zeroProfile(zeroProfileId)
+        val rifle = zero?.let { dao.rifle(it.rifleId) }
+        val ammunition = zero?.let { dao.ammunition(it.ammunitionId) }
+        return if (rifle != null && ammunition != null) {
+            "${rifle.profileName} · ${ammunition.profileName}"
+        } else {
+            null
+        }
+    }
+
     suspend fun saveRifle(value: RifleEntity) {
         require(value.profileName.isNotBlank()) { "Profile name is required" }
         require(value.calibreLabel.isNotBlank()) { "Calibre/cartridge label is required" }

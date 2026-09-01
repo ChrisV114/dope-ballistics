@@ -19,6 +19,7 @@ data class LocationReading(
     val verticalAccuracyMetres: Double?,
     val approximate: Boolean,
     val capturedAtEpochMillis: Long,
+    val cachedFallback: Boolean = false,
 )
 
 data class OrientationReading(

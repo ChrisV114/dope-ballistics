@@ -28,11 +28,12 @@ detekt {
 spotless {
     kotlin {
         target("**/*.kt")
-        targetExclude("**/build/**")
+        targetExclude("**/build/**", ".tools/**", ".gradle/**", ".kotlin/**")
         ktlint(libs.versions.ktlint.get())
     }
     kotlinGradle {
         target("**/*.gradle.kts")
+        targetExclude("**/build/**", ".tools/**", ".gradle/**", ".kotlin/**")
         ktlint(libs.versions.ktlint.get())
     }
 }

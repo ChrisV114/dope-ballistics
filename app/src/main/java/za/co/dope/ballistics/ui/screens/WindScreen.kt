@@ -240,11 +240,12 @@ private fun WindResultTiles(result: ResolvedWind) {
 
 @Composable
 @Suppress("LongMethod")
-private fun WindWheel(
+internal fun WindWheel(
     windFromDegrees: Double,
     directionOfFireDegrees: Double,
     locked: Boolean,
     onWindFromChanged: (Double) -> Unit,
+    height: androidx.compose.ui.unit.Dp = 330.dp,
 ) {
     val updateFromPosition: (Offset, Offset) -> Unit = { position, centre ->
         val bearing = WindConvention.normalizeDegrees(atan2(position.x - centre.x, centre.y - position.y) * 180.0 / PI)
@@ -254,7 +255,7 @@ private fun WindWheel(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .height(330.dp)
+                .height(height)
                 .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
                 .padding(18.dp)
                 .pointerInput(locked) {
