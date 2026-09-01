@@ -29,7 +29,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import za.co.dope.ballistics.data.ProfileRepository
+import za.co.dope.ballistics.data.SessionRepository
 import za.co.dope.ballistics.data.db.ActiveProfileSelectionEntity
+import za.co.dope.ballistics.data.db.VerifiedDopeRecordEntity
 import za.co.dope.ballistics.domain.BallisticsInputMapper
 import za.co.dope.ballistics.engine.AngularUnit
 import za.co.dope.ballistics.engine.StandardBallisticsEngine
@@ -41,15 +43,18 @@ import za.co.dope.ballistics.ui.components.DopeSecondaryButton
 import za.co.dope.ballistics.ui.components.DopeStatus
 import za.co.dope.ballistics.ui.components.LabelValue
 import za.co.dope.ballistics.ui.components.StatusChip
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import kotlin.math.PI
 import kotlin.math.max
 import kotlin.math.min
 
 @Composable
-@Suppress("LongMethod", "CyclomaticComplexMethod")
+@Suppress("LongMethod", "CyclomaticComplexMethod", "LongParameterList")
 fun ResultsScreen(
     repository: ProfileRepository?,
+    sessionRepository: SessionRepository?,
     windState: WindFormState,
     sessionDraft: SessionDraftState,
     onOpen: (String) -> Unit,
@@ -65,6 +70,10 @@ fun ResultsScreen(
         }
     val zeroProfiles by
         repository?.observeZeroProfiles()?.collectAsState(emptyList()) ?: remember {
+            mutableStateOf(emptyList())
+        }
+    val verifiedDopeRecords by
+        sessionRepository?.observeVerifiedDope()?.collectAsState(emptyList()) ?: remember {
             mutableStateOf(emptyList())
         }
     var setupLabels by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
@@ -192,6 +201,13 @@ fun ResultsScreen(
         val display = calculationDisplay(result, displayUnit) ?: previewDisplay(displayUnit).takeIf { previewMode }
         if (display != null) {
             CalculationResultGrid(display, reticleHoldValid || previewMode, windState)
+            val previousDope =
+                previousDopeForDistance(
+                    records = verifiedDopeRecords,
+                    activeZeroProfileId = active?.zeroProfileId,
+                    distanceMetres = parsePositiveDistance(distance),
+                ) ?: previewPreviousDope().takeIf { previewMode }
+            PreviousDopeCard(previousDope, distance)
             DopeCard {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     SectionHeading("Record actual setting")
@@ -256,6 +272,82 @@ fun ResultsScreen(
         }
     }
 }
+
+@Composable
+private fun PreviousDopeCard(
+    record: VerifiedDopeRecordEntity?,
+    distance: String,
+) {
+    DopeCard {
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            SectionHeading("Previous DOPE")
+            if (record == null) {
+                Text(
+                    "No verified manual record for $distance m with this setup.",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            } else {
+                LabelValue(
+                    "Last used at ${number(record.distanceMetres)} m",
+                    "${number(record.actualDialValue)} ${record.actualDialUnit}",
+                )
+                Text(
+                    "Recorded ${previousDopeDate(record.createdAtEpochMillis)} · historical record only",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+}
+
+internal fun previousDopeForDistance(
+    records: List<VerifiedDopeRecordEntity>,
+    activeZeroProfileId: String?,
+    distanceMetres: Double?,
+): VerifiedDopeRecordEntity? {
+    if (activeZeroProfileId == null || distanceMetres == null) return null
+    return records.firstOrNull { record ->
+        record.zeroProfileId == activeZeroProfileId &&
+            kotlin.math.abs(record.distanceMetres - distanceMetres) < 0.01 &&
+            record.status == "VERIFIED"
+    }
+}
+
+private fun previousDopeDate(epochMillis: Long): String {
+    val formatter = SimpleDateFormat("d MMM yyyy", Locale.getDefault())
+    return formatter.format(Date(epochMillis))
+}
+
+private fun previewPreviousDope(): VerifiedDopeRecordEntity =
+    VerifiedDopeRecordEntity(
+        id = "preview-verified-dope",
+        createdAtEpochMillis = 1_725_235_200_000,
+        rifleId = "preview-rifle",
+        rifleRevision = 1,
+        ammunitionId = "preview-ammunition",
+        ammunitionRevision = 1,
+        scopeProfileId = "preview-scope",
+        scopeProfileRevision = 1,
+        zeroProfileId = "preview-zero",
+        zeroProfileRevision = 1,
+        profileSnapshotJson = "{}",
+        distanceMetres = 800.0,
+        distanceSource = "MANUAL",
+        distanceUncertaintyMetres = 0.0,
+        calculatedUnit = "MIL",
+        calculatedRawValue = 8.0,
+        calculatedDialValue = 8.0,
+        calculatedClicks = 80,
+        actualDialUnit = "MIL",
+        actualDialValue = 8.0,
+        numberOfShots = 3,
+        conditionsJson = "{}",
+        confidence = "MEDIUM",
+        status = "VERIFIED",
+        engineVersion = "preview",
+        evidenceSha256 = "preview",
+    )
 
 private data class CalculationDisplay(
     val unit: AngularUnit,

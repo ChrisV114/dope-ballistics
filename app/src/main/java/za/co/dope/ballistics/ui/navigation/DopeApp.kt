@@ -202,7 +202,9 @@ private fun DopeNavHost(
         composable("zero_setup") { ZeroSetupScreen(profileRepository, setupDraftState) }
         composable("environment") { EnvironmentScreen(openRoute, profileRepository) }
         composable("wind") { WindScreen(windState) }
-        composable("results") { ResultsScreen(profileRepository, windState, sessionDraftState, openRoute) }
+        composable("results") {
+            ResultsScreen(profileRepository, sessionRepository, windState, sessionDraftState, openRoute)
+        }
         composable("range_card") { RangeCardScreen(profileRepository, windState, openRoute) }
         composable("session") {
             SessionScreen(profileRepository, sessionRepository, windState, sessionDraftState, openRoute)
@@ -256,7 +258,7 @@ fun DopeGoldenScreen(
                     "environment" -> EnvironmentScreen(onOpen = {}, previewMode = true)
                     "range_card" -> RangeCardScreen(null, windState, {}, previewMode = true)
                     "wind" -> WindScreen(windState)
-                    "results" -> ResultsScreen(null, windState, sessionDraftState, {}, previewMode = true)
+                    "results" -> ResultsScreen(null, null, windState, sessionDraftState, {}, previewMode = true)
                     "session" -> SessionScreen(null, null, windState, sessionDraftState, {})
                     "comparison" -> ComparisonScreen(null, windState)
                     "target_range" -> TargetRangeScreen(onOpen = {})

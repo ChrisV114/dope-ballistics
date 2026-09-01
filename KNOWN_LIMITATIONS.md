@@ -23,6 +23,7 @@
 - The two owner-requested starter loads use the same G7 `0.290` Lapua and G1 `0.290` Hornady coefficients as the reviewed regression fixtures. They are labelled test data and require exact bullet-SKU, published-BC and chronograph confirmation before field use.
 - Starter scopes remain `REQUIRES_USER_VERIFICATION`. No zero/reference profile is pre-created because the reference atmosphere must be confirmed or explicitly estimated by the owner.
 - Version `0.5.5-m5-review` adds profile photos and optional load OAL through `8 -> 9`; it does not overwrite other user-created values or fabricate a zero/reference atmosphere.
+- Version `0.5.6-m5-review` shows only the newest exact-distance `VERIFIED` manual DOPE record for the active setup. It does not perform environmental similarity matching, recommend a record, or mutate the calculator.
 - Profile photos must be chosen from an owner-controlled local file. Public manufacturer images are not bundled or downloaded without confirmed redistribution rights; the neutral local illustration remains the fallback.
 - Rifle and load records can now be edited. A dedicated reference-only pistol record type is not yet implemented; pistol drill/session work remains a later governed milestone.
 - Target-size choices do not perform camera ranging. IDPA/A-series values and nominal gong sizes require confirmation against the physical target.

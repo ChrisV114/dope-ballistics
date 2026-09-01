@@ -3,6 +3,7 @@ package za.co.dope.ballistics.ui.screens
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
+import za.co.dope.ballistics.data.db.VerifiedDopeRecordEntity
 
 class CalculationControlsTest {
     @Test
@@ -61,4 +62,64 @@ class CalculationControlsTest {
         assertEquals("7.5", state.maximumSpeedMps)
         state.observation()
     }
+
+    @Test
+    fun previousDopeUsesNewestVerifiedRecordAtExactDistanceForActiveSetup() {
+        val records =
+            listOf(
+                verifiedDope("newest", "active-zero", 500.0, "VERIFIED", 3.7),
+                verifiedDope("older", "active-zero", 500.0, "VERIFIED", 3.6),
+                verifiedDope("other-distance", "active-zero", 501.0, "VERIFIED", 4.0),
+                verifiedDope("other-setup", "other-zero", 500.0, "VERIFIED", 2.8),
+            )
+
+        val result = previousDopeForDistance(records, "active-zero", 500.0)
+
+        assertEquals("newest", result?.id)
+        assertEquals(3.7, result?.actualDialValue ?: 0.0, 0.0)
+    }
+
+    @Test
+    fun previousDopeDoesNotPresentUnverifiedOrMissingSetupRecords() {
+        val records = listOf(verifiedDope("calculated", "active-zero", 500.0, "CALCULATED", 3.7))
+
+        assertNull(previousDopeForDistance(records, "active-zero", 500.0))
+        assertNull(previousDopeForDistance(records, null, 500.0))
+        assertNull(previousDopeForDistance(records, "active-zero", null))
+    }
+
+    private fun verifiedDope(
+        id: String,
+        zeroProfileId: String,
+        distanceMetres: Double,
+        status: String,
+        actualDialValue: Double,
+    ) = VerifiedDopeRecordEntity(
+        id = id,
+        createdAtEpochMillis = 1,
+        rifleId = "rifle",
+        rifleRevision = 1,
+        ammunitionId = "ammunition",
+        ammunitionRevision = 1,
+        scopeProfileId = "scope",
+        scopeProfileRevision = 1,
+        zeroProfileId = zeroProfileId,
+        zeroProfileRevision = 1,
+        profileSnapshotJson = "{}",
+        distanceMetres = distanceMetres,
+        distanceSource = "MANUAL",
+        distanceUncertaintyMetres = 0.0,
+        calculatedUnit = "MIL",
+        calculatedRawValue = 3.6,
+        calculatedDialValue = 3.6,
+        calculatedClicks = 36,
+        actualDialUnit = "MIL",
+        actualDialValue = actualDialValue,
+        numberOfShots = 3,
+        conditionsJson = "{}",
+        confidence = "MEDIUM",
+        status = status,
+        engineVersion = "test",
+        evidenceSha256 = "test",
+    )
 }

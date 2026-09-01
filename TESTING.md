@@ -139,3 +139,15 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - Local emulator and physical Galaxy S25 execution are not claimed. The protected GitHub API 35 emulator job remains the external execution gate.
 - The build retains the known experimental screenshot-testing, Gradle 10 deprecation and unstripped debug native-library warnings.
 - GitHub Actions run `33538503906` passed `build-and-test` in 3m54s and API 35 `instrumentation` in 17m14s on commit `5fae2c6`. The signed review APK artifact was downloaded and independently checked for package, version and certificate identity.
+
+## Milestone 5 previous-DOPE review results — 2026-09-01
+
+- The calculation layout and existing result hierarchy remain unchanged. A read-only Previous DOPE card now appears immediately after Wind correction.
+- Matching is deliberately strict: the newest `VERIFIED` manual record must use the active zero/setup identifier and match the entered distance to within 0.01 m. Other setups, distances and non-verified records are excluded.
+- The full local gate passed: Spotless, Android lint, Detekt, all JVM tests, screenshot validation, signed debug APK assembly and debug instrumentation-test APK assembly.
+- JVM tests: 45 run, 0 failures, 0 errors and 0 skipped; 17 are pure `:ballistics` tests and 28 are app tests. Two focused tests cover newest-record selection and rejection of wrong-distance, wrong-setup and unverified records.
+- Eleven existing screenshot goldens passed unchanged; the added card is below the retained result hierarchy and does not change the locked calculation reference viewport.
+- `apkanalyzer` confirmed application ID `za.co.bdstudio.dope`, version code `11` and version name `0.5.6-m5-review`.
+- `apksigner` confirmed the approved private review certificate SHA-256 `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`.
+- Local emulator and physical Galaxy S25 execution are not claimed. The protected GitHub API 35 emulator job remains the external execution gate.
+- GitHub Actions evidence is pending until this review revision is committed and pushed.

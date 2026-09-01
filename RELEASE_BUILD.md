@@ -67,3 +67,13 @@ Milestone-5 calculator-usability review artifact:
 - Version name: `0.5.4-m5-review`
 - SHA-256: `2ABCEF9D23097B6AB90AB1662C117E60ECD5871E55C1B3C12353FA4422912F84`
 - Signing: automatically generated debug signing only; not a release artifact.
+
+Milestone-5 previous-DOPE review artifact:
+
+- Path: `app/build/outputs/apk/debug/app-debug.apk`
+- Application ID: `za.co.bdstudio.dope`
+- Version code: `11`
+- Version name: `0.5.6-m5-review`
+- SHA-256: `31EDB58266BD720EB784EC35F4BA894869652165140CAEF49B3FF397188F6501`
+- Signing certificate SHA-256: `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`
+- Signing: approved private review key; intended to update an installed review build signed by the same certificate.
