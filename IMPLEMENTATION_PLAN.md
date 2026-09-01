@@ -33,7 +33,7 @@ Milestone 5 — wind, range cards and sessions.
 - [x] Repair foreground location/altitude provenance, deterministic bottom navigation and actual-setting session handoff.
 - [x] Expose the future session modes without presenting Match, timer/drills or camera calibration as implemented.
 - [x] Run the complete local quality/build gate for `0.5.5-m5-review`.
-- [ ] Run the protected GitHub quality and emulator jobs for `0.5.5-m5-review`.
+- [x] Run the protected GitHub quality and emulator jobs for `0.5.5-m5-review`.
 - [ ] Stop for owner review of the `0.5.5-m5-review` APK.
 
 Milestone 6 camera ranging and calibration remains blocked until Milestone 5 review. Guided profile truing is a later optional workflow under the master prompt and `DOPE_LOG.md`; engagement-level match plans, Watch7 shot progression, fixed-camera sequencing and pistol-drill cues remain separately governed future work.

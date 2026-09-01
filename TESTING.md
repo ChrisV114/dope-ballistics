@@ -138,3 +138,4 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - `apksigner` confirmed the APK uses the approved private review certificate SHA-256 `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`.
 - Local emulator and physical Galaxy S25 execution are not claimed. The protected GitHub API 35 emulator job remains the external execution gate.
 - The build retains the known experimental screenshot-testing, Gradle 10 deprecation and unstripped debug native-library warnings.
+- GitHub Actions run `33538503906` passed `build-and-test` in 3m54s and API 35 `instrumentation` in 17m14s on commit `5fae2c6`. The signed review APK artifact was downloaded and independently checked for package, version and certificate identity.
