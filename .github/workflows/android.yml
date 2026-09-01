@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      DOPE_REVIEW_KEYSTORE: ${{ runner.temp }}/dope-review.jks
+      DOPE_REVIEW_KEYSTORE: dope-review.jks
       DOPE_REVIEW_KEYSTORE_B64: ${{ secrets.DOPE_REVIEW_KEYSTORE_B64 }}
       DOPE_REVIEW_STORE_PASSWORD: ${{ secrets.DOPE_REVIEW_STORE_PASSWORD }}
       DOPE_REVIEW_KEY_ALIAS: ${{ secrets.DOPE_REVIEW_KEY_ALIAS }}
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      DOPE_REVIEW_KEYSTORE: ${{ runner.temp }}/dope-review.jks
+      DOPE_REVIEW_KEYSTORE: dope-review.jks
       DOPE_REVIEW_KEYSTORE_B64: ${{ secrets.DOPE_REVIEW_KEYSTORE_B64 }}
       DOPE_REVIEW_STORE_PASSWORD: ${{ secrets.DOPE_REVIEW_STORE_PASSWORD }}
       DOPE_REVIEW_KEY_ALIAS: ${{ secrets.DOPE_REVIEW_KEY_ALIAS }}
