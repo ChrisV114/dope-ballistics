@@ -12,6 +12,12 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      DOPE_REVIEW_KEYSTORE: dope-review.jks
+      DOPE_REVIEW_KEYSTORE_B64: ${{ secrets.DOPE_REVIEW_KEYSTORE_B64 }}
+      DOPE_REVIEW_STORE_PASSWORD: ${{ secrets.DOPE_REVIEW_STORE_PASSWORD }}
+      DOPE_REVIEW_KEY_ALIAS: ${{ secrets.DOPE_REVIEW_KEY_ALIAS }}
+      DOPE_REVIEW_KEY_PASSWORD: ${{ secrets.DOPE_REVIEW_KEY_PASSWORD }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v6
@@ -21,6 +27,9 @@ jobs:
           cache: gradle
       - uses: gradle/actions/setup-gradle@v6
       - run: chmod +x gradlew
+      - name: Restore stable review signing key
+        if: env.DOPE_REVIEW_KEYSTORE_B64 != ''
+        run: printf '%s' "$DOPE_REVIEW_KEYSTORE_B64" | base64 --decode > "$DOPE_REVIEW_KEYSTORE"
       - run: ./gradlew spotlessCheck
       - run: ./gradlew lint
       - run: ./gradlew detekt
@@ -38,6 +47,12 @@ jobs:
   instrumentation:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    env:
+      DOPE_REVIEW_KEYSTORE: dope-review.jks
+      DOPE_REVIEW_KEYSTORE_B64: ${{ secrets.DOPE_REVIEW_KEYSTORE_B64 }}
+      DOPE_REVIEW_STORE_PASSWORD: ${{ secrets.DOPE_REVIEW_STORE_PASSWORD }}
+      DOPE_REVIEW_KEY_ALIAS: ${{ secrets.DOPE_REVIEW_KEY_ALIAS }}
+      DOPE_REVIEW_KEY_PASSWORD: ${{ secrets.DOPE_REVIEW_KEY_PASSWORD }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v6
@@ -47,6 +62,9 @@ jobs:
           cache: gradle
       - uses: gradle/actions/setup-gradle@v6
       - run: chmod +x gradlew
+      - name: Restore stable review signing key
+        if: env.DOPE_REVIEW_KEYSTORE_B64 != ''
+        run: printf '%s' "$DOPE_REVIEW_KEYSTORE_B64" | base64 --decode > "$DOPE_REVIEW_KEYSTORE"
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
