@@ -4,6 +4,7 @@
 
 ### Milestone 5
 
+- Added a Room `6 -> 7` repair migration for devices that opened an early review build but did not receive the owner test-profile rows.
 - Added the owner-requested Howa 6.5 Creedmoor/Lapua 139 gr and M&P15 Sport III/Hornady 53 gr editable test profiles, plus DNT TheOne MIL and Arken EP-8 MOA/KLBOX scope copies that remain explicitly unverified.
 - Added Room version 6 idempotent starter-profile insertion so an installed `0.5.1` database receives the profiles without duplicating or replacing user-created records.
 - Added visible saved-rifle and saved-ammunition cards above their entry forms.

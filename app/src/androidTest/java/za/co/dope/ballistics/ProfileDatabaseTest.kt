@@ -64,7 +64,7 @@ class ProfileDatabaseTest {
         }
 
     @Test
-    fun migrationOneToSixCreatesValidatedSchemaTemplatesAndStarterProfiles() {
+    fun migrationOneToSevenCreatesValidatedSchemaTemplatesAndStarterProfiles() {
         createVersionOneDatabase()
         database =
             Room
@@ -75,6 +75,7 @@ class ProfileDatabaseTest {
                     DopeDatabase.MIGRATION_3_4,
                     DopeDatabase.MIGRATION_4_5,
                     DopeDatabase.MIGRATION_5_6,
+                    DopeDatabase.MIGRATION_6_7,
                 ).allowMainThreadQueries()
                 .build()
 
@@ -136,6 +137,22 @@ class ProfileDatabaseTest {
             assertEquals(2, repository.observeAmmunition().first().size)
             assertEquals(2, repository.observeScopeProfiles().first().size)
         }
+
+    @Test
+    fun migrationSixToSevenRepairsMissingStarterProfiles() {
+        createVersionSixDatabaseWithoutStarterProfiles()
+        database =
+            Room
+                .databaseBuilder(context, DopeDatabase::class.java, TEST_DATABASE)
+                .addMigrations(DopeDatabase.MIGRATION_6_7)
+                .allowMainThreadQueries()
+                .build()
+
+        val repository = ProfileRepository(requireNotNull(database))
+        assertEquals(2, runBlocking { repository.observeRifles().first() }.size)
+        assertEquals(2, runBlocking { repository.observeAmmunition().first() }.size)
+        assertEquals(2, runBlocking { repository.observeScopeProfiles().first() }.size)
+    }
 
     @Test
     fun sessionAndVerifiedDopeAreAppendOnlyAndTraceable() =
@@ -246,6 +263,37 @@ class ProfileDatabaseTest {
                             oldVersion: Int,
                             newVersion: Int,
                         ) = Unit
+                    },
+                ).build()
+        val helper = FrameworkSQLiteOpenHelperFactory().create(configuration)
+        helper.writableDatabase.close()
+        helper.close()
+    }
+
+    private fun createVersionSixDatabaseWithoutStarterProfiles() {
+        createVersionOneDatabase()
+        val configuration =
+            SupportSQLiteOpenHelper.Configuration
+                .builder(context)
+                .name(TEST_DATABASE)
+                .callback(
+                    object : SupportSQLiteOpenHelper.Callback(6) {
+                        override fun onCreate(db: SupportSQLiteDatabase) = Unit
+
+                        override fun onUpgrade(
+                            db: SupportSQLiteDatabase,
+                            oldVersion: Int,
+                            newVersion: Int,
+                        ) {
+                            DopeDatabase.MIGRATION_1_2.migrate(db)
+                            DopeDatabase.MIGRATION_2_3.migrate(db)
+                            DopeDatabase.MIGRATION_3_4.migrate(db)
+                            DopeDatabase.MIGRATION_4_5.migrate(db)
+                            DopeDatabase.MIGRATION_5_6.migrate(db)
+                            db.execSQL("DELETE FROM ammunition")
+                            db.execSQL("DELETE FROM scope_profiles")
+                            db.execSQL("DELETE FROM rifles")
+                        }
                     },
                 ).build()
         val helper = FrameworkSQLiteOpenHelperFactory().create(configuration)

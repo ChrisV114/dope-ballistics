@@ -109,3 +109,10 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - The owner test profiles are visible on the Rifle and Ammunition screens. No zero/reference atmosphere is fabricated.
 - Local instrumentation execution is not claimed because no local emulator or physical device is installed. The protected GitHub emulator remains the execution gate.
 - GitHub Actions run `33484557392` passed `build-and-test` in 3m33s and API 35 `instrumentation` in 21m47s on commit `d38739c`. The emulator executed all eleven tests with 0 skipped and 0 failed. Two earlier attempts were not counted as passes: one exposed and led to the idempotency fix; the other ran zero tests after Android package/activity services disappeared.
+
+## Milestone 5 starter-profile repair results — 2026-09-01
+
+- The complete local gate passed: Spotless, Android lint, Detekt, 39 JVM tests, ten screenshot validations, debug APK assembly and debug instrumentation-test APK assembly.
+- Twelve instrumentation tests compile. New coverage creates a schema-6 database with missing starter rows, migrates it through `6 -> 7`, and confirms that both rifles, both linked loads and both unverified scope copies are restored.
+- The migration uses stable IDs and conflict-ignore insertion, so it does not replace matching records or create a zero/reference atmosphere.
+- Local instrumentation execution is not claimed because no local emulator or physical device is installed. The protected GitHub API 35 emulator job remains the execution gate.
