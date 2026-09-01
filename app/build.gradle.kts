@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
@@ -5,6 +7,27 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.screenshot)
 }
+
+val reviewSigningProperties =
+    Properties().apply {
+        rootProject.file("keystore.properties").takeIf { it.isFile }?.inputStream()?.use(::load)
+    }
+val reviewKeystorePath =
+    providers.environmentVariable("DOPE_REVIEW_KEYSTORE").orNull
+        ?: reviewSigningProperties.getProperty("storeFile")
+val reviewStorePassword =
+    providers.environmentVariable("DOPE_REVIEW_STORE_PASSWORD").orNull
+        ?: reviewSigningProperties.getProperty("storePassword")
+val reviewKeyAlias =
+    providers.environmentVariable("DOPE_REVIEW_KEY_ALIAS").orNull
+        ?: reviewSigningProperties.getProperty("keyAlias")
+val reviewKeyPassword =
+    providers.environmentVariable("DOPE_REVIEW_KEY_PASSWORD").orNull
+        ?: reviewSigningProperties.getProperty("keyPassword")
+val reviewKeystoreFile = reviewKeystorePath?.let(rootProject::file)
+val reviewSigningReady =
+    listOf(reviewKeystorePath, reviewStorePassword, reviewKeyAlias, reviewKeyPassword).all { !it.isNullOrBlank() } &&
+        requireNotNull(reviewKeystoreFile).isFile
 
 android {
     namespace = "za.co.dope.ballistics"
@@ -28,6 +51,23 @@ android {
     }
 
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
+
+    signingConfigs {
+        if (reviewSigningReady) {
+            create("review") {
+                storeFile = requireNotNull(reviewKeystoreFile)
+                storePassword = reviewStorePassword
+                keyAlias = reviewKeyAlias
+                keyPassword = reviewKeyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            if (reviewSigningReady) signingConfig = signingConfigs.getByName("review")
+        }
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
