@@ -26,7 +26,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         SessionSnapshotEntity::class,
         VerifiedDopeRecordEntity::class,
     ],
-    version = 8,
+    version = 9,
     exportSchema = true,
 )
 abstract class DopeDatabase : RoomDatabase() {
@@ -95,6 +95,16 @@ abstract class DopeDatabase : RoomDatabase() {
                 }
             }
 
+        val MIGRATION_8_9 =
+            object : Migration(8, 9) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL("ALTER TABLE `rifles` ADD COLUMN `imageUri` TEXT")
+                    db.execSQL("ALTER TABLE `ammunition` ADD COLUMN `cartridgeOverallLengthMetres` REAL")
+                    db.execSQL("ALTER TABLE `ammunition` ADD COLUMN `imageUri` TEXT")
+                    db.execSQL("ALTER TABLE `scope_profiles` ADD COLUMN `imageUri` TEXT")
+                }
+            }
+
         @Volatile private var instance: DopeDatabase? = null
 
         fun getInstance(context: Context): DopeDatabase =
@@ -110,6 +120,7 @@ abstract class DopeDatabase : RoomDatabase() {
                             MIGRATION_5_6,
                             MIGRATION_6_7,
                             MIGRATION_7_8,
+                            MIGRATION_8_9,
                         ).addCallback(
                             object : Callback() {
                                 override fun onCreate(db: SupportSQLiteDatabase) {

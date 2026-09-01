@@ -2,14 +2,11 @@
 
 package za.co.dope.ballistics.ui.screens
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.FilterChip
@@ -24,18 +21,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import za.co.dope.ballistics.data.ProfileRepository
+import za.co.dope.ballistics.data.SessionRepository
 import za.co.dope.ballistics.data.db.ActiveProfileSelectionEntity
+import za.co.dope.ballistics.data.db.VerifiedDopeRecordEntity
 import za.co.dope.ballistics.domain.BallisticsInputMapper
 import za.co.dope.ballistics.engine.AngularUnit
 import za.co.dope.ballistics.engine.StandardBallisticsEngine
@@ -47,16 +43,20 @@ import za.co.dope.ballistics.ui.components.DopeSecondaryButton
 import za.co.dope.ballistics.ui.components.DopeStatus
 import za.co.dope.ballistics.ui.components.LabelValue
 import za.co.dope.ballistics.ui.components.StatusChip
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import kotlin.math.PI
 import kotlin.math.max
 import kotlin.math.min
 
 @Composable
-@Suppress("LongMethod", "CyclomaticComplexMethod")
+@Suppress("LongMethod", "CyclomaticComplexMethod", "LongParameterList")
 fun ResultsScreen(
     repository: ProfileRepository?,
+    sessionRepository: SessionRepository?,
     windState: WindFormState,
+    sessionDraft: SessionDraftState,
     onOpen: (String) -> Unit,
     previewMode: Boolean = false,
 ) {
@@ -68,6 +68,16 @@ fun ResultsScreen(
         repository?.observeEnvironmentalSnapshots()?.collectAsState(emptyList()) ?: remember {
             mutableStateOf(emptyList())
         }
+    val zeroProfiles by
+        repository?.observeZeroProfiles()?.collectAsState(emptyList()) ?: remember {
+            mutableStateOf(emptyList())
+        }
+    val verifiedDopeRecords by
+        sessionRepository?.observeVerifiedDope()?.collectAsState(emptyList()) ?: remember {
+            mutableStateOf(emptyList())
+        }
+    var setupLabels by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
+    val coroutineScope = rememberCoroutineScope()
     var distance by remember { mutableStateOf(if (previewMode) "800" else "100") }
     var result by remember { mutableStateOf<TrajectoryResult?>(null) }
     var profileLabel by remember { mutableStateOf<String?>(null) }
@@ -75,6 +85,15 @@ fun ResultsScreen(
     var displayUnit by remember { mutableStateOf(AngularUnit.MIL) }
     var reticleHoldValid by remember { mutableStateOf(false) }
     var referenceEstimateLabel by remember { mutableStateOf<String?>(null) }
+    var actualDial by remember { mutableStateOf(sessionDraft.actualDialValue) }
+    LaunchedEffect(zeroProfiles, repository) {
+        if (repository != null) {
+            setupLabels =
+                zeroProfiles.associate { zero ->
+                    zero.id to (repository.zeroSetupLabel(zero.id) ?: "${zero.zeroDistanceMetres.toInt()} m setup")
+                }
+        }
+    }
 
     LaunchedEffect(
         repository,
@@ -158,7 +177,22 @@ fun ResultsScreen(
             }
         }
         CalculationAdjustments(distance, { distance = it }, windState)
-        profileLabel?.let { StatusChip(it, DopeStatus.READY) }
+        if (zeroProfiles.isNotEmpty()) {
+            val selectedZero = zeroProfiles.firstOrNull { it.id == active?.zeroProfileId } ?: zeroProfiles.first()
+            ChoiceRow(
+                zeroProfiles,
+                selectedZero,
+                { selected ->
+                    coroutineScope.launch {
+                        repository?.activateZeroProfile(selected.id, System.currentTimeMillis())
+                    }
+                },
+            ) { zero -> setupLabels[zero.id] ?: "${zero.zeroDistanceMetres.toInt()} m setup" }
+        }
+        profileLabel?.let {
+            StatusChip(it, DopeStatus.READY)
+            DopeSecondaryButton("Change rifle / load / scope", { onOpen("profiles") }, Modifier.fillMaxWidth())
+        }
         referenceEstimateLabel?.let { StatusChip(it, DopeStatus.WARNING) }
         if (parsePositiveDistance(distance) == null) {
             StatusChip("Finish typing a positive distance", DopeStatus.WARNING)
@@ -167,6 +201,37 @@ fun ResultsScreen(
         val display = calculationDisplay(result, displayUnit) ?: previewDisplay(displayUnit).takeIf { previewMode }
         if (display != null) {
             CalculationResultGrid(display, reticleHoldValid || previewMode, windState)
+            val previousDope =
+                previousDopeForDistance(
+                    records = verifiedDopeRecords,
+                    activeZeroProfileId = active?.zeroProfileId,
+                    distanceMetres = parsePositiveDistance(distance),
+                ) ?: previewPreviousDope().takeIf { previewMode }
+            PreviousDopeCard(previousDope, distance)
+            DopeCard {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    SectionHeading("Record actual setting")
+                    Text(
+                        "This records what you finally used. It never silently changes the calculator.",
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    CompactLiveField(
+                        "Actual ${display.scopeUnit.name}",
+                        actualDial,
+                        { actualDial = sanitiseDecimalInput(it) },
+                        Modifier.fillMaxWidth(),
+                    )
+                    DopeSecondaryButton(
+                        "Continue to verified DOPE log",
+                        {
+                            sessionDraft.distanceMetres = distance
+                            sessionDraft.actualDialValue = actualDial
+                            onOpen("session")
+                        },
+                        Modifier.fillMaxWidth(),
+                    )
+                }
+            }
             result?.solution?.let { solution ->
                 DopeCard {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -208,6 +273,82 @@ fun ResultsScreen(
     }
 }
 
+@Composable
+private fun PreviousDopeCard(
+    record: VerifiedDopeRecordEntity?,
+    distance: String,
+) {
+    DopeCard {
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            SectionHeading("Previous DOPE")
+            if (record == null) {
+                Text(
+                    "No verified manual record for $distance m with this setup.",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            } else {
+                LabelValue(
+                    "Last used at ${number(record.distanceMetres)} m",
+                    "${number(record.actualDialValue)} ${record.actualDialUnit}",
+                )
+                Text(
+                    "Recorded ${previousDopeDate(record.createdAtEpochMillis)} · historical record only",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+}
+
+internal fun previousDopeForDistance(
+    records: List<VerifiedDopeRecordEntity>,
+    activeZeroProfileId: String?,
+    distanceMetres: Double?,
+): VerifiedDopeRecordEntity? {
+    if (activeZeroProfileId == null || distanceMetres == null) return null
+    return records.firstOrNull { record ->
+        record.zeroProfileId == activeZeroProfileId &&
+            kotlin.math.abs(record.distanceMetres - distanceMetres) < 0.01 &&
+            record.status == "VERIFIED"
+    }
+}
+
+private fun previousDopeDate(epochMillis: Long): String {
+    val formatter = SimpleDateFormat("d MMM yyyy", Locale.getDefault())
+    return formatter.format(Date(epochMillis))
+}
+
+private fun previewPreviousDope(): VerifiedDopeRecordEntity =
+    VerifiedDopeRecordEntity(
+        id = "preview-verified-dope",
+        createdAtEpochMillis = 1_725_235_200_000,
+        rifleId = "preview-rifle",
+        rifleRevision = 1,
+        ammunitionId = "preview-ammunition",
+        ammunitionRevision = 1,
+        scopeProfileId = "preview-scope",
+        scopeProfileRevision = 1,
+        zeroProfileId = "preview-zero",
+        zeroProfileRevision = 1,
+        profileSnapshotJson = "{}",
+        distanceMetres = 800.0,
+        distanceSource = "MANUAL",
+        distanceUncertaintyMetres = 0.0,
+        calculatedUnit = "MIL",
+        calculatedRawValue = 8.0,
+        calculatedDialValue = 8.0,
+        calculatedClicks = 80,
+        actualDialUnit = "MIL",
+        actualDialValue = 8.0,
+        numberOfShots = 3,
+        conditionsJson = "{}",
+        confidence = "MEDIUM",
+        status = "VERIFIED",
+        engineVersion = "preview",
+        evidenceSha256 = "preview",
+    )
+
 private data class CalculationDisplay(
     val unit: AngularUnit,
     val referenceElevation: Double,
@@ -218,6 +359,8 @@ private data class CalculationDisplay(
     val scopeUnit: AngularUnit,
     val reticleHold: Double,
     val wind: Double,
+    val windClicks: Int,
+    val windScopeUnit: AngularUnit,
 )
 
 @Composable
@@ -253,7 +396,16 @@ private fun CalculationResultGrid(
             Modifier.weight(1f),
         )
     }
-    ElevationDial(display.totalElevation, unit)
+    WindWheel(
+        windFromDegrees = windState.windFromDegrees.toDoubleOrNull() ?: 0.0,
+        directionOfFireDegrees = windState.directionOfFireDegrees.toDoubleOrNull() ?: 0.0,
+        locked = windState.locked,
+        onWindFromChanged = { degrees ->
+            windState.locked = false
+            windState.windFromDegrees = number(WindConvention.normalizeDegrees(degrees))
+        },
+        height = 218.dp,
+    )
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
         ReferenceMetricTile(
             "Clicks (${display.scopeUnit.name})",
@@ -268,82 +420,10 @@ private fun CalculationResultGrid(
         )
     }
     ReferenceMetricTile(
-        "Wind (L to R)",
-        "${number(display.wind)} $unit · ${windState.averageSpeedMps} m/s",
+        "Wind correction",
+        windCorrectionLabel(display.wind, display.windClicks, unit, windState.averageSpeedMps),
         accent = MaterialTheme.colorScheme.secondary,
     )
-}
-
-@Composable
-@Suppress("LongMethod")
-private fun ElevationDial(
-    elevation: Double,
-    unit: String,
-) {
-    val maximum = max(4.0, kotlin.math.ceil(kotlin.math.abs(elevation) / 4.0) * 4.0)
-    val primary = MaterialTheme.colorScheme.primary
-    val secondary = MaterialTheme.colorScheme.secondary
-    Canvas(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.97f), RoundedCornerShape(12.dp))
-                .padding(18.dp),
-    ) {
-        val radius = min(size.width * 0.38f, size.height * 0.72f)
-        val centre = Offset(size.width / 2f, size.height * 0.78f)
-        val arcTopLeft = Offset(centre.x - radius, centre.y - radius)
-        val arcSize =
-            androidx.compose.ui.geometry
-                .Size(radius * 2f, radius * 2f)
-        drawArc(
-            color = Color(0xFF6B7B8F),
-            startAngle = 180f,
-            sweepAngle = 180f,
-            useCenter = false,
-            topLeft = arcTopLeft,
-            size = arcSize,
-            style = Stroke(width = 5.dp.toPx(), cap = StrokeCap.Round),
-        )
-        repeat(17) { index ->
-            val angle = (180.0 + index * 180.0 / 16.0) * PI / 180.0
-            val outer =
-                Offset(
-                    centre.x + kotlin.math.cos(angle).toFloat() * radius,
-                    centre.y + kotlin.math.sin(angle).toFloat() * radius,
-                )
-            val innerRadius = radius - if (index % 4 == 0) 16.dp.toPx() else 9.dp.toPx()
-            val inner =
-                Offset(
-                    centre.x + kotlin.math.cos(angle).toFloat() * innerRadius,
-                    centre.y + kotlin.math.sin(angle).toFloat() * innerRadius,
-                )
-            drawLine(Color(0xFFB5C1CF), inner, outer, 2.dp.toPx(), StrokeCap.Round)
-        }
-        val fraction = (kotlin.math.abs(elevation) / maximum).coerceIn(0.0, 1.0)
-        val needleAngle = (180.0 + fraction * 180.0) * PI / 180.0
-        val needleEnd =
-            Offset(
-                centre.x + kotlin.math.cos(needleAngle).toFloat() * radius * 0.78f,
-                centre.y + kotlin.math.sin(needleAngle).toFloat() * radius * 0.78f,
-            )
-        drawLine(primary, centre, needleEnd, 5.dp.toPx(), StrokeCap.Round)
-        drawCircle(secondary, 5.dp.toPx(), centre)
-        drawContext.canvas.nativeCanvas.apply {
-            val paint =
-                android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
-                    color = android.graphics.Color.WHITE
-                    textAlign = android.graphics.Paint.Align.CENTER
-                }
-            paint.textSize = 11.dp.toPx()
-            drawText("ELEVATION", centre.x, centre.y - 48.dp.toPx(), paint)
-            paint.textSize = 34.dp.toPx()
-            drawText(number(elevation), centre.x, centre.y - 15.dp.toPx(), paint)
-            paint.textSize = 13.dp.toPx()
-            drawText(unit, centre.x, centre.y + 7.dp.toPx(), paint)
-        }
-    }
 }
 
 @Composable
@@ -432,6 +512,8 @@ private fun calculationDisplay(
         scopeUnit = solution.elevationScope.unit,
         reticleHold = angularValue(solution.currentElevationRadians, unit),
         wind = angularValue(solution.windageRadians, unit),
+        windClicks = solution.windageScope.clicks,
+        windScopeUnit = solution.windageScope.unit,
     )
 }
 
@@ -447,7 +529,20 @@ private fun previewDisplay(unit: AngularUnit): CalculationDisplay {
         scopeUnit = AngularUnit.MIL,
         reticleHold = 2.3 * scale,
         wind = 0.87 * scale,
+        windClicks = 9,
+        windScopeUnit = AngularUnit.MIL,
     )
+}
+
+internal fun windCorrectionLabel(
+    windValue: Double,
+    windClicks: Int,
+    displayUnit: String,
+    speedMps: String,
+): String {
+    val direction = if (windClicks < 0) "LEFT" else "RIGHT"
+    val clickCount = kotlin.math.abs(windClicks)
+    return "${number(kotlin.math.abs(windValue))} $displayUnit · $clickCount clicks $direction · $speedMps m/s"
 }
 
 internal fun adjustWindSpeed(

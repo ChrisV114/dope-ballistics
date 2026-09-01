@@ -64,7 +64,8 @@ class ProfileDatabaseTest {
         }
 
     @Test
-    fun migrationOneToEightCreatesValidatedSchemaTemplatesAndStarterProfiles() {
+    @Suppress("LongMethod")
+    fun migrationOneToNineCreatesValidatedSchemaTemplatesAndStarterProfiles() {
         createVersionOneDatabase()
         database =
             Room
@@ -77,6 +78,7 @@ class ProfileDatabaseTest {
                     DopeDatabase.MIGRATION_5_6,
                     DopeDatabase.MIGRATION_6_7,
                     DopeDatabase.MIGRATION_7_8,
+                    DopeDatabase.MIGRATION_8_9,
                 ).allowMainThreadQueries()
                 .build()
 
@@ -108,6 +110,8 @@ class ProfileDatabaseTest {
         assertEquals(100.0, rifles.first { it.id == StarterProfiles.HOWA_RIFLE_ID }.defaultZeroDistanceMetres!!, 0.0)
         assertEquals(0.06, rifles.first { it.id == StarterProfiles.HOWA_RIFLE_ID }.sightHeightAboveBoreMetres!!, 0.0)
         assertTrue(ammunition.all { it.profileName.endsWith("test") })
+        assertTrue(ammunition.all { it.cartridgeOverallLengthMetres == null })
+        assertTrue(rifles.all { it.imageUri == null })
         assertTrue(scopes.all { it.verificationStatus == VerificationStatus.REQUIRES_USER_VERIFICATION.name })
         writable.query("SELECT name FROM sqlite_master WHERE type='table' AND name='environmental_snapshots'").use {
             assertTrue(it.moveToFirst())
@@ -142,13 +146,16 @@ class ProfileDatabaseTest {
         }
 
     @Test
-    fun migrationSixToEightRepairsMissingStarterProfilesAndAddsRifleSetupDefaults() {
+    fun migrationSixToNineRepairsMissingStarterProfilesAndAddsRifleSetupDefaults() {
         createVersionSixDatabaseWithoutStarterProfiles()
         database =
             Room
                 .databaseBuilder(context, DopeDatabase::class.java, TEST_DATABASE)
-                .addMigrations(DopeDatabase.MIGRATION_6_7, DopeDatabase.MIGRATION_7_8)
-                .allowMainThreadQueries()
+                .addMigrations(
+                    DopeDatabase.MIGRATION_6_7,
+                    DopeDatabase.MIGRATION_7_8,
+                    DopeDatabase.MIGRATION_8_9,
+                ).allowMainThreadQueries()
                 .build()
 
         val repository = ProfileRepository(requireNotNull(database))

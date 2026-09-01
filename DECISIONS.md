@@ -115,3 +115,11 @@ Treat the supplied original calculation-results image as the production layout t
 ## R5-007 — Unknown zero atmosphere
 
 Historical zero weather is not a hard blocker. The owner may explicitly copy the latest saved conditions as an estimated reference; persist the estimate source and notes, and warn that environmental deviation is approximate. Never present an estimate as measured zero-day weather.
+
+## R5-008 — Profile media ownership
+
+Profile photographs are user-owned local attachments selected through Android's document picker and stored as persistent content URIs. Do not scrape, bundle or redistribute manufacturer product photography without confirmed rights. Keep the neutral local illustration as the deterministic offline fallback.
+
+## R5-009 — Wind correction presentation
+
+The calculator may present the existing model windage as angular correction and rounded turret clicks using the selected verified scope. Always spell out `LEFT` or `RIGHT`; do not expose an unexplained signed click count. Wind observations and actual settings remain logged separately and do not auto-tune future wind predictions.

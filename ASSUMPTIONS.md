@@ -14,7 +14,7 @@
 - Owner-provided muzzle velocities of 809 m/s for the Howa 6.5 Creedmoor/Lapua 139 gr load and 920 m/s for the M&P15 Sport III/Hornady 53 gr load are editable starting averages, not universal factory values.
 - Zero distance and sight height are rifle-owned defaults: 100 m/6 cm for the Howa and 50 m/6 cm for the M&P15. Creating a zero copies those values into an immutable linked zero revision.
 - If zero-day weather was not recorded, current saved conditions may be used only as an explicitly labelled estimate; the resulting environmental deviation is approximate.
-- Neutral equipment illustrations stand in for photographs until the owner supplies profile-specific images that can be stored and displayed safely.
+- Neutral equipment illustrations remain the fallback. The owner may select a local photo for each rifle, load and scope; no manufacturer image is downloaded or redistributed without confirmed permission.
 - Both owner rifles have a stated 1:8 twist rate. Twist direction is not yet confirmed and is not required by the Milestone 4 point-mass core.
 - Garmin Xero C2 data is manually entered for now; no proprietary Bluetooth integration or ShotView import is included.
 - Owner field observations of 3.6 MIL at 500 m, 8.0 MIL at 800 m and 11.5 MIL at 1,000 m are treated as historical comparison data. Their atmosphere, date, direction, inclination and exact velocity string are not yet recorded, so they are not sufficient for automatic truing.

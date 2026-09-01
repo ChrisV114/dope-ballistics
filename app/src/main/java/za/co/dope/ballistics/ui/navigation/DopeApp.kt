@@ -58,6 +58,7 @@ import za.co.dope.ballistics.ui.screens.ResultsScreen
 import za.co.dope.ballistics.ui.screens.RifleScreen
 import za.co.dope.ballistics.ui.screens.ScopeDetailScreen
 import za.co.dope.ballistics.ui.screens.ScopeScreen
+import za.co.dope.ballistics.ui.screens.SessionDraftState
 import za.co.dope.ballistics.ui.screens.SessionScreen
 import za.co.dope.ballistics.ui.screens.SetupDraftState
 import za.co.dope.ballistics.ui.screens.SplashScreen
@@ -96,6 +97,7 @@ fun DopeApp(
         val navController = rememberNavController()
         val windState = remember { WindFormState() }
         val setupDraftState = remember { SetupDraftState() }
+        val sessionDraftState = remember { SessionDraftState() }
         val backStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = backStackEntry?.destination
         val currentRoute = currentDestination?.route
@@ -116,9 +118,9 @@ fun DopeApp(
                         selectedRoute = currentRoute,
                         onSelect = { destination ->
                             navController.navigate(destination.route) {
-                                popUpTo("dashboard") { saveState = true }
+                                popUpTo("dashboard") { saveState = false }
                                 launchSingleTop = true
-                                restoreState = true
+                                restoreState = false
                             }
                         },
                     )
@@ -132,6 +134,7 @@ fun DopeApp(
                 sessionRepository = sessionRepository,
                 windState = windState,
                 setupDraftState = setupDraftState,
+                sessionDraftState = sessionDraftState,
                 openRoute = openRoute,
                 modifier = Modifier.padding(innerPadding),
                 onThemeChange = {
@@ -156,6 +159,7 @@ private fun DopeNavHost(
     sessionRepository: SessionRepository?,
     windState: WindFormState,
     setupDraftState: SetupDraftState,
+    sessionDraftState: SessionDraftState,
     openRoute: (String) -> Unit,
     onThemeChange: () -> Unit,
     modifier: Modifier = Modifier,
@@ -198,9 +202,13 @@ private fun DopeNavHost(
         composable("zero_setup") { ZeroSetupScreen(profileRepository, setupDraftState) }
         composable("environment") { EnvironmentScreen(openRoute, profileRepository) }
         composable("wind") { WindScreen(windState) }
-        composable("results") { ResultsScreen(profileRepository, windState, openRoute) }
+        composable("results") {
+            ResultsScreen(profileRepository, sessionRepository, windState, sessionDraftState, openRoute)
+        }
         composable("range_card") { RangeCardScreen(profileRepository, windState, openRoute) }
-        composable("session") { SessionScreen(profileRepository, sessionRepository, windState, openRoute) }
+        composable("session") {
+            SessionScreen(profileRepository, sessionRepository, windState, sessionDraftState, openRoute)
+        }
         composable("comparison") { ComparisonScreen(profileRepository, windState) }
         composable("camera_calibration") { CameraCalibrationScreen() }
         composable("target_range") { TargetRangeScreen(openRoute, profileRepository) }
@@ -229,6 +237,7 @@ fun DopeGoldenScreen(
                     gustSpeedMps = "8.0"
                 }
             }
+        val sessionDraftState = remember { SessionDraftState() }
         Scaffold(
             contentWindowInsets =
                 WindowInsets.safeDrawing.only(
@@ -249,8 +258,8 @@ fun DopeGoldenScreen(
                     "environment" -> EnvironmentScreen(onOpen = {}, previewMode = true)
                     "range_card" -> RangeCardScreen(null, windState, {}, previewMode = true)
                     "wind" -> WindScreen(windState)
-                    "results" -> ResultsScreen(null, windState, {}, previewMode = true)
-                    "session" -> SessionScreen(null, null, windState, {})
+                    "results" -> ResultsScreen(null, null, windState, sessionDraftState, {}, previewMode = true)
+                    "session" -> SessionScreen(null, null, windState, sessionDraftState, {})
                     "comparison" -> ComparisonScreen(null, windState)
                     "target_range" -> TargetRangeScreen(onOpen = {})
                     else -> DashboardScreen(null, SetupDraftState(), windState, onOpen = {})

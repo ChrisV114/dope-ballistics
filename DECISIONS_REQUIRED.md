@@ -9,8 +9,9 @@
 
 ## DR-002 — Release signing and distribution
 
-- Status: deferred while the application remains private and sideloaded.
-- Select keystore custody, signing process, and intended public distribution channel before Milestone 11 release work. No signing secrets belong in Git.
+- Status: private review signing resolved 2026-09-01; public release/distribution remains deferred.
+- The owner-approved private review key signs local and GitHub review APKs through ignored local properties and encrypted GitHub Actions secrets. The key and passwords do not belong in Git.
+- Select long-term release-key custody and the public distribution channel before Milestone 11 release work.
 
 ## DR-003 — Wear OS companion scope
 

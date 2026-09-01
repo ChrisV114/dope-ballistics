@@ -4,6 +4,12 @@
 
 ### Milestone 5
 
+- Replaced the non-interactive elevation gauge with the shared touch/drag wind-direction wheel and added unambiguous wind turret output such as `6 clicks LEFT` or `3 clicks RIGHT` from the selected scope's click value.
+- Added direct verified-setup switching on the calculation screen and a bottom actual-setting handoff into the immutable session/DOPE log; observations remain separate and never silently tune a profile.
+- Added editable rifle and ammunition/load forms, optional cartridge overall length, owner-selected persistent local photos for rifle/load/scope profiles and a non-destructive Room `8 -> 9` migration.
+- Made foreground location collection listen to GPS and network providers together, added a recent-fix fallback, corrected environment-number formatting, and updates altitude from GPS or the weather model with visible provenance.
+- Made top-level bottom navigation deterministic from nested screens, exposed Free shoot/Match/Shot timer session structure, and replaced non-functional camera buttons with an honest Milestone 6 deferred state.
+- Updated the private signed review APK to version code 10 / `0.5.5-m5-review` so it installs over the prior signed review build.
 - Reworked the calculation screen to the supplied original-UI target with direct one-screen range, direction-of-fire, wind-direction and wind-speed entry; intermediate blank/invalid edits retain the last valid result instead of replacing the screen.
 - Moved rifle zero distance and sight height into the rifle profile, seeded the owner test rifles with their confirmed values, and added a non-destructive Room `7 -> 8` migration.
 - Added a clearly labelled estimated-reference path for users who do not know the historical zero-day atmosphere, while keeping exact source provenance and an approximation warning in results.
@@ -15,7 +21,7 @@
 - Added visible saved-rifle and saved-ammunition cards above their entry forms.
 - Added review fixes for a complete fresh-install path: explicit rifle/load/scope selection, G1 or G7 ammunition, physically confirmed dial directions, reference-atmosphere and zero creation, and a persistent active setup.
 - Replaced the blocked calculation preview with the offline engine result, exact missing-input guidance, confirmed-target distance shortcuts, and live wind speed/direction controls.
-- Restored the approved original calculation-results and wind-panel hierarchy as the production visual target: compact result grids, elevation dial, compass-first wind wheel, component tiles and speed tiles, with editors below the primary panels.
+- Restored the approved original calculation-results and wind-panel hierarchy as the production visual target: compact result grids, compass-first wind wheel, component tiles and speed tiles, with editors below the primary panels.
 - Added Room version 5 active-setup selection with a non-destructive `4 -> 5` migration and active multi-setup switching.
 - Added tested true/magnetic wind-from conventions, relative direction, signed cross/head components and min/average/max/gust brackets.
 - Added an interactive manual wind wheel with tap/drag, clock/numeric entry, fine adjustment, reset, source, timestamp, notes and lock state.

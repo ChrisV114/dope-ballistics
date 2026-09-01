@@ -8,6 +8,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeoutOrNull
 import za.co.dope.ballistics.domain.environment.LocationReading
 import kotlin.coroutines.resume
 
@@ -23,18 +24,39 @@ class AndroidLocationGateway(
     @Suppress("ReturnCount", "DEPRECATION")
     override suspend fun currentLocation(): Result<LocationReading> {
         if (!hasLocationPermission()) return Result.failure(SecurityException("Location permission was not granted"))
-        val provider =
-            when {
-                manager?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true -> LocationManager.GPS_PROVIDER
-                manager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == true -> LocationManager.NETWORK_PROVIDER
-                else -> return Result.failure(IllegalStateException("No location provider is enabled"))
+        val locationManager = manager ?: return Result.failure(IllegalStateException("Location service is unavailable"))
+        val providers =
+            listOf(LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER).filter {
+                locationManager.isProviderEnabled(it)
             }
-        return suspendCancellableCoroutine { continuation ->
+        if (providers.isEmpty()) return Result.failure(IllegalStateException("Turn on phone location and try again"))
+        return runCatching {
+            val fresh =
+                withTimeoutOrNull(LOCATION_TIMEOUT_MILLIS) {
+                    awaitSingleUpdate(locationManager, providers)
+                }
+            if (fresh != null) return@runCatching fresh.toReading(cachedFallback = false)
+            val recentFallback =
+                providers
+                    .mapNotNull(locationManager::getLastKnownLocation)
+                    .filter { System.currentTimeMillis() - it.time <= MAXIMUM_FALLBACK_AGE_MILLIS }
+                    .maxByOrNull { it.time }
+            requireNotNull(recentFallback) {
+                "Location timed out. Move near a window, confirm phone Location is on, then retry."
+            }.toReading(cachedFallback = true)
+        }
+    }
+
+    private suspend fun awaitSingleUpdate(
+        locationManager: LocationManager,
+        providers: List<String>,
+    ): Location? =
+        suspendCancellableCoroutine { continuation ->
             val listener =
                 object : LocationListener {
                     override fun onLocationChanged(location: Location) {
-                        manager.removeUpdates(this)
-                        if (continuation.isActive) continuation.resume(Result.success(location.toReading()))
+                        locationManager.removeUpdates(this)
+                        if (continuation.isActive) continuation.resume(location)
                     }
 
                     @Deprecated("Compatibility callback")
@@ -45,15 +67,16 @@ class AndroidLocationGateway(
                     ) = Unit
                 }
             try {
-                manager.requestSingleUpdate(provider, listener, context.mainLooper)
-                continuation.invokeOnCancellation { manager.removeUpdates(listener) }
+                providers.forEach { provider ->
+                    locationManager.requestLocationUpdates(provider, 0L, 0f, listener, context.mainLooper)
+                }
+                continuation.invokeOnCancellation { locationManager.removeUpdates(listener) }
             } catch (error: SecurityException) {
-                continuation.resume(Result.failure(error))
+                continuation.cancel(error)
             }
         }
-    }
 
-    private fun Location.toReading(): LocationReading =
+    private fun Location.toReading(cachedFallback: Boolean): LocationReading =
         LocationReading(
             latitudeDegrees = latitude,
             longitudeDegrees = longitude,
@@ -62,5 +85,11 @@ class AndroidLocationGateway(
             verticalAccuracyMetres = if (hasVerticalAccuracy()) verticalAccuracyMeters.toDouble() else null,
             approximate = accuracy >= 100f,
             capturedAtEpochMillis = time,
+            cachedFallback = cachedFallback,
         )
+
+    private companion object {
+        const val LOCATION_TIMEOUT_MILLIS = 12_000L
+        const val MAXIMUM_FALLBACK_AGE_MILLIS = 15 * 60 * 1000L
+    }
 }

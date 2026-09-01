@@ -127,3 +127,27 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - The build retains the known experimental screenshot-testing, Gradle 10 deprecation and unstripped debug native-library warnings.
 - GitHub Actions run `33509481413` passed `build-and-test` in 4m10s and API 35 `instrumentation` in 21m27s on commit `62dbc57`.
 - The GitHub emulator started and finished all twelve instrumentation tests with 0 skipped and 0 failed.
+
+## Milestone 5 usability round-two local results — 2026-09-01
+
+- The complete local gate passed: Spotless, Android lint, Detekt, all JVM tests, screenshot validation, signed debug APK assembly and debug instrumentation-test APK assembly.
+- JVM tests: 43 run, 0 failures, 0 errors and 0 skipped; focused coverage confirms blank-safe direct input and explicit left/right wind-click wording.
+- Eleven screenshot goldens passed after intentionally updating the calculation and session references. The calculation golden replaces the non-interactive elevation gauge with the shared wind wheel while retaining the original result-card hierarchy and bottom system-control clearance.
+- Room schema 9 is exported. Instrumentation migration coverage compiles for `1 -> 9` and `6 -> 9`, including preserved starter profiles, rifle-owned zero geometry, nullable owner-photo URIs and nullable cartridge overall length.
+- `apkanalyzer` confirmed application ID `za.co.bdstudio.dope`, version code `10` and version name `0.5.5-m5-review`.
+- `apksigner` confirmed the APK uses the approved private review certificate SHA-256 `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`.
+- Local emulator and physical Galaxy S25 execution are not claimed. The protected GitHub API 35 emulator job remains the external execution gate.
+- The build retains the known experimental screenshot-testing, Gradle 10 deprecation and unstripped debug native-library warnings.
+- GitHub Actions run `33538503906` passed `build-and-test` in 3m54s and API 35 `instrumentation` in 17m14s on commit `5fae2c6`. The signed review APK artifact was downloaded and independently checked for package, version and certificate identity.
+
+## Milestone 5 previous-DOPE review results — 2026-09-01
+
+- The calculation layout and existing result hierarchy remain unchanged. A read-only Previous DOPE card now appears immediately after Wind correction.
+- Matching is deliberately strict: the newest `VERIFIED` manual record must use the active zero/setup identifier and match the entered distance to within 0.01 m. Other setups, distances and non-verified records are excluded.
+- The full local gate passed: Spotless, Android lint, Detekt, all JVM tests, screenshot validation, signed debug APK assembly and debug instrumentation-test APK assembly.
+- JVM tests: 45 run, 0 failures, 0 errors and 0 skipped; 17 are pure `:ballistics` tests and 28 are app tests. Two focused tests cover newest-record selection and rejection of wrong-distance, wrong-setup and unverified records.
+- Eleven existing screenshot goldens passed unchanged; the added card is below the retained result hierarchy and does not change the locked calculation reference viewport.
+- `apkanalyzer` confirmed application ID `za.co.bdstudio.dope`, version code `11` and version name `0.5.6-m5-review`.
+- `apksigner` confirmed the approved private review certificate SHA-256 `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`.
+- Local emulator and physical Galaxy S25 execution are not claimed. The protected GitHub API 35 emulator job remains the external execution gate.
+- GitHub Actions run `33546118928` passed `build-and-test` in 3m58s on commit `8a4ee73`. Its first API 35 emulator attempt crashed before discovering any tests; the unchanged failed-job retry passed all twelve instrumentation tests with 0 skipped and 0 failed in 19m43s.
