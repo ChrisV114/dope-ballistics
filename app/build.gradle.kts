@@ -82,6 +82,7 @@ android {
         abortOnError = true
         warningsAsErrors = true
         checkReleaseBuilds = true
+        disable += "AndroidGradlePluginVersion"
     }
 
     packaging {
