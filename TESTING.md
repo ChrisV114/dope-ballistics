@@ -150,4 +150,4 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - `apkanalyzer` confirmed application ID `za.co.bdstudio.dope`, version code `11` and version name `0.5.6-m5-review`.
 - `apksigner` confirmed the approved private review certificate SHA-256 `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`.
 - Local emulator and physical Galaxy S25 execution are not claimed. The protected GitHub API 35 emulator job remains the external execution gate.
-- GitHub Actions evidence is pending until this review revision is committed and pushed.
+- GitHub Actions run `33546118928` passed `build-and-test` in 3m58s on commit `8a4ee73`. Its first API 35 emulator attempt crashed before discovering any tests; the unchanged failed-job retry passed all twelve instrumentation tests with 0 skipped and 0 failed in 19m43s.
