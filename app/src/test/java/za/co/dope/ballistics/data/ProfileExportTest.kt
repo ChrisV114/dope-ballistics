@@ -29,6 +29,8 @@ class ProfileExportTest {
                             barrelLengthMetres = 0.508,
                             twistRateMetres = 0.254,
                             twistDirection = "RIGHT",
+                            defaultZeroDistanceMetres = 100.0,
+                            sightHeightAboveBoreMetres = 0.05,
                             createdAtEpochMillis = 1L,
                             modifiedAtEpochMillis = 1L,
                         ),
@@ -101,6 +103,8 @@ class ProfileExportTest {
             barrelLengthMetres = 0.508,
             twistRateMetres = 0.254,
             twistDirection = "RIGHT",
+            defaultZeroDistanceMetres = 100.0,
+            sightHeightAboveBoreMetres = 0.05,
             createdAtEpochMillis = 1L,
             modifiedAtEpochMillis = 1L,
         )

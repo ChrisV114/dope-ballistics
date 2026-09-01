@@ -21,6 +21,13 @@ Milestone 5 — wind, range cards and sessions.
 - [x] Add the owner-requested editable test profiles, visible saved-profile lists and an idempotent Room `5 -> 6` data migration.
 - [x] Run the protected GitHub quality and emulator jobs for `0.5.2-m5-review`.
 - [x] Add a non-destructive `6 -> 7` repair migration for an installed review database missing starter profiles.
+- [x] Rework calculations into the original compact one-screen hierarchy with direct live range and wind entry.
+- [x] Make rifle profiles own zero distance and sight height, including a non-destructive `7 -> 8` migration.
+- [x] Preserve setup choices across Home navigation and expose active setup/current conditions on the dashboard.
+- [x] Allow an explicitly labelled estimated zero-reference atmosphere when historical zero-day weather is unavailable.
+- [x] Add equipment illustrations to the saved rifle, ammunition and scope cards.
+- [x] Run the complete local quality gate for `0.5.4-m5-review`.
+- [ ] Run the protected GitHub quality and emulator jobs for `0.5.4-m5-review`.
 - [ ] Stop for owner review of the review-fix APK.
 
 Milestone 6 camera ranging and calibration remains blocked until Milestone 5 review. Guided profile truing is a later optional workflow under the master prompt and `DOPE_LOG.md`; engagement-level match plans, Watch7 shot progression, fixed-camera sequencing and pistol-drill cues remain separately governed future work.

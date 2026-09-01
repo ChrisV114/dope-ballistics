@@ -103,3 +103,15 @@ Bearings run clockwise from north and describe where wind comes from. Relative d
 ## M5-002 — Immutable range evidence
 
 Completed sessions and verified range observations are append-only and content hashed. A session freezes profile revisions, reference/current environments, per-field sources, distance/uncertainty, direction, inclination, wind, result, trace, engine, rounding and warnings. Calculated and actual values remain distinct; no record changes a ballistic profile.
+
+## R5-005 — Rifle-owned zero geometry
+
+Store the rifle's default zero distance and sight height on its editable rifle profile. Zero setup displays and copies those values into the immutable zero revision rather than asking the user to re-enter them. The owner baselines are 100 m and 6 cm for the Howa, and 50 m and 6 cm for the M&P15 Sport III.
+
+## R5-006 — One-screen live calculator
+
+Treat the supplied original calculation-results image as the production layout target. Keep direct range, direction-of-fire, wind-direction and wind-speed fields with the result hierarchy on one phone screen; do not require repetitive increment/decrement controls. Blank or temporarily invalid editing input must not navigate away or discard the last valid result.
+
+## R5-007 — Unknown zero atmosphere
+
+Historical zero weather is not a hard blocker. The owner may explicitly copy the latest saved conditions as an estimated reference; persist the estimate source and notes, and warn that environmental deviation is approximate. Never present an estimate as measured zero-day weather.

@@ -27,6 +27,8 @@ object StarterProfiles {
                 barrelLengthMetres = 0.6604,
                 twistRateMetres = 0.2032,
                 twistDirection = TwistDirection.RIGHT.name,
+                defaultZeroDistanceMetres = 100.0,
+                sightHeightAboveBoreMetres = 0.06,
                 internalReference = "OWNER_TEST_PROFILE",
                 createdAtEpochMillis = nowEpochMillis,
                 modifiedAtEpochMillis = nowEpochMillis,
@@ -42,6 +44,8 @@ object StarterProfiles {
                 barrelLengthMetres = 0.4064,
                 twistRateMetres = 0.2032,
                 twistDirection = TwistDirection.RIGHT.name,
+                defaultZeroDistanceMetres = 50.0,
+                sightHeightAboveBoreMetres = 0.06,
                 internalReference = "OWNER_TEST_PROFILE",
                 createdAtEpochMillis = nowEpochMillis,
                 modifiedAtEpochMillis = nowEpochMillis,
@@ -135,7 +139,10 @@ object StarterProfiles {
         nowEpochMillis: Long = System.currentTimeMillis(),
     ) {
         ScopeTemplates.insertBuiltIns(database)
-        rifles(nowEpochMillis).forEach { database.insert("rifles", SQLiteDatabase.CONFLICT_IGNORE, it.toValues()) }
+        val includeSetupDefaults = database.hasColumn("rifles", "defaultZeroDistanceMetres")
+        rifles(nowEpochMillis).forEach {
+            database.insert("rifles", SQLiteDatabase.CONFLICT_IGNORE, it.toValues(includeSetupDefaults))
+        }
         ammunition(nowEpochMillis).forEach {
             database.insert("ammunition", SQLiteDatabase.CONFLICT_IGNORE, it.toValues())
         }
@@ -144,7 +151,7 @@ object StarterProfiles {
         }
     }
 
-    private fun RifleEntity.toValues() =
+    private fun RifleEntity.toValues(includeSetupDefaults: Boolean) =
         ContentValues().apply {
             put("id", id)
             put("profileName", profileName)
@@ -154,6 +161,10 @@ object StarterProfiles {
             put("barrelLengthMetres", barrelLengthMetres)
             put("twistRateMetres", twistRateMetres)
             put("twistDirection", twistDirection)
+            if (includeSetupDefaults) {
+                put("defaultZeroDistanceMetres", defaultZeroDistanceMetres)
+                put("sightHeightAboveBoreMetres", sightHeightAboveBoreMetres)
+            }
             put("internalReference", internalReference)
             put("serialNumber", serialNumber)
             put("createdAtEpochMillis", createdAtEpochMillis)
@@ -162,6 +173,15 @@ object StarterProfiles {
             put("archived", archived)
             put("favourite", favourite)
             put("notes", notes)
+        }
+
+    private fun SupportSQLiteDatabase.hasColumn(
+        table: String,
+        column: String,
+    ): Boolean =
+        query("PRAGMA table_info(`$table`)").use { cursor ->
+            val nameIndex = cursor.getColumnIndex("name")
+            generateSequence { if (cursor.moveToNext()) cursor.getString(nameIndex) else null }.any { it == column }
         }
 
     private fun AmmunitionEntity.toValues() =

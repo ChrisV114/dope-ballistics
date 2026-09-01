@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.ErrorOutline
@@ -39,6 +40,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import za.co.dope.ballistics.R
@@ -194,6 +196,12 @@ fun DopeField(
         label = { Text(label) },
         suffix = config.suffix?.let { { Text(it, color = LocalDopeColors.current.textMuted) } },
         readOnly = config.readOnly,
+        keyboardOptions =
+            if (config.numeric) {
+                KeyboardOptions(keyboardType = KeyboardType.Decimal)
+            } else {
+                KeyboardOptions.Default
+            },
         singleLine = true,
         shape = RoundedCornerShape(DopeDesignTokens.Sizing.ControlCorner),
         colors =

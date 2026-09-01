@@ -116,3 +116,12 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - Twelve instrumentation tests compile. New coverage creates a schema-6 database with missing starter rows, migrates it through `6 -> 7`, and confirms that both rifles, both linked loads and both unverified scope copies are restored.
 - The migration uses stable IDs and conflict-ignore insertion, so it does not replace matching records or create a zero/reference atmosphere.
 - Local instrumentation execution is not claimed because no local emulator or physical device is installed. The protected GitHub API 35 emulator job remains the execution gate.
+
+## Milestone 5 calculator-usability review results — 2026-09-01
+
+- The complete local gate passed: Spotless, Android lint, Detekt, all JVM tests, screenshot validation, debug APK assembly and debug instrumentation-test APK assembly.
+- JVM tests: 42 run, 0 failures, 0 errors and 0 skipped; 17 are pure `:ballistics` tests and 25 are app tests.
+- Eleven screenshot goldens passed. The S25-equivalent calculation golden keeps direct range, fire direction, wind direction and wind speed entry together with the complete original result hierarchy above the fixed bottom-navigation/system-control region.
+- Twelve instrumentation tests compile. Migration coverage now validates Room `1 -> 8` and `6 -> 8`, including rifle-owned zero-distance/sight-height defaults and preservation of explicit estimated-reference provenance.
+- Local instrumentation execution is not claimed because no local emulator or physical device is installed. The protected GitHub API 35 emulator job remains the execution gate.
+- The build retains the known experimental screenshot-testing, Gradle 10 deprecation and unstripped debug native-library warnings.
