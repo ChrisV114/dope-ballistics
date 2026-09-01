@@ -49,5 +49,5 @@ Milestone-5 test-profile review artifact:
 - Path: `app/build/outputs/apk/debug/app-debug.apk`
 - Application ID: `za.co.bdstudio.dope`
 - Version name: `0.5.2-m5-review`
-- SHA-256: `DE926391A579111877508086C258DD025CEE86D7A50143B932CDC128F66FAFBD`
+- SHA-256: `9D0C1C994A17DF44A2278217CB7146376FC707040A1F3C878E7F936A0D0D74CB`
 - Signing: automatically generated debug signing only; not a release artifact.

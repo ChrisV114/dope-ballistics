@@ -1,6 +1,7 @@
 package za.co.dope.ballistics.data.db
 
 import android.content.ContentValues
+import android.database.sqlite.SQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import za.co.dope.ballistics.domain.AngularUnit
 import za.co.dope.ballistics.domain.DialDirection
@@ -156,10 +157,10 @@ object ScopeTemplates {
 
     fun insertBuiltIns(database: SupportSQLiteDatabase) {
         families.forEach { family ->
-            database.insert("scope_families", 5, family.toValues())
+            database.insert("scope_families", SQLiteDatabase.CONFLICT_IGNORE, family.toValues())
         }
         variants.forEach { variant ->
-            database.insert("scope_variants", 5, variant.toValues())
+            database.insert("scope_variants", SQLiteDatabase.CONFLICT_IGNORE, variant.toValues())
         }
     }
 
