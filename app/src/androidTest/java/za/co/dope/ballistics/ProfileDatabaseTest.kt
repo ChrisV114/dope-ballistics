@@ -24,6 +24,7 @@ import za.co.dope.ballistics.data.db.EnvironmentalSnapshotEntity
 import za.co.dope.ballistics.data.db.RifleEntity
 import za.co.dope.ballistics.data.db.ScopeTemplates
 import za.co.dope.ballistics.data.db.SessionSnapshotEntity
+import za.co.dope.ballistics.data.db.StarterProfiles
 import za.co.dope.ballistics.data.db.VerifiedDopeRecordEntity
 import za.co.dope.ballistics.data.db.WeatherCacheEntity
 import za.co.dope.ballistics.domain.VerificationStatus
@@ -63,7 +64,7 @@ class ProfileDatabaseTest {
         }
 
     @Test
-    fun migrationOneToFiveCreatesValidatedSchemaAndBuiltInTemplates() {
+    fun migrationOneToSixCreatesValidatedSchemaTemplatesAndStarterProfiles() {
         createVersionOneDatabase()
         database =
             Room
@@ -73,6 +74,7 @@ class ProfileDatabaseTest {
                     DopeDatabase.MIGRATION_2_3,
                     DopeDatabase.MIGRATION_3_4,
                     DopeDatabase.MIGRATION_4_5,
+                    DopeDatabase.MIGRATION_5_6,
                 ).allowMainThreadQueries()
                 .build()
 
@@ -92,6 +94,17 @@ class ProfileDatabaseTest {
             )
         assertEquals("BDC", bdc.reticleSystem)
         assertEquals("REQUIRES_USER_VERIFICATION", bdc.verificationStatus)
+        val repository = ProfileRepository(requireNotNull(database))
+        val rifles = runBlocking { repository.observeRifles().first() }
+        val ammunition = runBlocking { repository.observeAmmunition().first() }
+        val scopes = runBlocking { repository.observeScopeProfiles().first() }
+        assertEquals(2, rifles.size)
+        assertEquals(2, ammunition.size)
+        assertEquals(2, scopes.size)
+        assertTrue(rifles.any { it.id == StarterProfiles.HOWA_RIFLE_ID })
+        assertTrue(rifles.any { it.id == StarterProfiles.M_AND_P_RIFLE_ID })
+        assertTrue(ammunition.all { it.profileName.endsWith("test") })
+        assertTrue(scopes.all { it.verificationStatus == VerificationStatus.REQUIRES_USER_VERIFICATION.name })
         writable.query("SELECT name FROM sqlite_master WHERE type='table' AND name='environmental_snapshots'").use {
             assertTrue(it.moveToFirst())
         }
@@ -105,6 +118,24 @@ class ProfileDatabaseTest {
             assertTrue(it.moveToFirst())
         }
     }
+
+    @Test
+    fun starterProfileInsertionIsIdempotent() =
+        runBlocking {
+            database =
+                Room
+                    .inMemoryDatabaseBuilder(context, DopeDatabase::class.java)
+                    .allowMainThreadQueries()
+                    .build()
+            val db = requireNotNull(database)
+            StarterProfiles.insert(db.openHelper.writableDatabase, 1L)
+            StarterProfiles.insert(db.openHelper.writableDatabase, 2L)
+            val repository = ProfileRepository(db)
+
+            assertEquals(2, repository.observeRifles().first().size)
+            assertEquals(2, repository.observeAmmunition().first().size)
+            assertEquals(2, repository.observeScopeProfiles().first().size)
+        }
 
     @Test
     fun sessionAndVerifiedDopeAreAppendOnlyAndTraceable() =

@@ -14,8 +14,8 @@ android {
         applicationId = "za.co.bdstudio.dope"
         minSdk = 28
         targetSdk = 37
-        versionCode = 6
-        versionName = "0.5.1-m5-review"
+        versionCode = 7
+        versionName = "0.5.2-m5-review"
 
         buildConfigField("boolean", "OPEN_METEO_ENABLED", "true")
 

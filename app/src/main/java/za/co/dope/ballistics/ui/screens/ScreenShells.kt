@@ -215,6 +215,7 @@ fun ProfilesScreen(
 @Composable
 @Suppress("LongMethod")
 fun RifleScreen(repository: ProfileRepository? = null) {
+    val rifles by repository?.observeRifles()?.collectAsState(emptyList()) ?: remember { mutableStateOf(emptyList()) }
     var name by remember { mutableStateOf("") }
     var manufacturer by remember { mutableStateOf("") }
     var model by remember { mutableStateOf("") }
@@ -224,6 +225,8 @@ fun RifleScreen(repository: ProfileRepository? = null) {
     var saveMessage by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
     ScreenShell(title = "Rifle profile", eyebrow = "LOCAL DATABASE · SI STORAGE") {
+        SavedRifleProfiles(rifles)
+        SectionHeading("Add rifle")
         DopeField("Profile name", name, { name = it })
         DopeField("Manufacturer", manufacturer, { manufacturer = it })
         DopeField("Model", model, { model = it })
@@ -281,6 +284,10 @@ fun RifleScreen(repository: ProfileRepository? = null) {
 @Suppress("LongMethod")
 fun AmmunitionScreen(repository: ProfileRepository? = null) {
     val rifles by repository?.observeRifles()?.collectAsState(emptyList()) ?: remember { mutableStateOf(emptyList()) }
+    val ammunition by
+        repository?.observeAmmunition()?.collectAsState(emptyList()) ?: remember {
+            mutableStateOf(emptyList())
+        }
     var selectedRifleId by remember { mutableStateOf<String?>(null) }
     var profileName by remember { mutableStateOf("") }
     var bulletName by remember { mutableStateOf("") }
@@ -294,6 +301,8 @@ fun AmmunitionScreen(repository: ProfileRepository? = null) {
         if (rifles.none { it.id == selectedRifleId }) selectedRifleId = rifles.firstOrNull()?.id
     }
     ScreenShell(title = "Ammunition", eyebrow = "LOCAL DATABASE · NO FABRICATED VALUES") {
+        SavedAmmunitionProfiles(ammunition, rifles)
+        SectionHeading("Add ammunition")
         SectionHeading("Linked rifle")
         if (rifles.isEmpty()) {
             StatusChip("Create a rifle first", DopeStatus.BLOCKED)
@@ -373,6 +382,57 @@ fun AmmunitionScreen(repository: ProfileRepository? = null) {
             Modifier.fillMaxWidth(),
             Icons.Outlined.CheckCircle,
         )
+    }
+}
+
+@Composable
+private fun SavedRifleProfiles(rifles: List<RifleEntity>) {
+    SectionHeading("Saved rifles")
+    if (rifles.isEmpty()) {
+        StatusChip("No saved rifles", DopeStatus.INFO)
+        return
+    }
+    rifles.forEach { rifle ->
+        DopeCard {
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                SectionHeading(rifle.profileName)
+                LabelValue("Rifle", "${rifle.manufacturer} · ${rifle.model}")
+                LabelValue("Cartridge", rifle.calibreLabel)
+                LabelValue(
+                    "Barrel / twist",
+                    "${rifle.barrelLengthMetres.times(1000).toInt()} mm · " +
+                        "1:${rifle.twistRateMetres.div(0.0254).toInt()}",
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SavedAmmunitionProfiles(
+    ammunition: List<AmmunitionEntity>,
+    rifles: List<RifleEntity>,
+) {
+    SectionHeading("Saved loads")
+    if (ammunition.isEmpty()) {
+        StatusChip("No saved ammunition", DopeStatus.INFO)
+        return
+    }
+    ammunition.forEach { load ->
+        val linkedRifle = rifles.firstOrNull { it.id == load.rifleId }
+        val coefficient = load.g7BallisticCoefficient ?: load.g1BallisticCoefficient
+        DopeCard {
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                SectionHeading(load.profileName)
+                LabelValue("Rifle", linkedRifle?.profileName ?: "Missing linked rifle")
+                LabelValue("Bullet", load.bulletName)
+                LabelValue(
+                    "Drag / velocity",
+                    "${load.selectedDragModel} ${coefficient ?: "—"} · " +
+                        "${load.muzzleVelocityMetresPerSecond.toInt()} m/s",
+                )
+            }
+        }
     }
 }
 

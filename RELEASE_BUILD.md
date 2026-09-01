@@ -43,3 +43,11 @@ Milestone-5 review-fix local debug artifact:
 - Version name: `0.5.1-m5-review`
 - SHA-256: `002F6CA1141ED7A5179CB92665174D07452812FFAF80CE4339C121B83074AFE3`
 - Signing: automatically generated debug signing only; not a release artifact.
+
+Milestone-5 test-profile review artifact:
+
+- Path: `app/build/outputs/apk/debug/app-debug.apk`
+- Application ID: `za.co.bdstudio.dope`
+- Version name: `0.5.2-m5-review`
+- SHA-256: `9D0C1C994A17DF44A2278217CB7146376FC707040A1F3C878E7F936A0D0D74CB`
+- Signing: automatically generated debug signing only; not a release artifact.

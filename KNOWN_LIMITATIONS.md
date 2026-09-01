@@ -18,6 +18,8 @@
 - Import/export logic is implemented, but Android Storage Access Framework file selection remains deferred to the milestone that adds the full backup/export UI.
 - Zero/reference creation and active setup selection are available, but saved zero/reference records do not yet have full edit/archive screens. A changed setup is saved as a new linked zero/reference pair.
 - The dashboard summary remains a static entry surface; the calculation screen and profile setup screen are authoritative for active-input readiness.
+- The two owner-requested starter loads use the same G7 `0.290` Lapua and G1 `0.290` Hornady coefficients as the reviewed regression fixtures. They are labelled test data and require exact bullet-SKU, published-BC and chronograph confirmation before field use.
+- Starter scopes remain `REQUIRES_USER_VERIFICATION`. No zero/reference profile is pre-created because the real reference atmosphere must be entered by the owner.
 - Target-size choices do not perform camera ranging. IDPA/A-series values and nominal gong sizes require confirmation against the physical target.
 - Confirmed manual target distances with the DOPE inclusion flag automatically populate generated range cards; camera/range-finder execution remains Milestone 6 and will require user confirmation.
 - Range-card exports are generated offline in app cache and shared through Android's chooser. A persistent export library and Storage Access Framework destination picker are not yet implemented.

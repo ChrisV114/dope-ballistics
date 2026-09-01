@@ -4,6 +4,9 @@
 
 ### Milestone 5
 
+- Added the owner-requested Howa 6.5 Creedmoor/Lapua 139 gr and M&P15 Sport III/Hornady 53 gr editable test profiles, plus DNT TheOne MIL and Arken EP-8 MOA/KLBOX scope copies that remain explicitly unverified.
+- Added Room version 6 idempotent starter-profile insertion so an installed `0.5.1` database receives the profiles without duplicating or replacing user-created records.
+- Added visible saved-rifle and saved-ammunition cards above their entry forms.
 - Added review fixes for a complete fresh-install path: explicit rifle/load/scope selection, G1 or G7 ammunition, physically confirmed dial directions, reference-atmosphere and zero creation, and a persistent active setup.
 - Replaced the blocked calculation preview with the offline engine result, exact missing-input guidance, confirmed-target distance shortcuts, and live wind speed/direction controls.
 - Restored the approved original calculation-results and wind-panel hierarchy as the production visual target: compact result grids, elevation dial, compass-first wind wheel, component tiles and speed tiles, with editors below the primary panels.

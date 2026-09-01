@@ -99,3 +99,13 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - Local instrumentation execution is not claimed because no local emulator or physical device is installed.
 - GitHub Actions run `33434913641` passed `build-and-test` in 3m31s and API 35 `instrumentation` in 21m58s on commit `601731a`.
 - The GitHub emulator executed all ten instrumentation tests with 0 skipped and 0 failed, including Room `1 -> 5` migration and active-zero switching.
+
+## Milestone 5 test-profile review results — 2026-09-01
+
+- The complete local gate passed: Spotless, Android lint, Detekt, all JVM tests, screenshot validation, debug APK assembly and debug instrumentation-test APK assembly.
+- JVM tests: 39 run, 0 failures, 0 errors and 0 skipped.
+- Ten screenshot goldens passed unchanged.
+- Eleven instrumentation tests compile. Updated migration coverage validates Room `1 -> 6`, two rifles, two linked loads, two unverified scope copies and idempotent stable-ID insertion.
+- The owner test profiles are visible on the Rifle and Ammunition screens. No zero/reference atmosphere is fabricated.
+- Local instrumentation execution is not claimed because no local emulator or physical device is installed. The protected GitHub emulator remains the execution gate.
+- GitHub Actions run `33484557392` passed `build-and-test` in 3m33s and API 35 `instrumentation` in 21m47s on commit `d38739c`. The emulator executed all eleven tests with 0 skipped and 0 failed. Two earlier attempts were not counted as passes: one exposed and led to the idempotency fix; the other ran zero tests after Android package/activity services disappeared.
