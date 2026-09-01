@@ -4,6 +4,11 @@
 
 ### Milestone 5
 
+- Reworked the calculation screen to the supplied original-UI target with direct one-screen range, direction-of-fire, wind-direction and wind-speed entry; intermediate blank/invalid edits retain the last valid result instead of replacing the screen.
+- Moved rifle zero distance and sight height into the rifle profile, seeded the owner test rifles with their confirmed values, and added a non-destructive Room `7 -> 8` migration.
+- Added a clearly labelled estimated-reference path for users who do not know the historical zero-day atmosphere, while keeping exact source provenance and an approximation warning in results.
+- Kept unsaved rifle/load/scope choices when navigating through Home, surfaced the active/draft setup and current conditions on the dashboard, and tightened interior headers to match the original compact layout.
+- Added local rifle, ammunition and scope illustrations to saved profile cards, with profile-specific owner photographs still replaceable later.
 - Added a Room `6 -> 7` repair migration for devices that opened an early review build but did not receive the owner test-profile rows.
 - Added the owner-requested Howa 6.5 Creedmoor/Lapua 139 gr and M&P15 Sport III/Hornady 53 gr editable test profiles, plus DNT TheOne MIL and Arken EP-8 MOA/KLBOX scope copies that remain explicitly unverified.
 - Added Room version 6 idempotent starter-profile insertion so an installed `0.5.1` database receives the profiles without duplicating or replacing user-created records.

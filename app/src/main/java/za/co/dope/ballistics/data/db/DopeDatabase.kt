@@ -26,7 +26,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         SessionSnapshotEntity::class,
         VerifiedDopeRecordEntity::class,
     ],
-    version = 7,
+    version = 8,
     exportSchema = true,
 )
 abstract class DopeDatabase : RoomDatabase() {
@@ -79,6 +79,22 @@ abstract class DopeDatabase : RoomDatabase() {
                 }
             }
 
+        val MIGRATION_7_8 =
+            object : Migration(7, 8) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL("ALTER TABLE `rifles` ADD COLUMN `defaultZeroDistanceMetres` REAL")
+                    db.execSQL("ALTER TABLE `rifles` ADD COLUMN `sightHeightAboveBoreMetres` REAL")
+                    db.execSQL(
+                        "UPDATE `rifles` SET `defaultZeroDistanceMetres` = 100.0, " +
+                            "`sightHeightAboveBoreMetres` = 0.06 WHERE `id` = '${StarterProfiles.HOWA_RIFLE_ID}'",
+                    )
+                    db.execSQL(
+                        "UPDATE `rifles` SET `defaultZeroDistanceMetres` = 50.0, " +
+                            "`sightHeightAboveBoreMetres` = 0.06 WHERE `id` = '${StarterProfiles.M_AND_P_RIFLE_ID}'",
+                    )
+                }
+            }
+
         @Volatile private var instance: DopeDatabase? = null
 
         fun getInstance(context: Context): DopeDatabase =
@@ -93,6 +109,7 @@ abstract class DopeDatabase : RoomDatabase() {
                             MIGRATION_4_5,
                             MIGRATION_5_6,
                             MIGRATION_6_7,
+                            MIGRATION_7_8,
                         ).addCallback(
                             object : Callback() {
                                 override fun onCreate(db: SupportSQLiteDatabase) {

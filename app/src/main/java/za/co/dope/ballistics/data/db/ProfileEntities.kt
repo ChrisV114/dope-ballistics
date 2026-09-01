@@ -17,6 +17,8 @@ data class RifleEntity(
     val barrelLengthMetres: Double,
     val twistRateMetres: Double,
     val twistDirection: String,
+    val defaultZeroDistanceMetres: Double? = null,
+    val sightHeightAboveBoreMetres: Double? = null,
     val internalReference: String? = null,
     val serialNumber: String? = null,
     val createdAtEpochMillis: Long,

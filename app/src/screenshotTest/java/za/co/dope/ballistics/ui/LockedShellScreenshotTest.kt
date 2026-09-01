@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package za.co.dope.ballistics.ui
 
 import androidx.compose.runtime.Composable
@@ -45,6 +47,17 @@ fun RangeCardLandscapePreview() {
 @Composable
 fun ProfilesLargeFontPreview() {
     DopeGoldenScreen(route = "profiles")
+}
+
+@PreviewTest
+@Preview(
+    name = "Profile equipment visuals",
+    device = "spec:width=360dp,height=780dp,dpi=480",
+    showSystemUi = true,
+)
+@Composable
+fun ProfileEquipmentVisualsPreview() {
+    DopeGoldenScreen(route = "profile_visuals")
 }
 
 @PreviewTest

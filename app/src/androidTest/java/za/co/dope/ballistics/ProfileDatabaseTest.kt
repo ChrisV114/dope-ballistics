@@ -64,7 +64,7 @@ class ProfileDatabaseTest {
         }
 
     @Test
-    fun migrationOneToSevenCreatesValidatedSchemaTemplatesAndStarterProfiles() {
+    fun migrationOneToEightCreatesValidatedSchemaTemplatesAndStarterProfiles() {
         createVersionOneDatabase()
         database =
             Room
@@ -76,6 +76,7 @@ class ProfileDatabaseTest {
                     DopeDatabase.MIGRATION_4_5,
                     DopeDatabase.MIGRATION_5_6,
                     DopeDatabase.MIGRATION_6_7,
+                    DopeDatabase.MIGRATION_7_8,
                 ).allowMainThreadQueries()
                 .build()
 
@@ -104,6 +105,8 @@ class ProfileDatabaseTest {
         assertEquals(2, scopes.size)
         assertTrue(rifles.any { it.id == StarterProfiles.HOWA_RIFLE_ID })
         assertTrue(rifles.any { it.id == StarterProfiles.M_AND_P_RIFLE_ID })
+        assertEquals(100.0, rifles.first { it.id == StarterProfiles.HOWA_RIFLE_ID }.defaultZeroDistanceMetres!!, 0.0)
+        assertEquals(0.06, rifles.first { it.id == StarterProfiles.HOWA_RIFLE_ID }.sightHeightAboveBoreMetres!!, 0.0)
         assertTrue(ammunition.all { it.profileName.endsWith("test") })
         assertTrue(scopes.all { it.verificationStatus == VerificationStatus.REQUIRES_USER_VERIFICATION.name })
         writable.query("SELECT name FROM sqlite_master WHERE type='table' AND name='environmental_snapshots'").use {
@@ -139,17 +142,19 @@ class ProfileDatabaseTest {
         }
 
     @Test
-    fun migrationSixToSevenRepairsMissingStarterProfiles() {
+    fun migrationSixToEightRepairsMissingStarterProfilesAndAddsRifleSetupDefaults() {
         createVersionSixDatabaseWithoutStarterProfiles()
         database =
             Room
                 .databaseBuilder(context, DopeDatabase::class.java, TEST_DATABASE)
-                .addMigrations(DopeDatabase.MIGRATION_6_7)
+                .addMigrations(DopeDatabase.MIGRATION_6_7, DopeDatabase.MIGRATION_7_8)
                 .allowMainThreadQueries()
                 .build()
 
         val repository = ProfileRepository(requireNotNull(database))
-        assertEquals(2, runBlocking { repository.observeRifles().first() }.size)
+        val rifles = runBlocking { repository.observeRifles().first() }
+        assertEquals(2, rifles.size)
+        assertEquals(50.0, rifles.first { it.id == StarterProfiles.M_AND_P_RIFLE_ID }.defaultZeroDistanceMetres!!, 0.0)
         assertEquals(2, runBlocking { repository.observeAmmunition().first() }.size)
         assertEquals(2, runBlocking { repository.observeScopeProfiles().first() }.size)
     }
@@ -236,7 +241,13 @@ class ProfileDatabaseTest {
             repository.saveScopeProfile(scope)
             repository.saveEnvironmentalSnapshot(sampleEnvironment())
 
-            val first = repository.createAndActivateZero(sampleZeroEntry(rifle.id, scope.id, 50.0, 2L))
+            val first =
+                repository.createAndActivateZero(
+                    sampleZeroEntry(rifle.id, scope.id, 50.0, 2L).copy(
+                        referenceSource = "ESTIMATED_FROM_CURRENT",
+                        referenceNotes = "Historical conditions unknown",
+                    ),
+                )
             val second = repository.createAndActivateZero(sampleZeroEntry(rifle.id, scope.id, 100.0, 3L))
 
             assertEquals(64, first.dependencyFingerprint.length)
@@ -244,6 +255,9 @@ class ProfileDatabaseTest {
             assertEquals(100.0, repository.calculationContext()?.zero?.zeroDistanceMetres)
             repository.activateZeroProfile(first.id, 4L)
             assertEquals(50.0, repository.calculationContext()?.zero?.zeroDistanceMetres)
+            val referenceAtmosphere = repository.calculationContext()?.referenceAtmosphere
+            assertEquals("ESTIMATED_FROM_CURRENT", referenceAtmosphere?.temperatureSource)
+            assertEquals("Historical conditions unknown", referenceAtmosphere?.notes)
         }
 
     private fun createVersionOneDatabase() {
@@ -311,6 +325,8 @@ class ProfileDatabaseTest {
             barrelLengthMetres = 0.508,
             twistRateMetres = 0.254,
             twistDirection = "RIGHT",
+            defaultZeroDistanceMetres = 100.0,
+            sightHeightAboveBoreMetres = 0.05,
             createdAtEpochMillis = 1L,
             modifiedAtEpochMillis = 1L,
         )

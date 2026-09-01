@@ -17,10 +17,12 @@
 - The speed-of-sound method currently applies temperature only; humidity correction remains deferred pending method validation and is shared by environment and trajectory calculations.
 - Import/export logic is implemented, but Android Storage Access Framework file selection remains deferred to the milestone that adds the full backup/export UI.
 - Zero/reference creation and active setup selection are available, but saved zero/reference records do not yet have full edit/archive screens. A changed setup is saved as a new linked zero/reference pair.
-- The dashboard summary remains a static entry surface; the calculation screen and profile setup screen are authoritative for active-input readiness.
+- An unsaved setup draft persists while the app process remains alive; durable active selection begins after a zero setup is saved to Room.
+- When historical zero-day weather is unknown, the app can copy the latest saved conditions as an explicitly labelled estimate. Environmental deviation remains approximate until a better reference is saved.
 - The two owner-requested starter loads use the same G7 `0.290` Lapua and G1 `0.290` Hornady coefficients as the reviewed regression fixtures. They are labelled test data and require exact bullet-SKU, published-BC and chronograph confirmation before field use.
-- Starter scopes remain `REQUIRES_USER_VERIFICATION`. No zero/reference profile is pre-created because the real reference atmosphere must be entered by the owner.
-- Version `0.5.3-m5-review` repairs missing starter rows during the `6 -> 7` upgrade; it does not overwrite matching records or fabricate a zero/reference atmosphere.
+- Starter scopes remain `REQUIRES_USER_VERIFICATION`. No zero/reference profile is pre-created because the reference atmosphere must be confirmed or explicitly estimated by the owner.
+- Version `0.5.4-m5-review` stores zero distance and sight height on the rifle profile and adds them to installed databases through `7 -> 8`; it does not overwrite other user-created rifle values or fabricate a zero/reference atmosphere.
+- Equipment cards currently use neutral local illustrations rather than owner-supplied product photographs. Profile-specific photos remain future work.
 - Target-size choices do not perform camera ranging. IDPA/A-series values and nominal gong sizes require confirmation against the physical target.
 - Confirmed manual target distances with the DOPE inclusion flag automatically populate generated range cards; camera/range-finder execution remains Milestone 6 and will require user confirmation.
 - Range-card exports are generated offline in app cache and shared through Android's chooser. A persistent export library and Storage Access Framework destination picker are not yet implemented.

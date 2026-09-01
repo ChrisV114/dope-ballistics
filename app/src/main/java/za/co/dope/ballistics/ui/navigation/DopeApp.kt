@@ -51,6 +51,7 @@ import za.co.dope.ballistics.ui.screens.ComparisonScreen
 import za.co.dope.ballistics.ui.screens.DashboardScreen
 import za.co.dope.ballistics.ui.screens.EnvironmentScreen
 import za.co.dope.ballistics.ui.screens.MoreScreen
+import za.co.dope.ballistics.ui.screens.ProfileEquipmentPreview
 import za.co.dope.ballistics.ui.screens.ProfilesScreen
 import za.co.dope.ballistics.ui.screens.RangeCardScreen
 import za.co.dope.ballistics.ui.screens.ResultsScreen
@@ -58,6 +59,7 @@ import za.co.dope.ballistics.ui.screens.RifleScreen
 import za.co.dope.ballistics.ui.screens.ScopeDetailScreen
 import za.co.dope.ballistics.ui.screens.ScopeScreen
 import za.co.dope.ballistics.ui.screens.SessionScreen
+import za.co.dope.ballistics.ui.screens.SetupDraftState
 import za.co.dope.ballistics.ui.screens.SplashScreen
 import za.co.dope.ballistics.ui.screens.TargetRangeScreen
 import za.co.dope.ballistics.ui.screens.WindFormState
@@ -93,6 +95,7 @@ fun DopeApp(
     DopeTheme(mode = themeMode) {
         val navController = rememberNavController()
         val windState = remember { WindFormState() }
+        val setupDraftState = remember { SetupDraftState() }
         val backStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = backStackEntry?.destination
         val currentRoute = currentDestination?.route
@@ -128,6 +131,7 @@ fun DopeApp(
                 profileRepository = profileRepository,
                 sessionRepository = sessionRepository,
                 windState = windState,
+                setupDraftState = setupDraftState,
                 openRoute = openRoute,
                 modifier = Modifier.padding(innerPadding),
                 onThemeChange = {
@@ -151,6 +155,7 @@ private fun DopeNavHost(
     profileRepository: ProfileRepository?,
     sessionRepository: SessionRepository?,
     windState: WindFormState,
+    setupDraftState: SetupDraftState,
     openRoute: (String) -> Unit,
     onThemeChange: () -> Unit,
     modifier: Modifier = Modifier,
@@ -167,7 +172,7 @@ private fun DopeNavHost(
                 }
             }
         }
-        composable("dashboard") { DashboardScreen(openRoute) }
+        composable("dashboard") { DashboardScreen(profileRepository, setupDraftState, windState, openRoute) }
         composable("profiles") {
             val rifles by profileRepository?.observeRifles()?.collectAsState(emptyList()) ?: remember {
                 mutableStateOf(emptyList())
@@ -190,7 +195,7 @@ private fun DopeNavHost(
         composable("ammo") { AmmunitionScreen(profileRepository) }
         composable("scope") { ScopeScreen(openRoute, profileRepository) }
         composable("scope_detail") { ScopeDetailScreen(profileRepository) }
-        composable("zero_setup") { ZeroSetupScreen(profileRepository) }
+        composable("zero_setup") { ZeroSetupScreen(profileRepository, setupDraftState) }
         composable("environment") { EnvironmentScreen(openRoute, profileRepository) }
         composable("wind") { WindScreen(windState) }
         composable("results") { ResultsScreen(profileRepository, windState, openRoute) }
@@ -240,6 +245,7 @@ fun DopeGoldenScreen(
                 when (route) {
                     "splash" -> SplashScreen(onContinue = {})
                     "profiles" -> ProfilesScreen(onOpen = {})
+                    "profile_visuals" -> ProfileEquipmentPreview()
                     "environment" -> EnvironmentScreen(onOpen = {}, previewMode = true)
                     "range_card" -> RangeCardScreen(null, windState, {}, previewMode = true)
                     "wind" -> WindScreen(windState)
@@ -247,7 +253,7 @@ fun DopeGoldenScreen(
                     "session" -> SessionScreen(null, null, windState, {})
                     "comparison" -> ComparisonScreen(null, windState)
                     "target_range" -> TargetRangeScreen(onOpen = {})
-                    else -> DashboardScreen(onOpen = {})
+                    else -> DashboardScreen(null, SetupDraftState(), windState, onOpen = {})
                 }
             }
         }

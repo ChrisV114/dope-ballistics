@@ -11,9 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import za.co.dope.ballistics.data.ProfileRepository
 import za.co.dope.ballistics.data.db.ActiveProfileSelectionEntity
@@ -37,9 +41,8 @@ import za.co.dope.ballistics.engine.AngularUnit
 import za.co.dope.ballistics.engine.StandardBallisticsEngine
 import za.co.dope.ballistics.engine.TrajectoryResult
 import za.co.dope.ballistics.engine.WindConvention
+import za.co.dope.ballistics.engine.WindSpeedSelection
 import za.co.dope.ballistics.ui.components.DopeCard
-import za.co.dope.ballistics.ui.components.DopeField
-import za.co.dope.ballistics.ui.components.DopeFieldConfig
 import za.co.dope.ballistics.ui.components.DopeSecondaryButton
 import za.co.dope.ballistics.ui.components.DopeStatus
 import za.co.dope.ballistics.ui.components.LabelValue
@@ -66,12 +69,12 @@ fun ResultsScreen(
             mutableStateOf(emptyList())
         }
     var distance by remember { mutableStateOf(if (previewMode) "800" else "100") }
-    var confirmedDistances by remember { mutableStateOf<List<Double>>(emptyList()) }
     var result by remember { mutableStateOf<TrajectoryResult?>(null) }
     var profileLabel by remember { mutableStateOf<String?>(null) }
     var issues by remember { mutableStateOf<List<String>>(emptyList()) }
     var displayUnit by remember { mutableStateOf(AngularUnit.MIL) }
     var reticleHoldValid by remember { mutableStateOf(false) }
+    var referenceEstimateLabel by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(
         repository,
@@ -88,15 +91,8 @@ fun ResultsScreen(
         windState.selectedSpeed,
     ) {
         if (repository == null || previewMode) return@LaunchedEffect
-        confirmedDistances =
-            repository
-                .confirmedDopeTargets()
-                .mapNotNull { it.measuredDistanceMetres }
-                .distinct()
-                .sorted()
-        val metres = distance.toDoubleOrNull()
+        val metres = parsePositiveDistance(distance)
         if (metres == null || metres <= 0.0) {
-            result = null
             issues = listOf("Enter a positive target distance.")
             return@LaunchedEffect
         }
@@ -107,6 +103,10 @@ fun ResultsScreen(
             return@LaunchedEffect
         }
         profileLabel = "${context.rifle.profileName} · ${context.ammunition.profileName} · ${context.scope.profileName}"
+        referenceEstimateLabel =
+            context.referenceAtmosphere.temperatureSource
+                .takeIf { it.startsWith("ESTIMATED_") }
+                ?.let { "Reference atmosphere estimated · environmental deviation is approximate" }
         reticleHoldValid = context.scope.reticleSystem != "BDC" && context.scope.focalPlane == "FIRST"
         val observation = windState.observation()
         if (observation == null) {
@@ -157,13 +157,16 @@ fun ResultsScreen(
                 )
             }
         }
-        ReferenceMetricTile("Distance", "${distance.ifBlank { "—" }} m")
+        CalculationAdjustments(distance, { distance = it }, windState)
         profileLabel?.let { StatusChip(it, DopeStatus.READY) }
+        referenceEstimateLabel?.let { StatusChip(it, DopeStatus.WARNING) }
+        if (parsePositiveDistance(distance) == null) {
+            StatusChip("Finish typing a positive distance", DopeStatus.WARNING)
+        }
 
         val display = calculationDisplay(result, displayUnit) ?: previewDisplay(displayUnit).takeIf { previewMode }
         if (display != null) {
             CalculationResultGrid(display, reticleHoldValid || previewMode, windState)
-            CalculationAdjustments(distance, { distance = it }, confirmedDistances, windState, onOpen)
             result?.solution?.let { solution ->
                 DopeCard {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -284,11 +287,11 @@ private fun ElevationDial(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .height(190.dp)
+                .height(150.dp)
                 .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.97f), RoundedCornerShape(12.dp))
                 .padding(18.dp),
     ) {
-        val radius = size.width * 0.38f
+        val radius = min(size.width * 0.38f, size.height * 0.72f)
         val centre = Offset(size.width / 2f, size.height * 0.78f)
         val arcTopLeft = Offset(centre.x - radius, centre.y - radius)
         val arcSize =
@@ -347,36 +350,71 @@ private fun ElevationDial(
 private fun CalculationAdjustments(
     distance: String,
     onDistanceChanged: (String) -> Unit,
-    confirmedDistances: List<Double>,
     state: WindFormState,
-    onOpen: (String) -> Unit,
 ) {
     DopeCard {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            SectionHeading("Live adjustments")
-            DopeField("Distance", distance, onDistanceChanged, config = DopeFieldConfig(suffix = "m"))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                DopeSecondaryButton("− 5 m", { onDistanceChanged(adjusted(distance, -5.0)) }, Modifier.weight(1f))
-                DopeSecondaryButton("+ 5 m", { onDistanceChanged(adjusted(distance, 5.0)) }, Modifier.weight(1f))
-            }
-            confirmedDistances.take(6).forEach { metres ->
-                DopeSecondaryButton(
-                    "Use confirmed target · ${number(metres)} m",
-                    { onDistanceChanged(number(metres)) },
-                    Modifier.fillMaxWidth(),
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            SectionHeading("Live calculator inputs")
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                CompactLiveField(
+                    "Range",
+                    distance,
+                    { onDistanceChanged(sanitiseDecimalInput(it)) },
+                    Modifier.weight(1f),
+                )
+                CompactLiveField(
+                    "Fire°",
+                    state.directionOfFireDegrees,
+                    {
+                        state.locked = false
+                        state.directionOfFireDegrees = sanitiseDecimalInput(it)
+                    },
+                    Modifier.weight(1f),
+                )
+                CompactLiveField(
+                    "Wind°",
+                    state.windFromDegrees,
+                    {
+                        state.locked = false
+                        state.windFromDegrees = sanitiseDecimalInput(it)
+                    },
+                    Modifier.weight(1f),
+                )
+                CompactLiveField(
+                    "m/s",
+                    state.averageSpeedMps,
+                    { setAverageWindSpeed(state, it) },
+                    Modifier.weight(1f),
                 )
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                DopeSecondaryButton("− 0.5 m/s", { adjustWindSpeed(state, -0.5) }, Modifier.weight(1f))
-                DopeSecondaryButton("+ 0.5 m/s", { adjustWindSpeed(state, 0.5) }, Modifier.weight(1f))
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                DopeSecondaryButton("Wind − 5°", { adjustWindDirection(state, -5.0) }, Modifier.weight(1f))
-                DopeSecondaryButton("Wind + 5°", { adjustWindDirection(state, 5.0) }, Modifier.weight(1f))
-            }
-            DopeSecondaryButton("Open full wind wheel", { onOpen("wind") }, Modifier.fillMaxWidth())
         }
     }
+}
+
+@Composable
+private fun CompactLiveField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier,
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = modifier.height(58.dp),
+        label = { Text(label, style = MaterialTheme.typography.labelSmall) },
+        textStyle = MaterialTheme.typography.titleMedium,
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+        shape = RoundedCornerShape(10.dp),
+        colors =
+            OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+            ),
+    )
 }
 
 private fun calculationDisplay(
@@ -432,10 +470,42 @@ internal fun adjustWindDirection(
     state.windFromDegrees = number(WindConvention.normalizeDegrees(current + delta))
 }
 
-private fun adjusted(
+internal fun parsePositiveDistance(value: String): Double? =
+    value
+        .trim()
+        .replace(',', '.')
+        .toDoubleOrNull()
+        ?.takeIf { it > 0.0 }
+
+internal fun sanitiseDecimalInput(value: String): String {
+    val normalized = value.replace(',', '.')
+    return buildString {
+        normalized.forEachIndexed { index, character ->
+            if (character.isAllowedDecimalCharacter(index, this)) {
+                append(character)
+            }
+        }
+    }
+}
+
+private fun Char.isAllowedDecimalCharacter(
+    index: Int,
+    current: CharSequence,
+): Boolean = isDigit() || (this == '.' && '.' !in current) || (this == '-' && index == 0)
+
+internal fun setAverageWindSpeed(
+    state: WindFormState,
     value: String,
-    delta: Double,
-): String = number(max(1.0, (value.toDoubleOrNull() ?: 0.0) + delta))
+) {
+    val cleaned = sanitiseDecimalInput(value)
+    state.locked = false
+    state.averageSpeedMps = cleaned
+    state.selectedSpeed = WindSpeedSelection.AVERAGE
+    cleaned.toDoubleOrNull()?.takeIf { it >= 0.0 }?.let { average ->
+        state.minimumSpeedMps = number(min(state.minimumSpeedMps.toDoubleOrNull() ?: average, average))
+        state.maximumSpeedMps = number(max(state.maximumSpeedMps.toDoubleOrNull() ?: average, average))
+    }
+}
 
 private fun missingContextIssues(
     active: ActiveProfileSelectionEntity?,

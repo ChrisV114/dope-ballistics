@@ -18,7 +18,7 @@ class NavigationAccessibilityTest {
     @Test
     fun splashToDashboardAndProfilesNavigationIsAccessible() {
         composeRule.onNodeWithContentDescription("Enter DOPE").assertHeightIsAtLeast(48.dp).performClick()
-        composeRule.onNodeWithText("Field dashboard").assertIsDisplayed()
+        composeRule.onNodeWithText("Dashboard").assertIsDisplayed()
         composeRule.onNodeWithTag("dope_bottom_navigation").assertIsDisplayed()
 
         composeRule

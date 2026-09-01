@@ -1,0 +1,2567 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 8,
+    "identityHash": "8e8d029c15bd8db49ed07654f9c8994d",
+    "entities": [
+      {
+        "tableName": "rifles",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `profileName` TEXT NOT NULL, `manufacturer` TEXT NOT NULL, `model` TEXT NOT NULL, `calibreLabel` TEXT NOT NULL, `barrelLengthMetres` REAL NOT NULL, `twistRateMetres` REAL NOT NULL, `twistDirection` TEXT NOT NULL, `defaultZeroDistanceMetres` REAL, `sightHeightAboveBoreMetres` REAL, `internalReference` TEXT, `serialNumber` TEXT, `createdAtEpochMillis` INTEGER NOT NULL, `modifiedAtEpochMillis` INTEGER NOT NULL, `revision` INTEGER NOT NULL, `archived` INTEGER NOT NULL, `favourite` INTEGER NOT NULL, `notes` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "profileName",
+            "columnName": "profileName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "manufacturer",
+            "columnName": "manufacturer",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "model",
+            "columnName": "model",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "calibreLabel",
+            "columnName": "calibreLabel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "barrelLengthMetres",
+            "columnName": "barrelLengthMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "twistRateMetres",
+            "columnName": "twistRateMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "twistDirection",
+            "columnName": "twistDirection",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "defaultZeroDistanceMetres",
+            "columnName": "defaultZeroDistanceMetres",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "sightHeightAboveBoreMetres",
+            "columnName": "sightHeightAboveBoreMetres",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "internalReference",
+            "columnName": "internalReference",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "serialNumber",
+            "columnName": "serialNumber",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAtEpochMillis",
+            "columnName": "createdAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modifiedAtEpochMillis",
+            "columnName": "modifiedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "revision",
+            "columnName": "revision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "archived",
+            "columnName": "archived",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "favourite",
+            "columnName": "favourite",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "ammunition",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `rifleId` TEXT NOT NULL, `profileName` TEXT NOT NULL, `manufacturer` TEXT NOT NULL, `productLoadName` TEXT NOT NULL, `bulletManufacturer` TEXT NOT NULL, `bulletName` TEXT NOT NULL, `bulletWeightKilograms` REAL NOT NULL, `bulletDiameterMetres` REAL, `g1BallisticCoefficient` REAL, `g7BallisticCoefficient` REAL, `selectedDragModel` TEXT NOT NULL, `muzzleVelocityMetresPerSecond` REAL NOT NULL, `muzzleVelocityStandardDeviation` REAL, `velocityTemperatureCoefficient` REAL, `ammunitionReferenceTemperatureKelvin` REAL, `lotNumber` TEXT, `chronographDateEpochMillis` INTEGER, `chronographType` TEXT, `selectedChronographStringId` TEXT, `createdAtEpochMillis` INTEGER NOT NULL, `modifiedAtEpochMillis` INTEGER NOT NULL, `revision` INTEGER NOT NULL, `archived` INTEGER NOT NULL, `favourite` INTEGER NOT NULL, `notes` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`rifleId`) REFERENCES `rifles`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rifleId",
+            "columnName": "rifleId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "profileName",
+            "columnName": "profileName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "manufacturer",
+            "columnName": "manufacturer",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "productLoadName",
+            "columnName": "productLoadName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bulletManufacturer",
+            "columnName": "bulletManufacturer",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bulletName",
+            "columnName": "bulletName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bulletWeightKilograms",
+            "columnName": "bulletWeightKilograms",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bulletDiameterMetres",
+            "columnName": "bulletDiameterMetres",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "g1BallisticCoefficient",
+            "columnName": "g1BallisticCoefficient",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "g7BallisticCoefficient",
+            "columnName": "g7BallisticCoefficient",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "selectedDragModel",
+            "columnName": "selectedDragModel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "muzzleVelocityMetresPerSecond",
+            "columnName": "muzzleVelocityMetresPerSecond",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "muzzleVelocityStandardDeviation",
+            "columnName": "muzzleVelocityStandardDeviation",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "velocityTemperatureCoefficient",
+            "columnName": "velocityTemperatureCoefficient",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "ammunitionReferenceTemperatureKelvin",
+            "columnName": "ammunitionReferenceTemperatureKelvin",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "lotNumber",
+            "columnName": "lotNumber",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "chronographDateEpochMillis",
+            "columnName": "chronographDateEpochMillis",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "chronographType",
+            "columnName": "chronographType",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "selectedChronographStringId",
+            "columnName": "selectedChronographStringId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAtEpochMillis",
+            "columnName": "createdAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modifiedAtEpochMillis",
+            "columnName": "modifiedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "revision",
+            "columnName": "revision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "archived",
+            "columnName": "archived",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "favourite",
+            "columnName": "favourite",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_ammunition_rifleId",
+            "unique": false,
+            "columnNames": [
+              "rifleId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ammunition_rifleId` ON `${TABLE_NAME}` (`rifleId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "rifles",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "rifleId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "chronograph_strings",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `ammunitionId` TEXT NOT NULL, `readingsMetresPerSecondJson` TEXT NOT NULL, `averageMetresPerSecond` REAL NOT NULL, `medianMetresPerSecond` REAL NOT NULL, `minimumMetresPerSecond` REAL NOT NULL, `maximumMetresPerSecond` REAL NOT NULL, `extremeSpreadMetresPerSecond` REAL NOT NULL, `sampleStandardDeviationMetresPerSecond` REAL NOT NULL, `sampleCount` INTEGER NOT NULL, `ammunitionTemperatureKelvin` REAL, `capturedAtEpochMillis` INTEGER NOT NULL, `chronograph` TEXT NOT NULL, `createdAtEpochMillis` INTEGER NOT NULL, `modifiedAtEpochMillis` INTEGER NOT NULL, `revision` INTEGER NOT NULL, `archived` INTEGER NOT NULL, `favourite` INTEGER NOT NULL, `notes` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`ammunitionId`) REFERENCES `ammunition`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ammunitionId",
+            "columnName": "ammunitionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "readingsMetresPerSecondJson",
+            "columnName": "readingsMetresPerSecondJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "averageMetresPerSecond",
+            "columnName": "averageMetresPerSecond",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "medianMetresPerSecond",
+            "columnName": "medianMetresPerSecond",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minimumMetresPerSecond",
+            "columnName": "minimumMetresPerSecond",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maximumMetresPerSecond",
+            "columnName": "maximumMetresPerSecond",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "extremeSpreadMetresPerSecond",
+            "columnName": "extremeSpreadMetresPerSecond",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sampleStandardDeviationMetresPerSecond",
+            "columnName": "sampleStandardDeviationMetresPerSecond",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sampleCount",
+            "columnName": "sampleCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ammunitionTemperatureKelvin",
+            "columnName": "ammunitionTemperatureKelvin",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "capturedAtEpochMillis",
+            "columnName": "capturedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chronograph",
+            "columnName": "chronograph",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAtEpochMillis",
+            "columnName": "createdAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modifiedAtEpochMillis",
+            "columnName": "modifiedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "revision",
+            "columnName": "revision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "archived",
+            "columnName": "archived",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "favourite",
+            "columnName": "favourite",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_chronograph_strings_ammunitionId",
+            "unique": false,
+            "columnNames": [
+              "ammunitionId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_chronograph_strings_ammunitionId` ON `${TABLE_NAME}` (`ammunitionId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "ammunition",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "ammunitionId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "scope_families",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `manufacturer` TEXT NOT NULL, `model` TEXT NOT NULL, `displayName` TEXT NOT NULL, `minimumMagnification` REAL NOT NULL, `maximumMagnification` REAL NOT NULL, `objectiveDiameterMetres` REAL NOT NULL, `tubeDiameterMetres` REAL NOT NULL, `focalPlane` TEXT NOT NULL, `illuminated` INTEGER NOT NULL, `zeroStopAvailable` INTEGER NOT NULL, `parallaxAdjustment` TEXT NOT NULL, `turretCapType` TEXT NOT NULL, `manufacturerSpecificationSourceNote` TEXT NOT NULL, `builtInImmutable` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "manufacturer",
+            "columnName": "manufacturer",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "model",
+            "columnName": "model",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minimumMagnification",
+            "columnName": "minimumMagnification",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maximumMagnification",
+            "columnName": "maximumMagnification",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "objectiveDiameterMetres",
+            "columnName": "objectiveDiameterMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tubeDiameterMetres",
+            "columnName": "tubeDiameterMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "focalPlane",
+            "columnName": "focalPlane",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "illuminated",
+            "columnName": "illuminated",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zeroStopAvailable",
+            "columnName": "zeroStopAvailable",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "parallaxAdjustment",
+            "columnName": "parallaxAdjustment",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "turretCapType",
+            "columnName": "turretCapType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "manufacturerSpecificationSourceNote",
+            "columnName": "manufacturerSpecificationSourceNote",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "builtInImmutable",
+            "columnName": "builtInImmutable",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "scope_variants",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `familyId` TEXT NOT NULL, `displayName` TEXT NOT NULL, `turretUnit` TEXT NOT NULL, `nominalElevationClickRadians` REAL NOT NULL, `nominalWindageClickRadians` REAL NOT NULL, `reticleSystem` TEXT NOT NULL, `reticleName` TEXT NOT NULL, `reticleSubtensionMetadata` TEXT, `bdcMetadata` TEXT, `nominalElevationTravelRadians` REAL, `nominalWindageTravelRadians` REAL, `verificationStatus` TEXT NOT NULL, `builtInImmutable` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`familyId`) REFERENCES `scope_families`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "familyId",
+            "columnName": "familyId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "turretUnit",
+            "columnName": "turretUnit",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nominalElevationClickRadians",
+            "columnName": "nominalElevationClickRadians",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nominalWindageClickRadians",
+            "columnName": "nominalWindageClickRadians",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reticleSystem",
+            "columnName": "reticleSystem",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reticleName",
+            "columnName": "reticleName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reticleSubtensionMetadata",
+            "columnName": "reticleSubtensionMetadata",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "bdcMetadata",
+            "columnName": "bdcMetadata",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "nominalElevationTravelRadians",
+            "columnName": "nominalElevationTravelRadians",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "nominalWindageTravelRadians",
+            "columnName": "nominalWindageTravelRadians",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "verificationStatus",
+            "columnName": "verificationStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "builtInImmutable",
+            "columnName": "builtInImmutable",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_scope_variants_familyId",
+            "unique": false,
+            "columnNames": [
+              "familyId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_scope_variants_familyId` ON `${TABLE_NAME}` (`familyId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "scope_families",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "familyId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "scope_profiles",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `familyId` TEXT NOT NULL, `variantId` TEXT NOT NULL, `profileName` TEXT NOT NULL, `manufacturer` TEXT NOT NULL, `model` TEXT NOT NULL, `minimumMagnification` REAL NOT NULL, `maximumMagnification` REAL NOT NULL, `objectiveDiameterMetres` REAL NOT NULL, `tubeDiameterMetres` REAL NOT NULL, `focalPlane` TEXT NOT NULL, `turretUnit` TEXT NOT NULL, `elevationClickValueRadians` REAL NOT NULL, `windageClickValueRadians` REAL NOT NULL, `reticleSystem` TEXT NOT NULL, `reticleName` TEXT NOT NULL, `reticleSubtensionMetadata` TEXT, `bdcMetadata` TEXT, `elevationTravelRadians` REAL, `windageTravelRadians` REAL, `zeroStopAvailable` INTEGER NOT NULL, `parallaxAdjustment` TEXT NOT NULL, `illumination` INTEGER NOT NULL, `turretCapType` TEXT NOT NULL, `elevationDialDirection` TEXT NOT NULL, `windageDialDirection` TEXT NOT NULL, `sightHeightMetres` REAL NOT NULL, `zeroDistanceMetres` REAL NOT NULL, `zeroElevationOffsetRadians` REAL NOT NULL, `zeroWindageOffsetRadians` REAL NOT NULL, `manufacturerSpecificationSourceNote` TEXT NOT NULL, `verificationStatus` TEXT NOT NULL, `verificationDateEpochMillis` INTEGER, `bdcCalibrationVerified` INTEGER NOT NULL, `createdAtEpochMillis` INTEGER NOT NULL, `modifiedAtEpochMillis` INTEGER NOT NULL, `revision` INTEGER NOT NULL, `archived` INTEGER NOT NULL, `favourite` INTEGER NOT NULL, `notes` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`familyId`) REFERENCES `scope_families`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT , FOREIGN KEY(`variantId`) REFERENCES `scope_variants`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "familyId",
+            "columnName": "familyId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "variantId",
+            "columnName": "variantId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "profileName",
+            "columnName": "profileName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "manufacturer",
+            "columnName": "manufacturer",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "model",
+            "columnName": "model",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minimumMagnification",
+            "columnName": "minimumMagnification",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maximumMagnification",
+            "columnName": "maximumMagnification",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "objectiveDiameterMetres",
+            "columnName": "objectiveDiameterMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tubeDiameterMetres",
+            "columnName": "tubeDiameterMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "focalPlane",
+            "columnName": "focalPlane",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "turretUnit",
+            "columnName": "turretUnit",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "elevationClickValueRadians",
+            "columnName": "elevationClickValueRadians",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "windageClickValueRadians",
+            "columnName": "windageClickValueRadians",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reticleSystem",
+            "columnName": "reticleSystem",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reticleName",
+            "columnName": "reticleName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reticleSubtensionMetadata",
+            "columnName": "reticleSubtensionMetadata",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "bdcMetadata",
+            "columnName": "bdcMetadata",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "elevationTravelRadians",
+            "columnName": "elevationTravelRadians",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "windageTravelRadians",
+            "columnName": "windageTravelRadians",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "zeroStopAvailable",
+            "columnName": "zeroStopAvailable",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "parallaxAdjustment",
+            "columnName": "parallaxAdjustment",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "illumination",
+            "columnName": "illumination",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "turretCapType",
+            "columnName": "turretCapType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "elevationDialDirection",
+            "columnName": "elevationDialDirection",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "windageDialDirection",
+            "columnName": "windageDialDirection",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sightHeightMetres",
+            "columnName": "sightHeightMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zeroDistanceMetres",
+            "columnName": "zeroDistanceMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zeroElevationOffsetRadians",
+            "columnName": "zeroElevationOffsetRadians",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zeroWindageOffsetRadians",
+            "columnName": "zeroWindageOffsetRadians",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "manufacturerSpecificationSourceNote",
+            "columnName": "manufacturerSpecificationSourceNote",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verificationStatus",
+            "columnName": "verificationStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verificationDateEpochMillis",
+            "columnName": "verificationDateEpochMillis",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "bdcCalibrationVerified",
+            "columnName": "bdcCalibrationVerified",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAtEpochMillis",
+            "columnName": "createdAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modifiedAtEpochMillis",
+            "columnName": "modifiedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "revision",
+            "columnName": "revision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "archived",
+            "columnName": "archived",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "favourite",
+            "columnName": "favourite",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_scope_profiles_familyId",
+            "unique": false,
+            "columnNames": [
+              "familyId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_scope_profiles_familyId` ON `${TABLE_NAME}` (`familyId`)"
+          },
+          {
+            "name": "index_scope_profiles_variantId",
+            "unique": false,
+            "columnNames": [
+              "variantId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_scope_profiles_variantId` ON `${TABLE_NAME}` (`variantId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "scope_families",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "familyId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "scope_variants",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "variantId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "scope_verifications",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `scopeProfileId` TEXT NOT NULL, `physicalModelConfirmed` INTEGER NOT NULL, `turretUnitConfirmed` INTEGER NOT NULL, `clickValueConfirmed` INTEGER NOT NULL, `reticleConfirmed` INTEGER NOT NULL, `focalPlaneConfirmed` INTEGER NOT NULL, `elevationDialDirectionConfirmed` INTEGER NOT NULL, `windageDialDirectionConfirmed` INTEGER NOT NULL, `zeroStopConfirmed` INTEGER NOT NULL, `sightHeightConfirmed` INTEGER NOT NULL, `zeroDistanceConfirmed` INTEGER NOT NULL, `verifiedAtEpochMillis` INTEGER, `notes` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`scopeProfileId`) REFERENCES `scope_profiles`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scopeProfileId",
+            "columnName": "scopeProfileId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "physicalModelConfirmed",
+            "columnName": "physicalModelConfirmed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "turretUnitConfirmed",
+            "columnName": "turretUnitConfirmed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "clickValueConfirmed",
+            "columnName": "clickValueConfirmed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reticleConfirmed",
+            "columnName": "reticleConfirmed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "focalPlaneConfirmed",
+            "columnName": "focalPlaneConfirmed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "elevationDialDirectionConfirmed",
+            "columnName": "elevationDialDirectionConfirmed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "windageDialDirectionConfirmed",
+            "columnName": "windageDialDirectionConfirmed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zeroStopConfirmed",
+            "columnName": "zeroStopConfirmed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sightHeightConfirmed",
+            "columnName": "sightHeightConfirmed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zeroDistanceConfirmed",
+            "columnName": "zeroDistanceConfirmed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verifiedAtEpochMillis",
+            "columnName": "verifiedAtEpochMillis",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_scope_verifications_scopeProfileId",
+            "unique": false,
+            "columnNames": [
+              "scopeProfileId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_scope_verifications_scopeProfileId` ON `${TABLE_NAME}` (`scopeProfileId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "scope_profiles",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "scopeProfileId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "reference_atmospheres",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `temperatureKelvin` REAL NOT NULL, `temperatureSource` TEXT NOT NULL, `stationPressurePascals` REAL NOT NULL, `pressureSource` TEXT NOT NULL, `relativeHumidityFraction` REAL, `dewPointKelvin` REAL, `humiditySource` TEXT NOT NULL, `altitudeMetres` REAL NOT NULL, `altitudeSource` TEXT NOT NULL, `capturedAtEpochMillis` INTEGER NOT NULL, `latitudeDegrees` REAL, `longitudeDegrees` REAL, `locationIncludedInExports` INTEGER NOT NULL, `densityAltitudeMetres` REAL, `createdAtEpochMillis` INTEGER NOT NULL, `modifiedAtEpochMillis` INTEGER NOT NULL, `revision` INTEGER NOT NULL, `archived` INTEGER NOT NULL, `favourite` INTEGER NOT NULL, `notes` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "temperatureKelvin",
+            "columnName": "temperatureKelvin",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "temperatureSource",
+            "columnName": "temperatureSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "stationPressurePascals",
+            "columnName": "stationPressurePascals",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pressureSource",
+            "columnName": "pressureSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "relativeHumidityFraction",
+            "columnName": "relativeHumidityFraction",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "dewPointKelvin",
+            "columnName": "dewPointKelvin",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "humiditySource",
+            "columnName": "humiditySource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "altitudeMetres",
+            "columnName": "altitudeMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "altitudeSource",
+            "columnName": "altitudeSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "capturedAtEpochMillis",
+            "columnName": "capturedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitudeDegrees",
+            "columnName": "latitudeDegrees",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "longitudeDegrees",
+            "columnName": "longitudeDegrees",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "locationIncludedInExports",
+            "columnName": "locationIncludedInExports",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "densityAltitudeMetres",
+            "columnName": "densityAltitudeMetres",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "createdAtEpochMillis",
+            "columnName": "createdAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modifiedAtEpochMillis",
+            "columnName": "modifiedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "revision",
+            "columnName": "revision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "archived",
+            "columnName": "archived",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "favourite",
+            "columnName": "favourite",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "environmental_snapshots",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `temperatureKelvin` REAL NOT NULL, `temperatureSource` TEXT NOT NULL, `temperatureQuality` TEXT NOT NULL, `temperatureCapturedAtEpochMillis` INTEGER NOT NULL, `stationPressurePascals` REAL NOT NULL, `pressureSource` TEXT NOT NULL, `pressureQuality` TEXT NOT NULL, `pressureCapturedAtEpochMillis` INTEGER NOT NULL, `relativeHumidityFraction` REAL NOT NULL, `humiditySource` TEXT NOT NULL, `humidityQuality` TEXT NOT NULL, `humidityCapturedAtEpochMillis` INTEGER NOT NULL, `altitudeMetres` REAL NOT NULL, `altitudeSource` TEXT NOT NULL, `altitudeQuality` TEXT NOT NULL, `altitudeCapturedAtEpochMillis` INTEGER NOT NULL, `latitudeDegrees` REAL, `longitudeDegrees` REAL, `horizontalAccuracyMetres` REAL, `verticalAccuracyMetres` REAL, `approximateLocation` INTEGER NOT NULL, `locationIncludedInExports` INTEGER NOT NULL, `magneticHeadingDegrees` REAL, `trueHeadingDegrees` REAL, `pitchDegrees` REAL, `rollDegrees` REAL, `orientationQuality` TEXT, `orientationStable` INTEGER, `pressureSampleSummaryJson` TEXT, `airDensityKilogramsPerCubicMetre` REAL NOT NULL, `densityRatio` REAL NOT NULL, `pressureAltitudeMetres` REAL NOT NULL, `densityAltitudeMetres` REAL NOT NULL, `dewPointKelvin` REAL NOT NULL, `waterVapourPressurePascals` REAL NOT NULL, `speedOfSoundMetresPerSecond` REAL NOT NULL, `providerName` TEXT, `providerAttribution` TEXT, `capturedAtEpochMillis` INTEGER NOT NULL, `notes` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "temperatureKelvin",
+            "columnName": "temperatureKelvin",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "temperatureSource",
+            "columnName": "temperatureSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "temperatureQuality",
+            "columnName": "temperatureQuality",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "temperatureCapturedAtEpochMillis",
+            "columnName": "temperatureCapturedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "stationPressurePascals",
+            "columnName": "stationPressurePascals",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pressureSource",
+            "columnName": "pressureSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pressureQuality",
+            "columnName": "pressureQuality",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pressureCapturedAtEpochMillis",
+            "columnName": "pressureCapturedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "relativeHumidityFraction",
+            "columnName": "relativeHumidityFraction",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "humiditySource",
+            "columnName": "humiditySource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "humidityQuality",
+            "columnName": "humidityQuality",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "humidityCapturedAtEpochMillis",
+            "columnName": "humidityCapturedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "altitudeMetres",
+            "columnName": "altitudeMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "altitudeSource",
+            "columnName": "altitudeSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "altitudeQuality",
+            "columnName": "altitudeQuality",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "altitudeCapturedAtEpochMillis",
+            "columnName": "altitudeCapturedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitudeDegrees",
+            "columnName": "latitudeDegrees",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "longitudeDegrees",
+            "columnName": "longitudeDegrees",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "horizontalAccuracyMetres",
+            "columnName": "horizontalAccuracyMetres",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "verticalAccuracyMetres",
+            "columnName": "verticalAccuracyMetres",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "approximateLocation",
+            "columnName": "approximateLocation",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "locationIncludedInExports",
+            "columnName": "locationIncludedInExports",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "magneticHeadingDegrees",
+            "columnName": "magneticHeadingDegrees",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "trueHeadingDegrees",
+            "columnName": "trueHeadingDegrees",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "pitchDegrees",
+            "columnName": "pitchDegrees",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "rollDegrees",
+            "columnName": "rollDegrees",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "orientationQuality",
+            "columnName": "orientationQuality",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "orientationStable",
+            "columnName": "orientationStable",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "pressureSampleSummaryJson",
+            "columnName": "pressureSampleSummaryJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "airDensityKilogramsPerCubicMetre",
+            "columnName": "airDensityKilogramsPerCubicMetre",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "densityRatio",
+            "columnName": "densityRatio",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pressureAltitudeMetres",
+            "columnName": "pressureAltitudeMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "densityAltitudeMetres",
+            "columnName": "densityAltitudeMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dewPointKelvin",
+            "columnName": "dewPointKelvin",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "waterVapourPressurePascals",
+            "columnName": "waterVapourPressurePascals",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "speedOfSoundMetresPerSecond",
+            "columnName": "speedOfSoundMetresPerSecond",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "providerName",
+            "columnName": "providerName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "providerAttribution",
+            "columnName": "providerAttribution",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "capturedAtEpochMillis",
+            "columnName": "capturedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "weather_cache",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`coordinateKey` TEXT NOT NULL, `latitudeDegrees` REAL NOT NULL, `longitudeDegrees` REAL NOT NULL, `temperatureKelvin` REAL NOT NULL, `surfacePressurePascals` REAL NOT NULL, `meanSeaLevelPressurePascals` REAL, `relativeHumidityFraction` REAL NOT NULL, `windSpeedMetresPerSecond` REAL, `windDirectionDegrees` REAL, `providerName` TEXT NOT NULL, `attribution` TEXT NOT NULL, `modelElevationMetres` REAL, `fetchedAtEpochMillis` INTEGER NOT NULL, PRIMARY KEY(`coordinateKey`))",
+        "fields": [
+          {
+            "fieldPath": "coordinateKey",
+            "columnName": "coordinateKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitudeDegrees",
+            "columnName": "latitudeDegrees",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitudeDegrees",
+            "columnName": "longitudeDegrees",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "temperatureKelvin",
+            "columnName": "temperatureKelvin",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "surfacePressurePascals",
+            "columnName": "surfacePressurePascals",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "meanSeaLevelPressurePascals",
+            "columnName": "meanSeaLevelPressurePascals",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "relativeHumidityFraction",
+            "columnName": "relativeHumidityFraction",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "windSpeedMetresPerSecond",
+            "columnName": "windSpeedMetresPerSecond",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "windDirectionDegrees",
+            "columnName": "windDirectionDegrees",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "providerName",
+            "columnName": "providerName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "attribution",
+            "columnName": "attribution",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modelElevationMetres",
+            "columnName": "modelElevationMetres",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "fetchedAtEpochMillis",
+            "columnName": "fetchedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "coordinateKey"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_weather_cache_fetchedAtEpochMillis",
+            "unique": false,
+            "columnNames": [
+              "fetchedAtEpochMillis"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_weather_cache_fetchedAtEpochMillis` ON `${TABLE_NAME}` (`fetchedAtEpochMillis`)"
+          }
+        ]
+      },
+      {
+        "tableName": "saved_ranges",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `rangeName` TEXT NOT NULL, `latitudeDegrees` REAL, `longitudeDegrees` REAL, `surveyedAltitudeMetres` REAL, `commonDistancesMetresJson` TEXT NOT NULL, `magneticDeclinationRadians` REAL, `locationStoragePreference` TEXT NOT NULL, `createdAtEpochMillis` INTEGER NOT NULL, `modifiedAtEpochMillis` INTEGER NOT NULL, `revision` INTEGER NOT NULL, `archived` INTEGER NOT NULL, `favourite` INTEGER NOT NULL, `notes` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rangeName",
+            "columnName": "rangeName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitudeDegrees",
+            "columnName": "latitudeDegrees",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "longitudeDegrees",
+            "columnName": "longitudeDegrees",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "surveyedAltitudeMetres",
+            "columnName": "surveyedAltitudeMetres",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "commonDistancesMetresJson",
+            "columnName": "commonDistancesMetresJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "magneticDeclinationRadians",
+            "columnName": "magneticDeclinationRadians",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "locationStoragePreference",
+            "columnName": "locationStoragePreference",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAtEpochMillis",
+            "columnName": "createdAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modifiedAtEpochMillis",
+            "columnName": "modifiedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "revision",
+            "columnName": "revision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "archived",
+            "columnName": "archived",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "favourite",
+            "columnName": "favourite",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "static_targets",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `savedRangeId` TEXT, `name` TEXT NOT NULL, `targetClass` TEXT NOT NULL, `physicalWidthMetres` REAL NOT NULL, `physicalHeightMetres` REAL NOT NULL, `measuredDistanceMetres` REAL, `distanceSource` TEXT, `distanceQuality` TEXT, `distanceMeasuredAtEpochMillis` INTEGER, `distanceUncertaintyMetres` REAL, `distanceConfirmed` INTEGER NOT NULL, `includeDistanceInDope` INTEGER NOT NULL, `centreLatitudeDegrees` REAL, `centreLongitudeDegrees` REAL, `scoringZonesJson` TEXT NOT NULL, `calibrationMarkerPositionsJson` TEXT, `referenceImageUri` TEXT, `expectedImpactDiameterMinimumMetres` REAL, `expectedImpactDiameterMaximumMetres` REAL, `createdAtEpochMillis` INTEGER NOT NULL, `modifiedAtEpochMillis` INTEGER NOT NULL, `revision` INTEGER NOT NULL, `archived` INTEGER NOT NULL, `favourite` INTEGER NOT NULL, `notes` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`savedRangeId`) REFERENCES `saved_ranges`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "savedRangeId",
+            "columnName": "savedRangeId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetClass",
+            "columnName": "targetClass",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "physicalWidthMetres",
+            "columnName": "physicalWidthMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "physicalHeightMetres",
+            "columnName": "physicalHeightMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "measuredDistanceMetres",
+            "columnName": "measuredDistanceMetres",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "distanceSource",
+            "columnName": "distanceSource",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "distanceQuality",
+            "columnName": "distanceQuality",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "distanceMeasuredAtEpochMillis",
+            "columnName": "distanceMeasuredAtEpochMillis",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "distanceUncertaintyMetres",
+            "columnName": "distanceUncertaintyMetres",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "distanceConfirmed",
+            "columnName": "distanceConfirmed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "includeDistanceInDope",
+            "columnName": "includeDistanceInDope",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "centreLatitudeDegrees",
+            "columnName": "centreLatitudeDegrees",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "centreLongitudeDegrees",
+            "columnName": "centreLongitudeDegrees",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "scoringZonesJson",
+            "columnName": "scoringZonesJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "calibrationMarkerPositionsJson",
+            "columnName": "calibrationMarkerPositionsJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "referenceImageUri",
+            "columnName": "referenceImageUri",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "expectedImpactDiameterMinimumMetres",
+            "columnName": "expectedImpactDiameterMinimumMetres",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "expectedImpactDiameterMaximumMetres",
+            "columnName": "expectedImpactDiameterMaximumMetres",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "createdAtEpochMillis",
+            "columnName": "createdAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modifiedAtEpochMillis",
+            "columnName": "modifiedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "revision",
+            "columnName": "revision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "archived",
+            "columnName": "archived",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "favourite",
+            "columnName": "favourite",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_static_targets_savedRangeId",
+            "unique": false,
+            "columnNames": [
+              "savedRangeId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_static_targets_savedRangeId` ON `${TABLE_NAME}` (`savedRangeId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "saved_ranges",
+            "onDelete": "SET NULL",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "savedRangeId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "zero_profiles",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `rifleId` TEXT NOT NULL, `ammunitionId` TEXT NOT NULL, `scopeProfileId` TEXT NOT NULL, `zeroDistanceMetres` REAL NOT NULL, `sightHeightAboveBoreMetres` REAL NOT NULL, `zeroElevationOffsetRadians` REAL NOT NULL, `zeroWindageOffsetRadians` REAL NOT NULL, `zeroConfirmationDateEpochMillis` INTEGER NOT NULL, `referenceAtmosphereId` TEXT NOT NULL, `verified` INTEGER NOT NULL, `dependencyFingerprint` TEXT NOT NULL, `createdAtEpochMillis` INTEGER NOT NULL, `modifiedAtEpochMillis` INTEGER NOT NULL, `revision` INTEGER NOT NULL, `archived` INTEGER NOT NULL, `favourite` INTEGER NOT NULL, `notes` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`rifleId`) REFERENCES `rifles`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`ammunitionId`) REFERENCES `ammunition`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`scopeProfileId`) REFERENCES `scope_profiles`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`referenceAtmosphereId`) REFERENCES `reference_atmospheres`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rifleId",
+            "columnName": "rifleId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ammunitionId",
+            "columnName": "ammunitionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scopeProfileId",
+            "columnName": "scopeProfileId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zeroDistanceMetres",
+            "columnName": "zeroDistanceMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sightHeightAboveBoreMetres",
+            "columnName": "sightHeightAboveBoreMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zeroElevationOffsetRadians",
+            "columnName": "zeroElevationOffsetRadians",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zeroWindageOffsetRadians",
+            "columnName": "zeroWindageOffsetRadians",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zeroConfirmationDateEpochMillis",
+            "columnName": "zeroConfirmationDateEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "referenceAtmosphereId",
+            "columnName": "referenceAtmosphereId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verified",
+            "columnName": "verified",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dependencyFingerprint",
+            "columnName": "dependencyFingerprint",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAtEpochMillis",
+            "columnName": "createdAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modifiedAtEpochMillis",
+            "columnName": "modifiedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "revision",
+            "columnName": "revision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "archived",
+            "columnName": "archived",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "favourite",
+            "columnName": "favourite",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_zero_profiles_rifleId",
+            "unique": false,
+            "columnNames": [
+              "rifleId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_zero_profiles_rifleId` ON `${TABLE_NAME}` (`rifleId`)"
+          },
+          {
+            "name": "index_zero_profiles_ammunitionId",
+            "unique": false,
+            "columnNames": [
+              "ammunitionId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_zero_profiles_ammunitionId` ON `${TABLE_NAME}` (`ammunitionId`)"
+          },
+          {
+            "name": "index_zero_profiles_scopeProfileId",
+            "unique": false,
+            "columnNames": [
+              "scopeProfileId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_zero_profiles_scopeProfileId` ON `${TABLE_NAME}` (`scopeProfileId`)"
+          },
+          {
+            "name": "index_zero_profiles_referenceAtmosphereId",
+            "unique": false,
+            "columnNames": [
+              "referenceAtmosphereId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_zero_profiles_referenceAtmosphereId` ON `${TABLE_NAME}` (`referenceAtmosphereId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "rifles",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "rifleId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "ammunition",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "ammunitionId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "scope_profiles",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "scopeProfileId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "reference_atmospheres",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "referenceAtmosphereId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "active_profile_selection",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `zeroProfileId` TEXT NOT NULL, `updatedAtEpochMillis` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zeroProfileId",
+            "columnName": "zeroProfileId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAtEpochMillis",
+            "columnName": "updatedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "session_snapshots",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `schemaVersion` INTEGER NOT NULL, `sessionName` TEXT NOT NULL, `startedAtEpochMillis` INTEGER NOT NULL, `completedAtEpochMillis` INTEGER NOT NULL, `savedRangeId` TEXT, `savedRangeName` TEXT, `preciseLocationIncluded` INTEGER NOT NULL, `locationSnapshotJson` TEXT, `rifleId` TEXT NOT NULL, `rifleRevision` INTEGER NOT NULL, `ammunitionId` TEXT NOT NULL, `ammunitionRevision` INTEGER NOT NULL, `scopeProfileId` TEXT NOT NULL, `scopeProfileRevision` INTEGER NOT NULL, `zeroProfileId` TEXT NOT NULL, `zeroProfileRevision` INTEGER NOT NULL, `profileSnapshotJson` TEXT NOT NULL, `referenceEnvironmentJson` TEXT NOT NULL, `currentEnvironmentJson` TEXT NOT NULL, `fieldSourcesJson` TEXT NOT NULL, `distanceMetres` REAL NOT NULL, `distanceSource` TEXT NOT NULL, `distanceUncertaintyMetres` REAL NOT NULL, `directionOfFireTrueDegrees` REAL, `inclinationDegrees` REAL NOT NULL, `windSnapshotJson` TEXT NOT NULL, `calculationResultJson` TEXT NOT NULL, `calculationTraceJson` TEXT NOT NULL, `engineVersion` TEXT NOT NULL, `scopeRoundingJson` TEXT NOT NULL, `warningsJson` TEXT NOT NULL, `notes` TEXT, `photoUrisJson` TEXT NOT NULL, `trainingVideoUrisJson` TEXT NOT NULL, `rangeAnalystStringsJson` TEXT NOT NULL, `contentSha256` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "schemaVersion",
+            "columnName": "schemaVersion",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sessionName",
+            "columnName": "sessionName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startedAtEpochMillis",
+            "columnName": "startedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "completedAtEpochMillis",
+            "columnName": "completedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "savedRangeId",
+            "columnName": "savedRangeId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "savedRangeName",
+            "columnName": "savedRangeName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "preciseLocationIncluded",
+            "columnName": "preciseLocationIncluded",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "locationSnapshotJson",
+            "columnName": "locationSnapshotJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "rifleId",
+            "columnName": "rifleId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rifleRevision",
+            "columnName": "rifleRevision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ammunitionId",
+            "columnName": "ammunitionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ammunitionRevision",
+            "columnName": "ammunitionRevision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scopeProfileId",
+            "columnName": "scopeProfileId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scopeProfileRevision",
+            "columnName": "scopeProfileRevision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zeroProfileId",
+            "columnName": "zeroProfileId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zeroProfileRevision",
+            "columnName": "zeroProfileRevision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "profileSnapshotJson",
+            "columnName": "profileSnapshotJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "referenceEnvironmentJson",
+            "columnName": "referenceEnvironmentJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currentEnvironmentJson",
+            "columnName": "currentEnvironmentJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fieldSourcesJson",
+            "columnName": "fieldSourcesJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "distanceMetres",
+            "columnName": "distanceMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "distanceSource",
+            "columnName": "distanceSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "distanceUncertaintyMetres",
+            "columnName": "distanceUncertaintyMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "directionOfFireTrueDegrees",
+            "columnName": "directionOfFireTrueDegrees",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "inclinationDegrees",
+            "columnName": "inclinationDegrees",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "windSnapshotJson",
+            "columnName": "windSnapshotJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "calculationResultJson",
+            "columnName": "calculationResultJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "calculationTraceJson",
+            "columnName": "calculationTraceJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "engineVersion",
+            "columnName": "engineVersion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scopeRoundingJson",
+            "columnName": "scopeRoundingJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "warningsJson",
+            "columnName": "warningsJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "photoUrisJson",
+            "columnName": "photoUrisJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trainingVideoUrisJson",
+            "columnName": "trainingVideoUrisJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rangeAnalystStringsJson",
+            "columnName": "rangeAnalystStringsJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contentSha256",
+            "columnName": "contentSha256",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_session_snapshots_completedAtEpochMillis",
+            "unique": false,
+            "columnNames": [
+              "completedAtEpochMillis"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_session_snapshots_completedAtEpochMillis` ON `${TABLE_NAME}` (`completedAtEpochMillis`)"
+          },
+          {
+            "name": "index_session_snapshots_rifleId",
+            "unique": false,
+            "columnNames": [
+              "rifleId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_session_snapshots_rifleId` ON `${TABLE_NAME}` (`rifleId`)"
+          },
+          {
+            "name": "index_session_snapshots_savedRangeId",
+            "unique": false,
+            "columnNames": [
+              "savedRangeId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_session_snapshots_savedRangeId` ON `${TABLE_NAME}` (`savedRangeId`)"
+          }
+        ]
+      },
+      {
+        "tableName": "verified_dope_records",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `schemaVersion` INTEGER NOT NULL, `sessionSnapshotId` TEXT, `supersedesRecordId` TEXT, `createdAtEpochMillis` INTEGER NOT NULL, `rifleId` TEXT NOT NULL, `rifleRevision` INTEGER NOT NULL, `ammunitionId` TEXT NOT NULL, `ammunitionRevision` INTEGER NOT NULL, `scopeProfileId` TEXT NOT NULL, `scopeProfileRevision` INTEGER NOT NULL, `zeroProfileId` TEXT NOT NULL, `zeroProfileRevision` INTEGER NOT NULL, `profileSnapshotJson` TEXT NOT NULL, `distanceMetres` REAL NOT NULL, `distanceSource` TEXT NOT NULL, `distanceUncertaintyMetres` REAL NOT NULL, `calculatedUnit` TEXT NOT NULL, `calculatedRawValue` REAL NOT NULL, `calculatedDialValue` REAL NOT NULL, `calculatedClicks` INTEGER NOT NULL, `actualDialUnit` TEXT NOT NULL, `actualDialValue` REAL NOT NULL, `actualDialClicks` INTEGER, `observedGroupCentreVerticalMetres` REAL, `observedGroupCentreHorizontalMetres` REAL, `groupSizeMetres` REAL, `numberOfShots` INTEGER NOT NULL, `conditionsJson` TEXT NOT NULL, `confidence` TEXT NOT NULL, `status` TEXT NOT NULL, `engineVersion` TEXT NOT NULL, `notes` TEXT, `evidenceSha256` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "schemaVersion",
+            "columnName": "schemaVersion",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sessionSnapshotId",
+            "columnName": "sessionSnapshotId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "supersedesRecordId",
+            "columnName": "supersedesRecordId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAtEpochMillis",
+            "columnName": "createdAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rifleId",
+            "columnName": "rifleId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rifleRevision",
+            "columnName": "rifleRevision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ammunitionId",
+            "columnName": "ammunitionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ammunitionRevision",
+            "columnName": "ammunitionRevision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scopeProfileId",
+            "columnName": "scopeProfileId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scopeProfileRevision",
+            "columnName": "scopeProfileRevision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zeroProfileId",
+            "columnName": "zeroProfileId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zeroProfileRevision",
+            "columnName": "zeroProfileRevision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "profileSnapshotJson",
+            "columnName": "profileSnapshotJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "distanceMetres",
+            "columnName": "distanceMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "distanceSource",
+            "columnName": "distanceSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "distanceUncertaintyMetres",
+            "columnName": "distanceUncertaintyMetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "calculatedUnit",
+            "columnName": "calculatedUnit",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "calculatedRawValue",
+            "columnName": "calculatedRawValue",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "calculatedDialValue",
+            "columnName": "calculatedDialValue",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "calculatedClicks",
+            "columnName": "calculatedClicks",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "actualDialUnit",
+            "columnName": "actualDialUnit",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "actualDialValue",
+            "columnName": "actualDialValue",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "actualDialClicks",
+            "columnName": "actualDialClicks",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "observedGroupCentreVerticalMetres",
+            "columnName": "observedGroupCentreVerticalMetres",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "observedGroupCentreHorizontalMetres",
+            "columnName": "observedGroupCentreHorizontalMetres",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "groupSizeMetres",
+            "columnName": "groupSizeMetres",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "numberOfShots",
+            "columnName": "numberOfShots",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "conditionsJson",
+            "columnName": "conditionsJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "confidence",
+            "columnName": "confidence",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "engineVersion",
+            "columnName": "engineVersion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "evidenceSha256",
+            "columnName": "evidenceSha256",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_verified_dope_records_createdAtEpochMillis",
+            "unique": false,
+            "columnNames": [
+              "createdAtEpochMillis"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_verified_dope_records_createdAtEpochMillis` ON `${TABLE_NAME}` (`createdAtEpochMillis`)"
+          },
+          {
+            "name": "index_verified_dope_records_rifleId",
+            "unique": false,
+            "columnNames": [
+              "rifleId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_verified_dope_records_rifleId` ON `${TABLE_NAME}` (`rifleId`)"
+          },
+          {
+            "name": "index_verified_dope_records_sessionSnapshotId",
+            "unique": false,
+            "columnNames": [
+              "sessionSnapshotId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_verified_dope_records_sessionSnapshotId` ON `${TABLE_NAME}` (`sessionSnapshotId`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8e8d029c15bd8db49ed07654f9c8994d')"
+    ]
+  }
+}

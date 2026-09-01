@@ -114,28 +114,78 @@ fun SplashScreen(onContinue: () -> Unit) {
 }
 
 @Composable
-fun DashboardScreen(onOpen: (String) -> Unit) {
-    ScreenShell(title = "Field dashboard", eyebrow = "DESIGN PREVIEW") {
+@Suppress("LongMethod", "CyclomaticComplexMethod")
+fun DashboardScreen(
+    repository: ProfileRepository?,
+    setupDraft: SetupDraftState,
+    windState: WindFormState,
+    onOpen: (String) -> Unit,
+) {
+    val rifles by repository?.observeRifles()?.collectAsState(emptyList()) ?: remember { mutableStateOf(emptyList()) }
+    val ammunition by
+        repository?.observeAmmunition()?.collectAsState(emptyList()) ?: remember { mutableStateOf(emptyList()) }
+    val scopes by
+        repository?.observeScopeProfiles()?.collectAsState(emptyList()) ?: remember { mutableStateOf(emptyList()) }
+    val zeros by
+        repository?.observeZeroProfiles()?.collectAsState(emptyList()) ?: remember { mutableStateOf(emptyList()) }
+    val active by
+        repository?.observeActiveProfileSelection()?.collectAsState(null) ?: remember { mutableStateOf(null) }
+    val environments by
+        repository?.observeEnvironmentalSnapshots()?.collectAsState(emptyList()) ?: remember {
+            mutableStateOf(emptyList())
+        }
+    val activeZero = zeros.firstOrNull { it.id == active?.zeroProfileId }
+    val rifleId = activeZero?.rifleId ?: setupDraft.rifleId
+    val ammunitionId = activeZero?.ammunitionId ?: setupDraft.ammunitionId
+    val scopeId = activeZero?.scopeProfileId ?: setupDraft.scopeId
+    val rifleLabel = rifles.firstOrNull { it.id == rifleId }?.profileName ?: "Select rifle"
+    val ammunitionLabel = ammunition.firstOrNull { it.id == ammunitionId }?.profileName ?: "Select ammunition"
+    val scopeLabel = scopes.firstOrNull { it.id == scopeId }?.profileName ?: "Select scope"
+    val environment = environments.firstOrNull()
+    val setupReady = activeZero != null
+    ScreenShell(title = "Dashboard", eyebrow = "ACTIVE FIELD SETUP") {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            StatusChip("Profiles incomplete", DopeStatus.WARNING)
+            StatusChip(
+                if (setupReady) "Setup active" else "Setup draft",
+                if (setupReady) DopeStatus.READY else DopeStatus.WARNING,
+            )
             StatusChip("Offline", DopeStatus.READY)
         }
         DopeCard {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 SectionHeading("Active setup")
-                LabelValue("Rifle", "Add rifle")
-                LabelValue("Ammunition", "Add ammunition")
-                LabelValue("Scope", "Not verified", valueColor = DopeDesignTokens.Colors.Warning)
-                LabelValue("Zero", "Not set")
+                LabelValue("Rifle", rifleLabel)
+                LabelValue("Ammunition", ammunitionLabel)
+                LabelValue("Scope", scopeLabel)
+                LabelValue(
+                    "Zero",
+                    activeZero?.let { "${it.zeroDistanceMetres.compactDashboard()} m" } ?: "Not saved",
+                )
+                DopeSecondaryButton("Review or change setup", { onOpen("zero_setup") }, Modifier.fillMaxWidth())
             }
         }
         DopeCard {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 SectionHeading("Current conditions")
-                LabelValue("Environment", "Manual · no reading")
-                LabelValue("Data age", "No source")
+                LabelValue("Environment", environment?.name ?: "No saved conditions")
+                LabelValue(
+                    "Data age",
+                    environment?.let {
+                        val ageMinutes =
+                            ((System.currentTimeMillis() - it.capturedAtEpochMillis) / 60_000L)
+                                .coerceAtLeast(0)
+                        "$ageMinutes min"
+                    }
+                        ?: "No source",
+                )
                 LabelValue("Distance", "100 m")
-                LabelValue("Wind", "0 m/s · manual")
+                val speed = windState.averageSpeedMps.ifBlank { "—" }
+                val direction = windState.windFromDegrees.ifBlank { "—" }
+                LabelValue("Wind", "$speed m/s · $direction°")
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                    DopeSecondaryButton("Environment", { onOpen("environment") }, Modifier.weight(1f))
+                    DopeSecondaryButton("Wind", { onOpen("wind") }, Modifier.weight(1f))
+                }
             }
         }
         DopePrimaryButton(
@@ -144,11 +194,7 @@ fun DashboardScreen(onOpen: (String) -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             icon = Icons.Outlined.Calculate,
         )
-        Text(
-            "Calculation shows the exact missing setup or environmental input when it cannot run.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = DopeDesignTokens.Colors.Warning,
-        )
+        Text("Setup → Environment → Wind → Calculate", style = MaterialTheme.typography.bodyMedium)
         ActionGrid(
             first = "Range card" to Icons.Outlined.FilePresent,
             second = "Measure target" to Icons.Outlined.Straighten,
@@ -161,6 +207,27 @@ fun DashboardScreen(onOpen: (String) -> Unit) {
             onFirst = { onOpen("session") },
             onSecond = { onOpen("session") },
         )
+    }
+}
+
+private fun Double.compactDashboard(): String = String.format(Locale.US, "%.1f", this).trimEnd('0').trimEnd('.')
+
+@Composable
+internal fun ProfileEquipmentPreview() {
+    ScreenShell(title = "Profiles", eyebrow = "EQUIPMENT") {
+        listOf(
+            Triple(EquipmentIllustrationType.RIFLE, "Howa 6.5 Creedmoor", "26-inch · 1:8 · 100 m zero"),
+            Triple(EquipmentIllustrationType.AMMUNITION, "Lapua 139 gr Scenar", "G7 0.290 · 809 m/s"),
+            Triple(EquipmentIllustrationType.SCOPE, "DNT TheOne MIL", "FFP · 0.1 MIL/click"),
+        ).forEach { (type, title, detail) ->
+            DopeCard {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    EquipmentIllustration(type, Modifier.fillMaxWidth())
+                    SectionHeading(title)
+                    Text(detail, style = MaterialTheme.typography.bodyMedium)
+                }
+            }
+        }
     }
 }
 
@@ -222,6 +289,8 @@ fun RifleScreen(repository: ProfileRepository? = null) {
     var calibre by remember { mutableStateOf("") }
     var barrelMillimetres by remember { mutableStateOf("") }
     var twistMillimetres by remember { mutableStateOf("") }
+    var zeroDistanceMetres by remember { mutableStateOf("") }
+    var sightHeightMillimetres by remember { mutableStateOf("") }
     var saveMessage by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
     ScreenShell(title = "Rifle profile", eyebrow = "LOCAL DATABASE · SI STORAGE") {
@@ -243,15 +312,38 @@ fun RifleScreen(repository: ProfileRepository? = null) {
             { twistMillimetres = it },
             config = DopeFieldConfig(suffix = "mm / turn"),
         )
+        DopeField(
+            "Rifle zero distance",
+            zeroDistanceMetres,
+            { zeroDistanceMetres = sanitiseDecimalInput(it) },
+            config = DopeFieldConfig(suffix = "m", numeric = true),
+        )
+        DopeField(
+            "Sight height above bore",
+            sightHeightMillimetres,
+            { sightHeightMillimetres = sanitiseDecimalInput(it) },
+            config = DopeFieldConfig(suffix = "mm", numeric = true),
+        )
+        Text(
+            "Measure from bore centre to optic centre. These values are reused when creating a zero.",
+            style = MaterialTheme.typography.bodySmall,
+        )
         saveMessage?.let { StatusChip(it, if (it == "Rifle saved") DopeStatus.READY else DopeStatus.BLOCKED) }
         DopePrimaryButton(
             "Save rifle",
             {
                 val barrel = barrelMillimetres.toDoubleOrNull()?.div(1000.0)
                 val twist = twistMillimetres.toDoubleOrNull()?.div(1000.0)
-                if (repository == null || barrel == null || twist == null) {
-                    saveMessage = "Complete valid dimensions"
+                val zeroDistance = zeroDistanceMetres.toDoubleOrNull()
+                val sightHeight = sightHeightMillimetres.toDoubleOrNull()?.div(1000.0)
+                val dimensions = listOf(barrel, twist, zeroDistance, sightHeight)
+                if (repository == null || dimensions.any { it == null }) {
+                    saveMessage = "Complete rifle, zero and sight-height dimensions"
                 } else {
+                    val validBarrel = requireNotNull(barrel)
+                    val validTwist = requireNotNull(twist)
+                    val validZeroDistance = requireNotNull(zeroDistance)
+                    val validSightHeight = requireNotNull(sightHeight)
                     val now = System.currentTimeMillis()
                     scope.launch {
                         runCatching {
@@ -262,9 +354,11 @@ fun RifleScreen(repository: ProfileRepository? = null) {
                                     manufacturer = manufacturer,
                                     model = model,
                                     calibreLabel = calibre,
-                                    barrelLengthMetres = barrel,
-                                    twistRateMetres = twist,
+                                    barrelLengthMetres = validBarrel,
+                                    twistRateMetres = validTwist,
                                     twistDirection = TwistDirection.RIGHT.name,
+                                    defaultZeroDistanceMetres = validZeroDistance,
+                                    sightHeightAboveBoreMetres = validSightHeight,
                                     createdAtEpochMillis = now,
                                     modifiedAtEpochMillis = now,
                                 ),
@@ -395,6 +489,7 @@ private fun SavedRifleProfiles(rifles: List<RifleEntity>) {
     rifles.forEach { rifle ->
         DopeCard {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                EquipmentIllustration(EquipmentIllustrationType.RIFLE, Modifier.fillMaxWidth())
                 SectionHeading(rifle.profileName)
                 LabelValue("Rifle", "${rifle.manufacturer} · ${rifle.model}")
                 LabelValue("Cartridge", rifle.calibreLabel)
@@ -402,6 +497,11 @@ private fun SavedRifleProfiles(rifles: List<RifleEntity>) {
                     "Barrel / twist",
                     "${rifle.barrelLengthMetres.times(1000).toInt()} mm · " +
                         "1:${rifle.twistRateMetres.div(0.0254).toInt()}",
+                )
+                LabelValue(
+                    "Zero / sight height",
+                    "${rifle.defaultZeroDistanceMetres?.compactDashboard() ?: "—"} m · " +
+                        "${rifle.sightHeightAboveBoreMetres?.times(1000)?.compactDashboard() ?: "—"} mm",
                 )
             }
         }
@@ -423,6 +523,7 @@ private fun SavedAmmunitionProfiles(
         val coefficient = load.g7BallisticCoefficient ?: load.g1BallisticCoefficient
         DopeCard {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                EquipmentIllustration(EquipmentIllustrationType.AMMUNITION, Modifier.fillMaxWidth())
                 SectionHeading(load.profileName)
                 LabelValue("Rifle", linkedRifle?.profileName ?: "Missing linked rifle")
                 LabelValue("Bullet", load.bulletName)
@@ -437,6 +538,7 @@ private fun SavedAmmunitionProfiles(
 }
 
 @Composable
+@Suppress("LongMethod")
 fun ScopeScreen(
     onOpen: (String) -> Unit,
     repository: ProfileRepository? = null,
@@ -456,6 +558,31 @@ fun ScopeScreen(
         variants = families.flatMap { repository?.scopeVariants(it.id).orEmpty() }
     }
     ScreenShell(title = "Scope profile", eyebrow = "IMMUTABLE BUILT-INS · USER-OWNED COPIES") {
+        if (profiles.isNotEmpty()) {
+            SectionHeading("Saved scopes")
+            profiles.forEach { profile ->
+                DopeCard {
+                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        EquipmentIllustration(EquipmentIllustrationType.SCOPE, Modifier.fillMaxWidth())
+                        SectionHeading(profile.profileName)
+                        LabelValue("Optic", "${profile.manufacturer} · ${profile.model}")
+                        LabelValue("Turret / reticle", "${profile.turretUnit} · ${profile.reticleName}")
+                        StatusChip(
+                            if (profile.verificationStatus == VerificationStatus.USER_VERIFIED.name) {
+                                "Verified"
+                            } else {
+                                "Verification required"
+                            },
+                            if (profile.verificationStatus == VerificationStatus.USER_VERIFIED.name) {
+                                DopeStatus.READY
+                            } else {
+                                DopeStatus.WARNING
+                            },
+                        )
+                    }
+                }
+            }
+        }
         families.forEach { family ->
             DopeCard {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -860,12 +987,11 @@ internal fun ScreenShell(
                     .padding(horizontal = DopeDesignTokens.Spacing.ScreenHorizontal, vertical = 20.dp),
             verticalArrangement = Arrangement.spacedBy(DopeDesignTokens.Spacing.Control),
         ) {
-            DopeWordmark(modifier = Modifier.fillMaxWidth(0.42f))
             Text(eyebrow, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary)
             Text(
                 title,
                 modifier = Modifier.semantics { heading() },
-                style = MaterialTheme.typography.headlineLarge,
+                style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground,
             )
             content()

@@ -35,6 +35,8 @@ data class ZeroSetupEntry(
     val referenceStationPressureHectopascals: Double,
     val referenceHumidityPercent: Double,
     val referenceAltitudeMetres: Double,
+    val referenceSource: String = "MANUAL",
+    val referenceNotes: String? = null,
     val verified: Boolean,
     val nowEpochMillis: Long,
 )
@@ -99,6 +101,8 @@ class ProfileRepository(
         require(value.calibreLabel.isNotBlank()) { "Calibre/cartridge label is required" }
         require(value.barrelLengthMetres > 0.0) { "Barrel length must be positive" }
         require(value.twistRateMetres > 0.0) { "Twist rate must be positive" }
+        require(value.defaultZeroDistanceMetres?.let { it > 0.0 } == true) { "Rifle zero distance is required" }
+        require(value.sightHeightAboveBoreMetres?.let { it > 0.0 } == true) { "Rifle sight height is required" }
         dao.upsertRifle(value)
     }
 
@@ -220,16 +224,17 @@ class ProfileRepository(
                     id = atmosphereId,
                     name = entry.referenceName.ifBlank { "Zero reference" },
                     temperatureKelvin = entry.referenceTemperatureCelsius + 273.15,
-                    temperatureSource = "MANUAL",
+                    temperatureSource = entry.referenceSource,
                     stationPressurePascals = entry.referenceStationPressureHectopascals * 100.0,
-                    pressureSource = "MANUAL_STATION_PRESSURE",
+                    pressureSource = "${entry.referenceSource}_STATION_PRESSURE",
                     relativeHumidityFraction = entry.referenceHumidityPercent / 100.0,
-                    humiditySource = "MANUAL",
+                    humiditySource = entry.referenceSource,
                     altitudeMetres = entry.referenceAltitudeMetres,
-                    altitudeSource = "MANUAL",
+                    altitudeSource = entry.referenceSource,
                     capturedAtEpochMillis = entry.nowEpochMillis,
                     createdAtEpochMillis = entry.nowEpochMillis,
                     modifiedAtEpochMillis = entry.nowEpochMillis,
+                    notes = entry.referenceNotes,
                 )
             dao.upsertReferenceAtmosphere(atmosphere)
             val fingerprint =

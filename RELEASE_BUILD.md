@@ -59,3 +59,11 @@ Milestone-5 starter-profile repair artifact:
 - Version name: `0.5.3-m5-review`
 - SHA-256: `578CC6FDA66C7AB0FE4B717083FD33EC2A1D68FB6E018CC71B47240BCEC3069C`
 - Signing: automatically generated debug signing only; not a release artifact.
+
+Milestone-5 calculator-usability review artifact:
+
+- Path: `app/build/outputs/apk/debug/app-debug.apk`
+- Application ID: `za.co.bdstudio.dope`
+- Version name: `0.5.4-m5-review`
+- SHA-256: `2ABCEF9D23097B6AB90AB1662C117E60ECD5871E55C1B3C12353FA4422912F84`
+- Signing: automatically generated debug signing only; not a release artifact.
