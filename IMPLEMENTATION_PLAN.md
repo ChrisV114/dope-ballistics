@@ -13,7 +13,7 @@ Milestone 6 — camera capability and calibration review.
 - [x] Warn when camera ID, capture resolution, zoom or device configuration differs from the saved calibration.
 - [x] Add a Galaxy S25 landscape physical-acceptance checklist and a deterministic phone golden.
 - [x] Run the complete local quality/build gate for `0.6.0-m6-review`.
-- [ ] Run the protected GitHub quality and emulator jobs for `0.6.0-m6-review`.
+- [x] Run the protected GitHub quality and emulator jobs for `0.6.0-m6-review`.
 - [ ] Complete physical Galaxy S25 camera/lens/resolution/zoom acceptance.
 
 Camera-derived target-distance calculation and automatic ballistic handoff are intentionally not implemented. Target distance remains a separately confirmed manual measurement. Milestone 7 AR/training-video work, match plans, Watch7 shot progression, fixed-camera sequencing and pistol-drill cues remain future work.
