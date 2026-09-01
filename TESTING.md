@@ -108,3 +108,4 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - Eleven instrumentation tests compile. Updated migration coverage validates Room `1 -> 6`, two rifles, two linked loads, two unverified scope copies and idempotent stable-ID insertion.
 - The owner test profiles are visible on the Rifle and Ammunition screens. No zero/reference atmosphere is fabricated.
 - Local instrumentation execution is not claimed because no local emulator or physical device is installed. The protected GitHub emulator remains the execution gate.
+- GitHub Actions run `33484557392` passed `build-and-test` in 3m33s and API 35 `instrumentation` in 21m47s on commit `d38739c`. The emulator executed all eleven tests with 0 skipped and 0 failed. Two earlier attempts were not counted as passes: one exposed and led to the idempotency fix; the other ran zero tests after Android package/activity services disappeared.
