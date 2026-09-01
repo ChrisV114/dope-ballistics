@@ -26,7 +26,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         SessionSnapshotEntity::class,
         VerifiedDopeRecordEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = true,
 )
 abstract class DopeDatabase : RoomDatabase() {
@@ -71,6 +71,14 @@ abstract class DopeDatabase : RoomDatabase() {
                 }
             }
 
+        /** Repairs installations that reached schema 6 from an early review APK without starter rows. */
+        val MIGRATION_6_7 =
+            object : Migration(6, 7) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    StarterProfiles.insert(db)
+                }
+            }
+
         @Volatile private var instance: DopeDatabase? = null
 
         fun getInstance(context: Context): DopeDatabase =
@@ -78,8 +86,14 @@ abstract class DopeDatabase : RoomDatabase() {
                 instance
                     ?: Room
                         .databaseBuilder(context.applicationContext, DopeDatabase::class.java, DATABASE_NAME)
-                        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
-                        .addCallback(
+                        .addMigrations(
+                            MIGRATION_1_2,
+                            MIGRATION_2_3,
+                            MIGRATION_3_4,
+                            MIGRATION_4_5,
+                            MIGRATION_5_6,
+                            MIGRATION_6_7,
+                        ).addCallback(
                             object : Callback() {
                                 override fun onCreate(db: SupportSQLiteDatabase) {
                                     super.onCreate(db)
