@@ -1,6 +1,6 @@
 # Release Build
 
-Milestone 5 and its review-fix build verify debug assembly only. A signed APK/AAB is out of scope.
+Milestones through 6 verify private signed review APK assembly only. A public release APK/AAB is out of scope.
 
 Before public release: reconfirm branding, define keystore custody and distribution, run all quality gates, verify migrations/backup/restore, complete physical-device acceptance, document known limitations, and keep secrets outside the repository. The owner-approved application ID is `za.co.bdstudio.dope`.
 
@@ -75,5 +75,15 @@ Milestone-5 previous-DOPE review artifact:
 - Version code: `11`
 - Version name: `0.5.6-m5-review`
 - SHA-256: `31EDB58266BD720EB784EC35F4BA894869652165140CAEF49B3FF397188F6501`
+- Signing certificate SHA-256: `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`
+- Signing: approved private review key; intended to update an installed review build signed by the same certificate.
+
+Milestone-6 camera-calibration review artifact:
+
+- Path: `app/build/outputs/apk/debug/app-debug.apk`
+- Application ID: `za.co.bdstudio.dope`
+- Version code: `12`
+- Version name: `0.6.0-m6-review`
+- SHA-256: `76CB7E02C5406FC1B1D52AB407A8650DB824FBDD9204F372005CA9B7F21FA9E7`
 - Signing certificate SHA-256: `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`
 - Signing: approved private review key; intended to update an installed review build signed by the same certificate.

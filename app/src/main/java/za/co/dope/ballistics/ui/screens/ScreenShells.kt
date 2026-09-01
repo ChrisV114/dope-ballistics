@@ -879,26 +879,6 @@ fun EnvironmentScreen(
 ) = LiveEnvironmentScreen(onOpen, repository, previewMode)
 
 @Composable
-fun CameraCalibrationScreen() {
-    ScreenShell(title = "Camera calibration", eyebrow = "STATIC TARGETS ONLY") {
-        DopeCard {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                SectionHeading("Selected lens")
-                LabelValue("Camera", "Not inspected")
-                LabelValue("Physical lens", "Not selected")
-                LabelValue("Calibration", "Milestone 6 · not available yet")
-            }
-        }
-        StatusChip("Deferred — controls are intentionally disabled", DopeStatus.INFO)
-        Text(
-            "This review build does not pretend to inspect the lens or calibrate a target. Milestone 6 will " +
-                "add capability inspection, fixed-camera calibration and physical acceptance tests.",
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
-}
-
-@Composable
 @Suppress("LongMethod")
 fun TargetRangeScreen(
     onOpen: (String) -> Unit,

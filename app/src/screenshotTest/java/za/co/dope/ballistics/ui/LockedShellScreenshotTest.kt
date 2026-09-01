@@ -124,3 +124,14 @@ fun CalculationQuickControlsPreview() {
 fun SessionLogPreview() {
     DopeGoldenScreen(route = "session")
 }
+
+@PreviewTest
+@Preview(
+    name = "Camera calibration",
+    device = "spec:width=360dp,height=780dp,dpi=480",
+    showSystemUi = true,
+)
+@Composable
+fun CameraCalibrationPreview() {
+    DopeGoldenScreen(route = "camera_calibration")
+}

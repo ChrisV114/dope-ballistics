@@ -123,3 +123,11 @@ Profile photographs are user-owned local attachments selected through Android's 
 ## R5-009 — Wind correction presentation
 
 The calculator may present the existing model windage as angular correction and rounded turret clicks using the selected verified scope. Always spell out `LEFT` or `RIGHT`; do not expose an unexplained signed click count. Wind observations and actual settings remain logged separately and do not auto-tune future wind predictions.
+
+## M6-001 — Camera calibration boundary
+
+CameraX may inspect camera capabilities, capture an app-private still, place manual anchors, fit multi-distance calibration evidence and warn when the device/camera/resolution/zoom configuration changes. The workflow uses Android camera IDs and physical metadata where exposed and requests 1.0× zoom; it never treats a marketing zoom label as calibration. Camera anchor data does not calculate a target distance or enter a ballistic solution. A target distance remains a separately measured and explicitly confirmed manual value.
+
+## M6-002 — Calibration persistence
+
+Persist one active camera-calibration profile in private application preferences because it is device-local configuration rather than relational profile/session evidence. Store the device/configuration fingerprint, samples, effective focal length, fit errors, valid range, date and app version. Captured JPEG files remain transient app-cache files and are not exported or added to the media library.

@@ -151,3 +151,14 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - `apksigner` confirmed the approved private review certificate SHA-256 `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`.
 - Local emulator and physical Galaxy S25 execution are not claimed. The protected GitHub API 35 emulator job remains the external execution gate.
 - GitHub Actions run `33546118928` passed `build-and-test` in 3m58s on commit `8a4ee73`. Its first API 35 emulator attempt crashed before discovering any tests; the unchanged failed-job retry passed all twelve instrumentation tests with 0 skipped and 0 failed in 19m43s.
+
+## Milestone 6 local results — 2026-09-01
+
+- The complete local gate passed: Spotless, Android lint, Detekt, all JVM tests, screenshot validation, signed debug APK assembly and debug instrumentation-test APK assembly.
+- JVM tests: 48 run, 0 failures, 0 errors and 0 skipped; 17 are pure `:ballistics` tests and 31 are app tests. New coverage verifies multi-distance focal-length fitting, fit-error/range reporting, invalid-sample rejection and camera/lens/resolution/zoom mismatch warnings.
+- Twelve screenshot goldens passed, including a new S25-equivalent camera-calibration screen with the app navigation clear of Android system controls.
+- The existing instrumentation suite compiles into `app-debug-androidTest.apk`. No Room schema changed; camera calibration is private device configuration stored outside the relational profile/session database.
+- `aapt2` confirmed application ID `za.co.bdstudio.dope`, version code `12` and version name `0.6.0-m6-review`.
+- `apksigner` confirmed the approved private review certificate SHA-256 `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`.
+- Local emulator execution and physical Galaxy S25 camera/lens acceptance are not claimed. The protected GitHub API 35 job and owner physical checklist remain pending.
+- The build retains the experimental screenshot-testing and Gradle 10 deprecation warnings. CameraX adds unstripped debug `libimage_processing_util_jni.so` and `libsurface_util_jni.so` alongside the existing `libandroidx.graphics.path.so` warning.

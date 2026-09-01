@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Milestone 6
+
+- Added CameraX 1.6.2 preview and app-private still capture with explicit runtime permission.
+- Added rear-camera capability inspection for camera IDs, focal lengths, sensor/active-array geometry, capture sizes, zoom range, OIS, distortion metadata and logical physical-camera IDs where Android exposes them.
+- Added explicit camera-ID selection, a requested 1.0× zoom baseline, draggable still-image calibration anchors and tape-measured calibration sample entry.
+- Added local multi-distance calibration fitting with effective focal length, mean absolute error, median percentage error, 95th-percentile error and valid-distance range.
+- Added persistent device/configuration fingerprints and visible wrong-camera, wrong-resolution and changed-zoom warnings.
+- Added a Galaxy S25 landscape physical-acceptance checklist and a locked phone-sized camera-calibration golden.
+- Kept camera calibration isolated from target-distance calculation and ballistic handoff; target distance remains separately measured and confirmed manually.
+
 ### Milestone 5
 
 - Replaced the non-interactive elevation gauge with the shared touch/drag wind-direction wheel and added unambiguous wind turret output such as `6 clicks LEFT` or `3 clicks RIGHT` from the selected scope's click value.

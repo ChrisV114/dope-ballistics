@@ -221,6 +221,7 @@ private fun DopeNavHost(
  * bottom navigation without requiring an Activity-owned navigation event dispatcher.
  */
 @Composable
+@Suppress("CyclomaticComplexMethod")
 fun DopeGoldenScreen(
     route: String,
     themeMode: DopeThemeMode = DopeThemeMode.DARK,
@@ -262,6 +263,7 @@ fun DopeGoldenScreen(
                     "session" -> SessionScreen(null, null, windState, sessionDraftState, {})
                     "comparison" -> ComparisonScreen(null, windState)
                     "target_range" -> TargetRangeScreen(onOpen = {})
+                    "camera_calibration" -> CameraCalibrationScreen(previewMode = true)
                     else -> DashboardScreen(null, SetupDraftState(), windState, onOpen = {})
                 }
             }

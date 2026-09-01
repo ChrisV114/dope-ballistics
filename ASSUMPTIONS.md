@@ -20,3 +20,5 @@
 - Owner field observations of 3.6 MIL at 500 m, 8.0 MIL at 800 m and 11.5 MIL at 1,000 m are treated as historical comparison data. Their atmosphere, date, direction, inclination and exact velocity string are not yet recorded, so they are not sufficient for automatic truing.
 - A match or stage may contain multiple rifle/load combinations, including an equipment change between consecutive targets. Equipment selection therefore belongs to each engagement, not only to the match or stage.
 - In multi-gun match mode the Galaxy S25 is body-carried and may be locked; the rigid landscape stand is reserved for a separate fixed-camera mode.
+- Android may expose a logical rear camera ID rather than a directly selectable physical lens ID. Milestone 6 records the reported physical IDs and requires an S25 physical test to confirm that the selected 1.0× configuration remains stable.
+- Camera calibration objects are static, clearly edged paper or steel references with tape-measured dimensions and distances. At least two samples are required; three or more spanning the intended camera distance are preferred.

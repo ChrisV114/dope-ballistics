@@ -1,6 +1,9 @@
 # Known Limitations
 
-- Milestone 5 provides manual wind, offline range cards, immutable sessions, verified range records and non-mutating comparison. Camera, AR, Range Analyst, voice, Wear OS and ML remain deferred.
+- Milestone 6 adds camera capability inspection, app-private still capture, manual calibration anchors, local calibration fitting and configuration warnings. Camera-derived target ranging, AR, Range Analyst, voice, Wear OS and ML remain deferred.
+- Camera anchor measurements do not calculate or recommend a target distance and cannot feed the ballistic calculator. Use a separately measured and confirmed manual distance in Target Range.
+- Android may expose a logical rear camera rather than a directly selectable physical lens. A 1.0× request does not by itself prove which physical S25 lens produced every frame; the in-app metadata and physical checklist make that uncertainty visible.
+- Captured calibration images are transient cache files. The saved calibration profile retains numerical samples and configuration/error metadata, not an image library.
 - The calculator now shows elevation and windage in angular units and signed left/right clicks. These remain model outputs that require a verified profile, confirmed range and user judgement; the app does not provide live aim-point overlays.
 - G1/G7 accuracy is limited by the supplied manufacturer BC and its validity across velocity bands; the engine does not invent or convert coefficients.
 - The current solver excludes spin drift, Coriolis, aerodynamic jump, custom Doppler drag curves and verified BDC holds.
@@ -38,4 +41,4 @@
 
 
 - Gradle reports `ReportingExtension.file(String)` as deprecated through a current third-party quality plugin; the build passes on Gradle 9.7.1, but that upstream plugin must be upgraded before Gradle 10.
-- Debug packaging reports that `libandroidx.graphics.path.so` cannot be stripped and packages it unchanged; this is a debug dependency warning, not a failed build.
+- Debug packaging reports that `libandroidx.graphics.path.so`, `libimage_processing_util_jni.so` and `libsurface_util_jni.so` cannot be stripped and packages them unchanged; these are debug dependency warnings, not a failed build.
