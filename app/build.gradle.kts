@@ -10,7 +10,11 @@ plugins {
 
 val reviewSigningProperties =
     Properties().apply {
-        rootProject.file("keystore.properties").takeIf { it.isFile }?.inputStream()?.use(::load)
+        rootProject
+            .file("keystore.properties")
+            .takeIf { it.isFile }
+            ?.inputStream()
+            ?.use(::load)
     }
 val reviewKeystorePath =
     providers.environmentVariable("DOPE_REVIEW_KEYSTORE").orNull
