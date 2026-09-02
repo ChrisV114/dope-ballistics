@@ -6,9 +6,9 @@
 - English (South Africa) and metric defaults remain requirements.
 - Common gong presets are nominal conveniences, not claims of a universal standard, and always require confirmation against the physical target.
 - Wear OS, automatic shot counting, fixed-camera sequencing and pistol drill playback are future requirements and do not expand the completed Milestone 2 implementation scope.
-- The future Wear OS baseline is the owner's Samsung Galaxy Watch7 44 mm paired with the Samsung Galaxy S25; layouts must still tolerate the smaller 40 mm display.
+- The future Wear OS baseline is the owner's Samsung Galaxy Watch7 44 mm paired with the Samsung Galaxy S25 Ultra; layouts must still tolerate the smaller 40 mm display.
 - Live-fire drill cues will use EARMOR Bluetooth hearing protection; dry-fire cues may use the phone speaker. Watch display/vibration are secondary outputs.
-- The future fixed-camera baseline is the owner's rigid landscape stand with every user-marked stationary target retained in one wide frame.
+- The future fixed-camera baseline is the owner's Samsung Galaxy S25 Ultra on a rigid landscape stand with every user-marked stationary target retained in one wide frame.
 - Milestone 2 stores target-distance provenance and the confirmed DOPE-inclusion flag, but camera measurement and automatic handoff execution remain Milestone 6.
 - Room 2.8.4 is retained as the mature Android-only database line; Room 3 is not required for the current non-KMP module.
 - Owner-provided muzzle velocities of 809 m/s for the Howa 6.5 Creedmoor/Lapua 139 gr load and 920 m/s for the M&P15 Sport III/Hornady 53 gr load are editable starting averages, not universal factory values.
@@ -19,6 +19,7 @@
 - Garmin Xero C2 data is manually entered for now; no proprietary Bluetooth integration or ShotView import is included.
 - Owner field observations of 3.6 MIL at 500 m, 8.0 MIL at 800 m and 11.5 MIL at 1,000 m are treated as historical comparison data. Their atmosphere, date, direction, inclination and exact velocity string are not yet recorded, so they are not sufficient for automatic truing.
 - A match or stage may contain multiple rifle/load combinations, including an equipment change between consecutive targets. Equipment selection therefore belongs to each engagement, not only to the match or stage.
-- In multi-gun match mode the Galaxy S25 is body-carried and may be locked; the rigid landscape stand is reserved for a separate fixed-camera mode.
+- In multi-gun match mode the Galaxy S25 Ultra is body-carried and may be locked; the rigid landscape stand is reserved for a separate fixed-camera mode.
 - Android may expose a logical rear camera ID rather than a directly selectable physical lens ID. Milestone 6 records the reported physical IDs and requires an S25 physical test to confirm that the selected 1.0× configuration remains stable.
+- Samsung advertises up to 100× digital zoom for the Galaxy S25 Ultra, but CameraX may expose a lower maximum to this app. Runtime camera metadata is authoritative for available in-app controls.
 - Camera calibration objects are static, clearly edged paper or steel references with tape-measured dimensions and distances. At least two samples are required; three or more spanning the intended camera distance are preferred.

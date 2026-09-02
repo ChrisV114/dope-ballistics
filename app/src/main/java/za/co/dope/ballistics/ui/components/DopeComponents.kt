@@ -151,9 +151,11 @@ fun DopeSecondaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
+    enabled: Boolean = true,
 ) {
     OutlinedButton(
         onClick = onClick,
+        enabled = enabled,
         modifier =
             modifier
                 .heightIn(min = DopeDesignTokens.Sizing.PrimaryControlHeight)

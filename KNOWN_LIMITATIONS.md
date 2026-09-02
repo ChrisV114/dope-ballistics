@@ -2,7 +2,8 @@
 
 - Milestone 6 adds camera capability inspection, app-private still capture, manual calibration anchors, local calibration fitting and configuration warnings. Camera-derived target ranging, AR, Range Analyst, voice, Wear OS and ML remain deferred.
 - Camera anchor measurements do not calculate or recommend a target distance and cannot feed the ballistic calculator. Use a separately measured and confirmed manual distance in Target Range.
-- Android may expose a logical rear camera rather than a directly selectable physical lens. A 1.0× request does not by itself prove which physical S25 lens produced every frame; the in-app metadata and physical checklist make that uncertainty visible.
+- Android may expose a logical rear camera rather than a directly selectable physical lens. A requested zoom ratio does not by itself prove which physical S25 Ultra lens produced every frame; the in-app metadata and physical checklist make that uncertainty visible.
+- Samsung Camera advertises up to 100× digital zoom on the Galaxy S25 Ultra, but a third-party CameraX app may receive a lower maximum. DOPE exposes only the runtime-reported range; high digital zoom adds no optical detail and is not evidence of accurate distance measurement.
 - Captured calibration images are transient cache files. The saved calibration profile retains numerical samples and configuration/error metadata, not an image library.
 - The calculator now shows elevation and windage in angular units and signed left/right clicks. These remain model outputs that require a verified profile, confirmed range and user judgement; the app does not provide live aim-point overlays.
 - G1/G7 accuracy is limited by the supplied manufacturer BC and its validity across velocity bands; the engine does not invent or convert coefficients.

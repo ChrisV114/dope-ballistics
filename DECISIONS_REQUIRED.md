@@ -35,10 +35,11 @@
 - Required before implementation acceptance: physical-device tests for microphone shot-count confidence, camera thermal limits, screen wake behaviour and highlight visibility at target distance.
 - Locked boundary: no live hit detection, impact analysis, ballistic correction or aim overlay.
 
-## DR-006 — Milestone 6 Galaxy S25 camera acceptance
+## DR-006 — Milestone 6 Galaxy S25 Ultra camera acceptance
 
-- Status: pending owner physical review of `0.6.0-m6-review`.
-- On the Galaxy S25 in the landscape stand, confirm camera permission, rear-camera selection, stable preview, still capture, anchor dragging and two-or-more-sample calibration save.
+- Status: pending owner physical review of `0.6.1-m6-review`.
+- On the Galaxy S25 Ultra in the landscape stand, confirm camera permission, rear-camera selection, stable preview, still capture, anchor dragging and two-or-more-sample calibration save.
+- Confirm the displayed maximum zoom, 1×/3×/5×/10×/Max shortcuts and slider all behave correctly. Record the maximum CameraX actually exposes; do not assume it is Samsung Camera's 100× mode.
 - Confirm the displayed camera ID, focal length and captured resolution remain the same between samples and after reopening the calibration screen.
 - Confirm the saved-calibration warning appears after selecting a different camera/configuration where the device exposes one.
 - This acceptance does not validate camera-derived target range, hit detection, aiming overlays or ballistic handoff; those are not implemented.

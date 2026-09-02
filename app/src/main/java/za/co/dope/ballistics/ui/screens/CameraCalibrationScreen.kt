@@ -27,6 +27,7 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
+import androidx.camera.core.ZoomState
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
@@ -46,6 +47,7 @@ import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -68,6 +70,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import za.co.dope.ballistics.BuildConfig
 import za.co.dope.ballistics.data.camera.AndroidCameraCapabilityReader
@@ -112,6 +115,10 @@ fun CameraCalibrationScreen(previewMode: Boolean = false) {
     var frameMetadata by remember { mutableStateOf<CameraFrameMetadata?>(null) }
     var capturedBitmap by remember { mutableStateOf<Bitmap?>(null) }
     var captureMessage by remember { mutableStateOf<String?>(null) }
+    var requestedZoomRatio by remember { mutableFloatStateOf(1f) }
+    var appliedZoomRatio by remember { mutableFloatStateOf(1f) }
+    var minimumZoomRatio by remember { mutableFloatStateOf(1f) }
+    var maximumZoomRatio by remember { mutableFloatStateOf(if (previewMode) 100f else 1f) }
     var knownSize by remember { mutableStateOf("") }
     var knownDistance by remember { mutableStateOf("") }
     val samples = remember { mutableStateListOf<CalibrationSample>() }
@@ -148,19 +155,6 @@ fun CameraCalibrationScreen(previewMode: Boolean = false) {
                 }
             }
         } else {
-            CapabilityPanel(
-                capabilities,
-                selectedCameraId,
-                onSelect = { cameraId ->
-                    if (cameraId != selectedCameraId) {
-                        selectedCameraId = cameraId
-                        frameMetadata = null
-                        capturedBitmap = null
-                        samples.clear()
-                        captureMessage = "Camera changed · capture new calibration samples"
-                    }
-                },
-            )
             capabilityError?.let { StatusChip(it, DopeStatus.BLOCKED) }
             selectedCameraId?.let { cameraId ->
                 if (previewMode) {
@@ -173,10 +167,30 @@ fun CameraCalibrationScreen(previewMode: Boolean = false) {
                 } else {
                     LiveCameraPreview(
                         cameraId = cameraId,
+                        requestedZoomRatio = requestedZoomRatio,
                         onBound = { imageCapture = it },
                         onMetadata = { frameMetadata = it },
+                        onZoomState = { minimum, maximum, current ->
+                            minimumZoomRatio = minimum
+                            maximumZoomRatio = maximum
+                            appliedZoomRatio = current
+                            if (requestedZoomRatio !in minimum..maximum) requestedZoomRatio = current
+                        },
                     )
                 }
+                ZoomControl(
+                    requestedZoomRatio = requestedZoomRatio,
+                    appliedZoomRatio = appliedZoomRatio,
+                    minimumZoomRatio = minimumZoomRatio,
+                    maximumZoomRatio = maximumZoomRatio,
+                    enabled = imageCapture != null && !previewMode,
+                    onZoomRequested = { zoomRatio ->
+                        requestedZoomRatio = zoomRatio
+                        capturedBitmap = null
+                        samples.clear()
+                        captureMessage = "Zoom changed · capture new calibration samples"
+                    },
+                )
                 DopePrimaryButton(
                     "Capture calibration still",
                     {
@@ -193,6 +207,23 @@ fun CameraCalibrationScreen(previewMode: Boolean = false) {
                     enabled = imageCapture != null && !previewMode,
                 )
             }
+            CapabilityPanel(
+                capabilities,
+                selectedCameraId,
+                onSelect = { cameraId ->
+                    if (cameraId != selectedCameraId) {
+                        selectedCameraId = cameraId
+                        frameMetadata = null
+                        capturedBitmap = null
+                        samples.clear()
+                        requestedZoomRatio = 1f
+                        appliedZoomRatio = 1f
+                        minimumZoomRatio = 1f
+                        maximumZoomRatio = 1f
+                        captureMessage = "Camera changed · capture new calibration samples"
+                    }
+                },
+            )
             captureMessage?.let { StatusChip(it, if (capturedBitmap != null) DopeStatus.READY else DopeStatus.BLOCKED) }
             frameMetadata?.let { metadata ->
                 LabelValue(
@@ -290,14 +321,23 @@ private fun CapabilityPanel(
 @androidx.annotation.OptIn(ExperimentalCamera2Interop::class)
 private fun LiveCameraPreview(
     cameraId: String,
+    requestedZoomRatio: Float,
     onBound: (ImageCapture?) -> Unit,
     onMetadata: (CameraFrameMetadata) -> Unit,
+    onZoomState: (minimum: Float, maximum: Float, current: Float) -> Unit,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val previewView = remember { PreviewView(context).apply { scaleType = PreviewView.ScaleType.FIT_CENTER } }
+    var boundCamera by remember(cameraId) { mutableStateOf<androidx.camera.core.Camera?>(null) }
+    LaunchedEffect(boundCamera, requestedZoomRatio) {
+        val camera = boundCamera ?: return@LaunchedEffect
+        val zoomState = camera.cameraInfo.zoomState.value ?: return@LaunchedEffect
+        camera.cameraControl.setZoomRatio(requestedZoomRatio.coerceIn(zoomState.minZoomRatio, zoomState.maxZoomRatio))
+    }
     DisposableEffect(cameraId, lifecycleOwner) {
         val providerFuture = ProcessCameraProvider.getInstance(context)
+        var zoomObserver: Observer<ZoomState>? = null
         val listener =
             Runnable {
                 runCatching {
@@ -339,12 +379,20 @@ private fun LiveCameraPreview(
                             .build()
                     provider.unbindAll()
                     val camera = provider.bindToLifecycle(lifecycleOwner, selector, preview, capture)
-                    camera.cameraControl.setZoomRatio(1f)
+                    val observer =
+                        Observer<ZoomState> { zoomState ->
+                            onZoomState(zoomState.minZoomRatio, zoomState.maxZoomRatio, zoomState.zoomRatio)
+                        }
+                    zoomObserver = observer
+                    camera.cameraInfo.zoomState.observe(lifecycleOwner, observer)
+                    boundCamera = camera
                     onBound(capture)
                 }.onFailure { onBound(null) }
             }
         providerFuture.addListener(listener, ContextCompat.getMainExecutor(context))
         onDispose {
+            zoomObserver?.let { observer -> boundCamera?.cameraInfo?.zoomState?.removeObserver(observer) }
+            boundCamera = null
             if (providerFuture.isDone) runCatching { providerFuture.get().unbindAll() }
             onBound(null)
         }
@@ -353,6 +401,61 @@ private fun LiveCameraPreview(
         factory = { previewView },
         modifier = Modifier.fillMaxWidth().height(280.dp).background(Color.Black),
     )
+}
+
+@Composable
+private fun ZoomControl(
+    requestedZoomRatio: Float,
+    appliedZoomRatio: Float,
+    minimumZoomRatio: Float,
+    maximumZoomRatio: Float,
+    enabled: Boolean,
+    onZoomRequested: (Float) -> Unit,
+) {
+    val usableMaximum = maximumZoomRatio.coerceAtLeast(minimumZoomRatio)
+    val sliderUpperBound = if (usableMaximum > minimumZoomRatio) usableMaximum else minimumZoomRatio + 1f
+    DopeCard {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            SectionHeading("Camera zoom")
+            LabelValue("Active zoom", "${appliedZoomRatio.toDouble().round(1)}×")
+            LabelValue("Available range", "${minimumZoomRatio.toDouble().round(1)}–${usableMaximum.toDouble().round(1)}×")
+            Slider(
+                value = requestedZoomRatio.coerceIn(minimumZoomRatio, usableMaximum),
+                onValueChange = onZoomRequested,
+                valueRange = minimumZoomRatio..sliderUpperBound,
+                enabled = enabled && usableMaximum > minimumZoomRatio,
+            )
+            listOf(
+                listOf(
+                    "1×" to 1f,
+                    "3×" to 3f,
+                    "5×" to 5f,
+                ),
+                listOf(
+                    "10×" to 10f,
+                    "Max" to usableMaximum,
+                ),
+            ).forEach { shortcuts ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    shortcuts.forEach { (label, ratio) ->
+                        DopeSecondaryButton(
+                            label,
+                            { onZoomRequested(ratio.coerceIn(minimumZoomRatio, usableMaximum)) },
+                            Modifier.weight(1f),
+                            enabled = enabled && ratio >= minimumZoomRatio && ratio <= usableMaximum,
+                        )
+                    }
+                }
+            }
+            Text(
+                "The app uses the zoom range Android reports for the selected camera. Samsung Camera's 100× mode may not be exposed to CameraX.",
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    }
 }
 
 @Composable
@@ -467,7 +570,7 @@ private fun SafetyAndAcceptancePanel(checklist: MutableList<Boolean>) {
                 "Landscape stand is stable and camera controls remain clear",
                 "Selected camera ID and focal length stay unchanged",
                 "Captured resolution matches the saved calibration",
-                "Zoom remains locked at 1.0× with no digital zoom",
+                "Reported maximum and 1×/3×/5×/10×/Max controls are confirmed",
                 "Static paper or steel target edges are clearly visible",
             ).forEachIndexed { index, label ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -542,7 +645,7 @@ private val PreviewCapability =
         activeWidthPixels = 4000,
         activeHeightPixels = 3000,
         jpegSizes = listOf("4000×3000", "3840×2160"),
-        zoomRatioRange = "1.0–10.0×",
+        zoomRatioRange = "1.0–100.0×",
         opticalStabilisation = true,
         distortionMetadata = true,
         physicalCameraIds = setOf("2", "3"),

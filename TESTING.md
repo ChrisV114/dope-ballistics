@@ -163,3 +163,14 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - Local emulator execution and physical Galaxy S25 camera/lens acceptance are not claimed. The protected GitHub API 35 job and owner physical checklist remain pending.
 - The build retains the experimental screenshot-testing and Gradle 10 deprecation warnings. CameraX adds unstripped debug `libimage_processing_util_jni.so` and `libsurface_util_jni.so` alongside the existing `libandroidx.graphics.path.so` warning.
 - GitHub Actions run `33556414089` passed `build-and-test` in 6m45s and the unchanged API 35 instrumentation retry in 19m34s. The emulator executed all 12 tests with 0 skipped and 0 failed. The first emulator attempt never started tests because Android services returned `Broken pipe` immediately after a 472-second unaccelerated boot; rerunning only the failed job passed without a code change.
+
+## Milestone 6 S25 Ultra zoom review — 2026-09-02
+
+- The owner confirmed the physical review device is a Samsung Galaxy S25 Ultra.
+- The complete local gate passed after adding runtime CameraX zoom controls: Spotless, Android lint, Detekt, JVM tests, screenshot validation, signed debug APK assembly and debug instrumentation-test APK assembly.
+- JVM tests: 48 run, 0 failures, 0 errors and 0 skipped; 17 are pure `:ballistics` tests and 31 are app tests.
+- Twelve screenshot goldens passed. The updated camera baseline places the preview and two-row 1×/3×/5×/10×/Max controls ahead of diagnostics and above the fixed app/system navigation region.
+- `aapt2` confirmed application ID `za.co.bdstudio.dope`, version code `13` and version name `0.6.1-m6-review`.
+- `apksigner` confirmed the approved private review certificate SHA-256 `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`.
+- Physical S25 Ultra execution is not claimed. Owner acceptance must record the maximum zoom CameraX exposes and verify the slider, shortcuts, preview, still capture and configuration warnings on the phone.
+- The build retains the experimental screenshot-testing and Gradle 10 deprecation warnings.

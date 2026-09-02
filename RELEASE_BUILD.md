@@ -87,3 +87,13 @@ Milestone-6 camera-calibration review artifact:
 - SHA-256: `76CB7E02C5406FC1B1D52AB407A8650DB824FBDD9204F372005CA9B7F21FA9E7`
 - Signing certificate SHA-256: `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`
 - Signing: approved private review key; intended to update an installed review build signed by the same certificate.
+
+Milestone-6 S25 Ultra zoom review artifact:
+
+- Path: `app/build/outputs/apk/debug/app-debug.apk`
+- Application ID: `za.co.bdstudio.dope`
+- Version code: `13`
+- Version name: `0.6.1-m6-review`
+- SHA-256: `E6F8EB09E1B715AF1015046183C5483ADBF7EC9E670067755219483DB92A36E6`
+- Signing certificate SHA-256: `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`
+- Signing: approved private review key; intended to update the installed version-code-12 review build without a clean install.
