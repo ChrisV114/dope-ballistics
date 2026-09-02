@@ -9,3 +9,5 @@ ARCore Depth is checked only when ARCore is installed and camera permission has 
 Training video is user-started, stored locally and may include microphone audio only after a separate point-of-use permission. Playback synchronizes the saved orientation stream with the original video. Original-video sharing and privacy-bounded Sensor CSV export are implemented. A burned-in informational-overlay MP4 remains pending codec and physical-device validation.
 
 Physical Samsung Galaxy S25 Ultra acceptance is still required for heading accuracy, compass calibration prompts, sensor stability, ARCore/Depth status, video/audio capture, thermal behaviour, playback synchronization and safe-area controls.
+
+Official capability guidance: [Enable ARCore](https://developers.google.com/ar/develop/java/enable-arcore) and [Depth limitations](https://developers.google.com/ar/develop/depth).

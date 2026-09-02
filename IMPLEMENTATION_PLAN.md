@@ -16,6 +16,6 @@ Milestone 7 — AR orientation and training video.
 - [ ] Add burned-in informational-overlay MP4 export after codec validation.
 - [ ] Complete Samsung Galaxy S25 Ultra physical-device acceptance.
 - [x] Run and record the complete local quality/build gate for `0.7.0-m7-review`.
-- [ ] Run and record protected GitHub quality and emulator jobs for `0.7.0-m7-review`.
+- [x] Run and record protected GitHub quality and emulator jobs for `0.7.0-m7-review`.
 
 Milestone 7 remains in review until the two pending deliverable/acceptance items and both complete gates pass. Match plans, Watch7 shot progression, full-screen fixed-camera sequencing and pistol-drill cues remain future milestones.
