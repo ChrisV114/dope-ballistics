@@ -44,6 +44,7 @@
 
 ### Maintenance
 
+- Enabled the Android emulator runner's documented KVM permissions on Ubuntu so instrumentation uses hardware acceleration instead of an unstable unaccelerated boot.
 - Updated the GitHub-hosted CI actions to their current Node-runtime-compatible major releases: checkout v7, setup-java v6, setup-gradle v6 and upload-artifact v7.
 
 ### Milestone 4
