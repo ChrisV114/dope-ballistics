@@ -4,6 +4,8 @@ Milestone 6 provides CameraX capability inspection, app-private still capture, m
 
 The owner confirmed a Samsung Galaxy S25 Ultra. The preview requests only zoom values within the runtime range CameraX reports for the selected camera and provides 1×, 3×, 5×, 10× and maximum shortcuts where supported. Samsung Camera's advertised 100× digital mode is not assumed to be available to third-party CameraX capture. The UI displays both the active zoom and runtime range so physical acceptance can record the actual limit.
 
+Physical owner review on 2026-09-02 confirmed that zoom works through the 10× maximum exposed by CameraX for the selected S25 Ultra camera configuration.
+
 Calibration binds device, camera ID, focal length, resolution, aspect ratio, zoom and error metrics. Changing camera or zoom clears the current transient still and unsaved samples. It does not alter profiles, DOPE records or saved sessions. Marketing zoom is not calibration; changed configurations warn or invalidate saved evidence.
 
 Milestone 1 adds a design-only target-range shell with:
@@ -18,4 +20,4 @@ Every preset must expose its dimensions/source and require confirmation. The use
 
 ## Requested fixed-camera target sequence
 
-A future session may let the user pre-mark and order stationary targets before shooting. The approved physical baseline is the Samsung Galaxy S25 Ultra on the owner's rigid landscape stand with every target retained in one fixed wide frame. A configured and confirmed shot count moves a border and sequence-number highlight to the next saved target region; digital crop/zoom is optional and not required. The highlight is not a crosshair or aim point. The app cannot pan, select an unmarked target, identify an impact, infer a hit, calculate a correction or run Range Analyst while the string is active. Low-confidence counts pause for manual confirmation; impact review stays post-string.
+A future session may let the user pre-mark and order stationary targets before shooting. The approved physical baseline is the Samsung Galaxy S25 Ultra on the owner's rigid landscape stand with every target retained in one fixed wide frame. Stage marking and target-sequence display use a dedicated full-screen landscape camera surface with the app bottom navigation hidden; overlay controls remain within Android system and camera-cutout safe areas. A configured and confirmed shot count moves a border and sequence-number highlight to the next saved target region; digital crop/zoom is optional and not required. The highlight is not a crosshair or aim point. The app cannot pan, select an unmarked target, identify an impact, infer a hit, calculate a correction or run Range Analyst while the string is active. Low-confidence counts pause for manual confirmation; impact review stays post-string.

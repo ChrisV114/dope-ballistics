@@ -176,3 +176,5 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - The build retains the experimental screenshot-testing and Gradle 10 deprecation warnings.
 - GitHub Actions run `33611028709` passed `build-and-test` in 1m14s and the KVM-accelerated API 35 `instrumentation` job in 2m56s. The emulator executed all 12 tests with 0 skipped and 0 failed.
 - An earlier run on the same app source exposed a missing KVM-permissions step: the first unaccelerated attempt failed immediately after a 461-second boot and its unchanged retry lost package/activity services during APK installation, starting 0 tests. Adding the emulator runner's documented Ubuntu KVM setup corrected the CI infrastructure rather than changing application code.
+- Owner physical review confirmed that the CameraX zoom controls work through the displayed 10× maximum on the Samsung Galaxy S25 Ultra.
+- Full physical Milestone 6 acceptance remains pending for preview stability, still capture, anchor dragging, multi-sample calibration save, configuration warnings and installed-update behaviour.

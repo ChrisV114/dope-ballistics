@@ -30,14 +30,15 @@
 
 ## DR-005 — Fixed-camera sequencing hardware acceptance
 
-- Owner baseline resolved 2026-08-31: Samsung S25 on a rigid landscape stand, all targets in one fixed wide frame, with user-marked borders and sequence numbers advancing after confirmed shot groups.
+- Owner baseline resolved 2026-08-31 and clarified 2026-09-02: Samsung Galaxy S25 Ultra on a rigid landscape stand, all targets in one fixed wide frame, with user-marked borders and sequence numbers advancing after confirmed shot groups.
+- Owner layout requirement recorded 2026-09-02: stage target marking and sequence display use a dedicated full-screen landscape camera surface with app navigation hidden and all controls clear of Android system controls and the camera cutout.
 - Crop/zoom is optional and not required; physical camera panning is unsupported.
 - Required before implementation acceptance: physical-device tests for microphone shot-count confidence, camera thermal limits, screen wake behaviour and highlight visibility at target distance.
 - Locked boundary: no live hit detection, impact analysis, ballistic correction or aim overlay.
 
 ## DR-006 — Milestone 6 Galaxy S25 Ultra camera acceptance
 
-- Status: pending owner physical review of `0.6.1-m6-review`.
+- Status: partially reviewed on 2026-09-02; CameraX zoom controls work up to a physically observed maximum of 10×. Remaining preview/capture/calibration checks are pending.
 - On the Galaxy S25 Ultra in the landscape stand, confirm camera permission, rear-camera selection, stable preview, still capture, anchor dragging and two-or-more-sample calibration save.
 - Confirm the displayed maximum zoom, 1×/3×/5×/10×/Max shortcuts and slider all behave correctly. Record the maximum CameraX actually exposes; do not assume it is Samsung Camera's 100× mode.
 - Confirm the displayed camera ID, focal length and captured resolution remain the same between samples and after reopening the calibration screen.

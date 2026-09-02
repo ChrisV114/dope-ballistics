@@ -22,4 +22,5 @@
 - In multi-gun match mode the Galaxy S25 Ultra is body-carried and may be locked; the rigid landscape stand is reserved for a separate fixed-camera mode.
 - Android may expose a logical rear camera ID rather than a directly selectable physical lens ID. Milestone 6 records the reported physical IDs and requires an S25 physical test to confirm that the selected 1.0× configuration remains stable.
 - Samsung advertises up to 100× digital zoom for the Galaxy S25 Ultra, but CameraX may expose a lower maximum to this app. Runtime camera metadata is authoritative for available in-app controls.
+- Owner physical review confirmed a 10× CameraX maximum for the currently selected S25 Ultra camera configuration. Full-screen stage marking improves visibility and control space but does not add image detail or extend that zoom limit.
 - Camera calibration objects are static, clearly edged paper or steel references with tape-measured dimensions and distances. At least two samples are required; three or more spanning the intended camera distance are preferred.
