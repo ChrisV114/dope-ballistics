@@ -16,7 +16,7 @@ Milestone 6 — camera capability and calibration review.
 - [x] Run the complete local quality/build gate for `0.6.0-m6-review`.
 - [x] Run the protected GitHub quality and emulator jobs for `0.6.0-m6-review`.
 - [x] Run the complete local quality/build gate for the S25 Ultra zoom revision `0.6.1-m6-review`.
-- [ ] Run the protected GitHub quality and emulator jobs for `0.6.1-m6-review`.
+- [x] Run the protected GitHub quality and emulator jobs for `0.6.1-m6-review`.
 - [ ] Complete physical Galaxy S25 Ultra camera/lens/resolution/zoom acceptance, including the maximum CameraX exposes.
 
 Camera-derived target-distance calculation and automatic ballistic handoff are intentionally not implemented. Target distance remains a separately confirmed manual measurement. Milestone 7 AR/training-video work, match plans, Watch7 shot progression, fixed-camera sequencing and pistol-drill cues remain future work.

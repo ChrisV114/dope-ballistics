@@ -174,3 +174,5 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - `apksigner` confirmed the approved private review certificate SHA-256 `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`.
 - Physical S25 Ultra execution is not claimed. Owner acceptance must record the maximum zoom CameraX exposes and verify the slider, shortcuts, preview, still capture and configuration warnings on the phone.
 - The build retains the experimental screenshot-testing and Gradle 10 deprecation warnings.
+- GitHub Actions run `33611028709` passed `build-and-test` in 1m14s and the KVM-accelerated API 35 `instrumentation` job in 2m56s. The emulator executed all 12 tests with 0 skipped and 0 failed.
+- An earlier run on the same app source exposed a missing KVM-permissions step: the first unaccelerated attempt failed immediately after a 461-second boot and its unchanged retry lost package/activity services during APK installation, starting 0 tests. Adding the emulator runner's documented Ubuntu KVM setup corrected the CI infrastructure rather than changing application code.
