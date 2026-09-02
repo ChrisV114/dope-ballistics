@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+### Milestone 6
+
+- Added CameraX 1.6.2 preview and app-private still capture with explicit runtime permission.
+- Added rear-camera capability inspection for camera IDs, focal lengths, sensor/active-array geometry, capture sizes, zoom range, OIS, distortion metadata and logical physical-camera IDs where Android exposes them.
+- Added runtime-reported camera zoom with active/range readouts, a continuous slider and supported 1×/3×/5×/10×/Max shortcuts for the owner's Galaxy S25 Ultra review.
+- Changing camera zoom now clears the transient still and unsaved calibration samples without affecting rifle, DOPE or session data.
+- Recorded physical S25 Ultra confirmation of the CameraX 10× maximum and the future requirement for a system-safe full-screen landscape stage-marking surface.
+- Added explicit camera-ID selection, a requested 1.0× zoom baseline, draggable still-image calibration anchors and tape-measured calibration sample entry.
+- Added local multi-distance calibration fitting with effective focal length, mean absolute error, median percentage error, 95th-percentile error and valid-distance range.
+- Added persistent device/configuration fingerprints and visible wrong-camera, wrong-resolution and changed-zoom warnings.
+- Added a Galaxy S25 landscape physical-acceptance checklist and a locked phone-sized camera-calibration golden.
+- Kept camera calibration isolated from target-distance calculation and ballistic handoff; target distance remains separately measured and confirmed manually.
+- Completed owner physical S25 Ultra review, removed calibration from the normal Target Range workflow and retained it only as clearly labelled advanced camera diagnostics with no range result.
+
 ### Milestone 5
 
 - Replaced the non-interactive elevation gauge with the shared touch/drag wind-direction wheel and added unambiguous wind turret output such as `6 clicks LEFT` or `3 clicks RIGHT` from the selected scope's click value.
@@ -32,6 +46,7 @@
 
 ### Maintenance
 
+- Enabled the Android emulator runner's documented KVM permissions on Ubuntu so instrumentation uses hardware acceleration instead of an unstable unaccelerated boot.
 - Updated the GitHub-hosted CI actions to their current Node-runtime-compatible major releases: checkout v7, setup-java v6, setup-gradle v6 and upload-artifact v7.
 
 ### Milestone 4

@@ -1,6 +1,6 @@
 # Release Build
 
-Milestone 5 and its review-fix build verify debug assembly only. A signed APK/AAB is out of scope.
+Milestones through 6 verify private signed review APK assembly only. A public release APK/AAB is out of scope.
 
 Before public release: reconfirm branding, define keystore custody and distribution, run all quality gates, verify migrations/backup/restore, complete physical-device acceptance, document known limitations, and keep secrets outside the repository. The owner-approved application ID is `za.co.bdstudio.dope`.
 
@@ -77,3 +77,33 @@ Milestone-5 previous-DOPE review artifact:
 - SHA-256: `31EDB58266BD720EB784EC35F4BA894869652165140CAEF49B3FF397188F6501`
 - Signing certificate SHA-256: `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`
 - Signing: approved private review key; intended to update an installed review build signed by the same certificate.
+
+Milestone-6 camera-calibration review artifact:
+
+- Path: `app/build/outputs/apk/debug/app-debug.apk`
+- Application ID: `za.co.bdstudio.dope`
+- Version code: `12`
+- Version name: `0.6.0-m6-review`
+- SHA-256: `76CB7E02C5406FC1B1D52AB407A8650DB824FBDD9204F372005CA9B7F21FA9E7`
+- Signing certificate SHA-256: `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`
+- Signing: approved private review key; intended to update an installed review build signed by the same certificate.
+
+Milestone-6 S25 Ultra zoom review artifact:
+
+- Path: `app/build/outputs/apk/debug/app-debug.apk`
+- Application ID: `za.co.bdstudio.dope`
+- Version code: `13`
+- Version name: `0.6.1-m6-review`
+- SHA-256: `E6F8EB09E1B715AF1015046183C5483ADBF7EC9E670067755219483DB92A36E6`
+- Signing certificate SHA-256: `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`
+- Signing: approved private review key; intended to update the installed version-code-12 review build without a clean install.
+
+Milestone-6 final diagnostics-cleanup artifact:
+
+- Path: `app/build/outputs/apk/debug/app-debug.apk`
+- Application ID: `za.co.bdstudio.dope`
+- Version code: `14`
+- Version name: `0.6.2-m6-review`
+- SHA-256: `07A5CA4990A0DD4F9B6767A06EADAE08AD57F68F51EC0B4D535E1107582FCB9A`
+- Signing certificate SHA-256: `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`
+- Signing: approved private review key; intended to update the installed version-code-13 review build without a clean install.

@@ -55,6 +55,11 @@ jobs:
       DOPE_REVIEW_KEY_PASSWORD: ${{ secrets.DOPE_REVIEW_KEY_PASSWORD }}
     steps:
       - uses: actions/checkout@v7
+      - name: Enable KVM group permissions
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
       - uses: actions/setup-java@v6
         with:
           distribution: temurin

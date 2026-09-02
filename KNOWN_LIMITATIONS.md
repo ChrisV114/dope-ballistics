@@ -1,6 +1,11 @@
 # Known Limitations
 
-- Milestone 5 provides manual wind, offline range cards, immutable sessions, verified range records and non-mutating comparison. Camera, AR, Range Analyst, voice, Wear OS and ML remain deferred.
+- Milestone 6 adds optional advanced camera capability inspection, app-private still capture, manual calibration anchors, local calibration fitting and configuration warnings. These diagnostics are intentionally absent from normal Target Range because they do not produce a range. Camera-derived target ranging, AR, Range Analyst, voice, Wear OS and ML remain deferred.
+- Camera anchor measurements do not calculate or recommend a target distance and cannot feed the ballistic calculator. Use a separately measured and confirmed manual distance in Target Range.
+- Android may expose a logical rear camera rather than a directly selectable physical lens. A requested zoom ratio does not by itself prove which physical S25 Ultra lens produced every frame; the in-app metadata and physical checklist make that uncertainty visible.
+- Samsung Camera advertises up to 100× digital zoom on the Galaxy S25 Ultra, but a third-party CameraX app may receive a lower maximum. DOPE exposes only the runtime-reported range; high digital zoom adds no optical detail and is not evidence of accurate distance measurement.
+- Owner physical review confirmed that the current CameraX configuration works up to 10×. Full-screen future target marking will enlarge the preview area but cannot provide Samsung Camera's unavailable 100× processing or make 10× suitable for reliable 1,200 m ranging.
+- Captured calibration images are transient cache files. The saved calibration profile retains numerical samples and configuration/error metadata, not an image library.
 - The calculator now shows elevation and windage in angular units and signed left/right clicks. These remain model outputs that require a verified profile, confirmed range and user judgement; the app does not provide live aim-point overlays.
 - G1/G7 accuracy is limited by the supplied manufacturer BC and its validity across velocity bands; the engine does not invent or convert coefficients.
 - The current solver excludes spin drift, Coriolis, aerodynamic jump, custom Doppler drag curves and verified BDC holds.
@@ -32,10 +37,10 @@
 - Actual elevation can be handed from Calculations into a new immutable verified record. Correcting an already-saved record remains a later append-only `supersedesRecordId` workflow.
 - Match plans, Wear OS display/shot counting, fixed-camera target sequencing and pistol drill cues are documented future requirements only.
 - Automatic acoustic shot counting is not implemented and will require confidence, manual correction and physical range testing.
-- GitHub API 35 emulator instrumentation passed for Milestones 1 through 5. No physical Samsung Galaxy S25 acceptance is claimed.
+- GitHub API 35 emulator instrumentation passed for Milestones 1 through 6. The Milestone 6 job now uses the emulator runner's documented KVM permissions. Owner physical S25 Ultra acceptance covers the reviewed CameraX diagnostics through its exposed 10× maximum; it does not validate camera-derived ranging.
 - The application ID is owner-approved as `za.co.bdstudio.dope`; release signing, keystore custody and public distribution remain undecided.
 - Android Compose Screenshot Testing is an isolated alpha16 build-time dependency because no stable AGP 9-compatible Android tool currently satisfies the required golden-test gate.
 
 
 - Gradle reports `ReportingExtension.file(String)` as deprecated through a current third-party quality plugin; the build passes on Gradle 9.7.1, but that upstream plugin must be upgraded before Gradle 10.
-- Debug packaging reports that `libandroidx.graphics.path.so` cannot be stripped and packages it unchanged; this is a debug dependency warning, not a failed build.
+- Debug packaging reports that `libandroidx.graphics.path.so`, `libimage_processing_util_jni.so` and `libsurface_util_jni.so` cannot be stripped and packages them unchanged; these are debug dependency warnings, not a failed build.

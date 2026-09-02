@@ -123,3 +123,25 @@ Profile photographs are user-owned local attachments selected through Android's 
 ## R5-009 — Wind correction presentation
 
 The calculator may present the existing model windage as angular correction and rounded turret clicks using the selected verified scope. Always spell out `LEFT` or `RIGHT`; do not expose an unexplained signed click count. Wind observations and actual settings remain logged separately and do not auto-tune future wind predictions.
+
+## M6-001 — Camera calibration boundary
+
+CameraX may inspect camera capabilities, capture an app-private still, place manual anchors, fit multi-distance calibration evidence and warn when the device/camera/resolution/zoom configuration changes. The workflow uses Android camera IDs and physical metadata where exposed and requests 1.0× zoom; it never treats a marketing zoom label as calibration. Camera anchor data does not calculate a target distance or enter a ballistic solution. A target distance remains a separately measured and explicitly confirmed manual value.
+
+## M6-002 — Calibration persistence
+
+Persist one active camera-calibration profile in private application preferences because it is device-local configuration rather than relational profile/session evidence. Store the device/configuration fingerprint, samples, effective focal length, fit errors, valid range, date and app version. Captured JPEG files remain transient app-cache files and are not exported or added to the media library.
+
+## M6-003 — Advanced diagnostics placement
+
+Camera calibration has no ordinary user-facing ranging purpose until a reviewed camera-derived ranging workflow exists. Remove it from Target Range, retain the underlying capability and calibration evidence only under a clearly labelled Advanced diagnostics section, and state on that screen that it does not measure target distance. Confirmed manual or laser distance remains the normal ranging input.
+
+## R6-001 — Galaxy S25 Ultra zoom baseline
+
+The owner confirmed the physical phone is a Samsung Galaxy S25 Ultra. Camera preview controls must use the minimum and maximum zoom ratios reported at runtime by CameraX for the selected logical camera, display the active and available zoom, and provide 1×, 3×, 5×, 10× and maximum shortcuts where supported. Do not hard-code or claim Samsung's marketing 100× mode when Android does not expose it to the app. Changing zoom invalidates the current captured still and unsaved calibration samples, but never changes rifle, DOPE or session data.
+
+Owner physical review on 2026-09-02 confirmed that the selected CameraX camera exposes and applies zoom up to 10× on the Galaxy S25 Ultra. Treat 10× as the verified in-app maximum for the current camera configuration, not as a universal device or firmware constant.
+
+## R6-002 — Full-screen stage target marking
+
+Future fixed-camera stage setup and target-sequence display must use a dedicated full-screen landscape camera surface rather than the standard app shell. Hide the app bottom navigation while that surface is active. Keep exit, target number, marking and sequence controls inside status-bar, camera-cutout and navigation/gesture safe areas. Full-screen display increases usable viewing area but does not increase optical detail or extend the CameraX 10× limit. Continue to allow only user-marked stationary target regions with no automatic target selection, hit detection, aiming overlay or correction.

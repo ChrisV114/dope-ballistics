@@ -1,6 +1,12 @@
 # Camera Calibration
 
-Camera implementation remains deferred to Milestone 6. Known static paper/cardboard or steel targets only. Calibration must bind device, physical lens, resolution, aspect ratio, zoom and error metrics. Marketing zoom is not calibration; changed configurations warn or invalidate the result.
+Milestone 6 provides optional advanced CameraX capability inspection, app-private still capture, manual anchors and locally stored multi-distance calibration evidence for known static paper/cardboard or steel references. It is available only under More > Advanced diagnostics and is not part of the normal Target Range workflow. Camera-derived distance calculation remains unavailable; users must enter and confirm a separately measured manual or laser distance.
+
+The owner confirmed a Samsung Galaxy S25 Ultra. The preview requests only zoom values within the runtime range CameraX reports for the selected camera and provides 1×, 3×, 5×, 10× and maximum shortcuts where supported. Samsung Camera's advertised 100× digital mode is not assumed to be available to third-party CameraX capture. The UI displays both the active zoom and runtime range so physical acceptance can record the actual limit.
+
+Physical owner review on 2026-09-02 confirmed that zoom works through the 10× maximum exposed by CameraX for the selected S25 Ultra camera configuration and that the Milestone 6 permission, preview, capture, anchor, multi-sample, warning and installed-update checks work on the phone.
+
+Calibration binds device, camera ID, focal length, resolution, aspect ratio, zoom and error metrics. Changing camera or zoom clears the current transient still and unsaved samples. It does not alter profiles, DOPE records or saved sessions. Marketing zoom is not calibration; changed configurations warn or invalidate saved evidence.
 
 Milestone 1 adds a design-only target-range shell with:
 
@@ -10,8 +16,8 @@ Milestone 1 adds a design-only target-range shell with:
 - Common 150, 200 and 300 mm circular gong presets, explicitly labelled nominal rather than governing-standard dimensions.
 - Custom gong width/height or diameter.
 
-Every preset must expose its dimensions/source and require confirmation. The user should measure the physical target when practical. No distance result may be produced until Milestone 6 implements calibrated angular geometry and uncertainty.
+Every preset must expose its dimensions/source and require confirmation. The user should measure the physical target when practical. No distance result is produced by the current camera workflow.
 
 ## Requested fixed-camera target sequence
 
-A future session may let the user pre-mark and order stationary targets before shooting. The approved physical baseline is the Samsung S25 on the owner's rigid landscape stand with every target retained in one fixed wide frame. A configured and confirmed shot count moves a border and sequence-number highlight to the next saved target region; digital crop/zoom is optional and not required. The highlight is not a crosshair or aim point. The app cannot pan, select an unmarked target, identify an impact, infer a hit, calculate a correction or run Range Analyst while the string is active. Low-confidence counts pause for manual confirmation; impact review stays post-string.
+A future session may let the user pre-mark and order stationary targets before shooting. The approved physical baseline is the Samsung Galaxy S25 Ultra on the owner's rigid landscape stand with every target retained in one fixed wide frame. Stage marking and target-sequence display use a dedicated full-screen landscape camera surface with the app bottom navigation hidden; overlay controls remain within Android system and camera-cutout safe areas. A configured and confirmed shot count moves a border and sequence-number highlight to the next saved target region; digital crop/zoom is optional and not required. The highlight is not a crosshair or aim point. The app cannot pan, select an unmarked target, identify an impact, infer a hit, calculate a correction or run Range Analyst while the string is active. Low-confidence counts pause for manual confirmation; impact review stays post-string.

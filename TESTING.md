@@ -151,3 +151,43 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - `apksigner` confirmed the approved private review certificate SHA-256 `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`.
 - Local emulator and physical Galaxy S25 execution are not claimed. The protected GitHub API 35 emulator job remains the external execution gate.
 - GitHub Actions run `33546118928` passed `build-and-test` in 3m58s on commit `8a4ee73`. Its first API 35 emulator attempt crashed before discovering any tests; the unchanged failed-job retry passed all twelve instrumentation tests with 0 skipped and 0 failed in 19m43s.
+
+## Milestone 6 local results — 2026-09-01
+
+- The complete local gate passed: Spotless, Android lint, Detekt, all JVM tests, screenshot validation, signed debug APK assembly and debug instrumentation-test APK assembly.
+- JVM tests: 48 run, 0 failures, 0 errors and 0 skipped; 17 are pure `:ballistics` tests and 31 are app tests. New coverage verifies multi-distance focal-length fitting, fit-error/range reporting, invalid-sample rejection and camera/lens/resolution/zoom mismatch warnings.
+- Twelve screenshot goldens passed, including a new S25-equivalent camera-calibration screen with the app navigation clear of Android system controls.
+- The existing instrumentation suite compiles into `app-debug-androidTest.apk`. No Room schema changed; camera calibration is private device configuration stored outside the relational profile/session database.
+- `aapt2` confirmed application ID `za.co.bdstudio.dope`, version code `12` and version name `0.6.0-m6-review`.
+- `apksigner` confirmed the approved private review certificate SHA-256 `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`.
+- Local emulator execution and physical Galaxy S25 camera/lens acceptance are not claimed. The protected GitHub API 35 job and owner physical checklist remain pending.
+- The build retains the experimental screenshot-testing and Gradle 10 deprecation warnings. CameraX adds unstripped debug `libimage_processing_util_jni.so` and `libsurface_util_jni.so` alongside the existing `libandroidx.graphics.path.so` warning.
+- GitHub Actions run `33556414089` passed `build-and-test` in 6m45s and the unchanged API 35 instrumentation retry in 19m34s. The emulator executed all 12 tests with 0 skipped and 0 failed. The first emulator attempt never started tests because Android services returned `Broken pipe` immediately after a 472-second unaccelerated boot; rerunning only the failed job passed without a code change.
+
+## Milestone 6 S25 Ultra zoom review — 2026-09-02
+
+- The owner confirmed the physical review device is a Samsung Galaxy S25 Ultra.
+- The complete local gate passed after adding runtime CameraX zoom controls: Spotless, Android lint, Detekt, JVM tests, screenshot validation, signed debug APK assembly and debug instrumentation-test APK assembly.
+- JVM tests: 48 run, 0 failures, 0 errors and 0 skipped; 17 are pure `:ballistics` tests and 31 are app tests.
+- Twelve screenshot goldens passed. The updated camera baseline places the preview and two-row 1×/3×/5×/10×/Max controls ahead of diagnostics and above the fixed app/system navigation region.
+- `aapt2` confirmed application ID `za.co.bdstudio.dope`, version code `13` and version name `0.6.1-m6-review`.
+- `apksigner` confirmed the approved private review certificate SHA-256 `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`.
+- Physical S25 Ultra execution is not claimed. Owner acceptance must record the maximum zoom CameraX exposes and verify the slider, shortcuts, preview, still capture and configuration warnings on the phone.
+- The build retains the experimental screenshot-testing and Gradle 10 deprecation warnings.
+- GitHub Actions run `33611028709` passed `build-and-test` in 1m14s and the KVM-accelerated API 35 `instrumentation` job in 2m56s. The emulator executed all 12 tests with 0 skipped and 0 failed.
+- An earlier run on the same app source exposed a missing KVM-permissions step: the first unaccelerated attempt failed immediately after a 461-second boot and its unchanged retry lost package/activity services during APK installation, starting 0 tests. Adding the emulator runner's documented Ubuntu KVM setup corrected the CI infrastructure rather than changing application code.
+- Owner physical review confirmed that the CameraX zoom controls work through the displayed 10× maximum on the Samsung Galaxy S25 Ultra.
+- Full physical Milestone 6 acceptance remains pending for preview stability, still capture, anchor dragging, multi-sample calibration save, configuration warnings and installed-update behaviour.
+
+## Milestone 6 final diagnostics cleanup — 2026-09-02
+
+- Owner physical review completed the remaining permission, rear-camera selection, stable-preview, still-capture, anchor-dragging, multi-sample calibration, configuration-warning and installed-update checks on the Samsung Galaxy S25 Ultra. The observed CameraX maximum remains 10×.
+- Removed the camera-calibration entry point from Target Range. The retained tool is clearly labelled Camera diagnostics under More > Advanced diagnostics and states that it does not measure distance.
+- The complete local gate passed in one invocation after the cleanup: Spotless, Android lint, Detekt, all JVM tests, screenshot validation, signed debug APK assembly and debug instrumentation-test APK assembly.
+- JVM tests: 48 run, 0 failures, 0 errors and 0 skipped; 17 are pure `:ballistics` tests and 31 are app tests.
+- Twelve screenshot goldens passed with 0 errors, failures or skipped tests. The renamed camera-diagnostics golden keeps app navigation clear of Android system controls.
+- `aapt2` confirmed application ID `za.co.bdstudio.dope`, version code `14` and version name `0.6.2-m6-review`.
+- `apksigner` confirmed the approved private review certificate SHA-256 `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`.
+- APK SHA-256: `07A5CA4990A0DD4F9B6767A06EADAE08AD57F68F51EC0B4D535E1107582FCB9A`.
+- The build retains the experimental screenshot-testing and Gradle 10 deprecation warnings.
+- GitHub Actions run `33638857114` passed `build-and-test` in 7m07s and the KVM-accelerated API 35 `instrumentation` job in 5m06s.
