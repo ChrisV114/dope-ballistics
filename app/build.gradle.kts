@@ -41,8 +41,8 @@ android {
         applicationId = "za.co.bdstudio.dope"
         minSdk = 28
         targetSdk = 37
-        versionCode = 14
-        versionName = "0.6.2-m6-review"
+        versionCode = 15
+        versionName = "0.7.0-m7-review"
 
         buildConfigField("boolean", "OPEN_METEO_ENABLED", "true")
 
@@ -109,6 +109,8 @@ dependencies {
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.video)
+    implementation(libs.google.ar.core)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.kotlinx.serialization.json)

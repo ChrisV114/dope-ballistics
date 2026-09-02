@@ -1072,6 +1072,9 @@ fun MoreScreen(
         UtilityRow("Target range", "Target presets or manual dimensions") { onOpen("target_range") }
         UtilityRow("Wind wheel", "True/magnetic wind-from convention") { onOpen("wind") }
         UtilityRow("Comparison", "Non-destructive what-if calculation") { onOpen("comparison") }
+        UtilityRow("Orientation & training video", "Local video with synchronized heading, angle and roll") {
+            onOpen("training_video")
+        }
         DopeSecondaryButton("Cycle display mode", onThemeChange, Modifier.fillMaxWidth())
         SectionHeading("Advanced diagnostics")
         UtilityRow("Camera diagnostics", "Lens checks only · does not calculate range") {

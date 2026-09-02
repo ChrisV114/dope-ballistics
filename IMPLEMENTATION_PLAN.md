@@ -2,25 +2,20 @@
 
 ## Current milestone
 
-Milestone 6 — camera capability and calibration review.
+Milestone 7 — AR orientation and training video.
 
-- [x] Record owner acceptance of the final Milestone 5 review build.
-- [x] Add stable CameraX preview and still capture with runtime camera permission.
-- [x] Inspect rear-camera IDs, focal lengths, sensor/active-array dimensions, JPEG sizes, zoom range, OIS, distortion metadata and logical physical IDs where Android exposes them.
-- [x] Select an explicit CameraX camera ID and request a 1.0× zoom ratio without marketing-zoom assumptions.
-- [x] Add runtime-reported zoom control with 1×/3×/5×/10×/Max shortcuts and invalidate only unsaved camera evidence when zoom changes.
-- [x] Capture an app-private still and provide draggable horizontal calibration anchors.
-- [x] Fit and persist multi-distance calibration evidence with mean, median and 95th-percentile errors and a valid distance range.
-- [x] Warn when camera ID, capture resolution, zoom or device configuration differs from the saved calibration.
-- [x] Add a Galaxy S25 landscape physical-acceptance checklist and a deterministic phone golden.
-- [x] Run the complete local quality/build gate for `0.6.0-m6-review`.
-- [x] Run the protected GitHub quality and emulator jobs for `0.6.0-m6-review`.
-- [x] Run the complete local quality/build gate for the S25 Ultra zoom revision `0.6.1-m6-review`.
-- [x] Run the protected GitHub quality and emulator jobs for `0.6.1-m6-review`.
-- [x] Record owner physical confirmation that CameraX zoom works through the reported 10× maximum.
-- [x] Complete owner physical Galaxy S25 Ultra camera/lens/resolution/zoom acceptance, including the observed 10× CameraX maximum.
-- [x] Remove calibration from Target Range and retain it only as clearly labelled advanced camera diagnostics that do not produce a range.
-- [x] Run the complete local gate for the final `0.6.2-m6-review` cleanup.
-- [x] Run the protected GitHub quality and emulator jobs for `0.6.2-m6-review`.
+- [x] Add optional runtime ARCore support and an explicit sensor-only fallback.
+- [x] Report optional Depth support without treating Depth as a long-range rangefinder.
+- [x] Add rotation-vector orientation with accelerometer-plus-magnetometer fallback.
+- [x] Show horizon, magnetic heading, inclination, roll, stability, confidence and recording state.
+- [x] Keep all aiming points, target tracking, impact markers, lead indicators and corrected reticles out of the live view.
+- [x] Add user-started CameraX training video with audio off by default and point-of-use microphone permission.
+- [x] Keep a bounded local training-recording history and synchronize playback to saved sensor samples.
+- [x] Export original video through Android sharing and a location-free Sensor CSV.
+- [x] Add deterministic unit, instrumentation and phone-sized screenshot coverage.
+- [ ] Add burned-in informational-overlay MP4 export after codec validation.
+- [ ] Complete Samsung Galaxy S25 Ultra physical-device acceptance.
+- [x] Run and record the complete local quality/build gate for `0.7.0-m7-review`.
+- [ ] Run and record protected GitHub quality and emulator jobs for `0.7.0-m7-review`.
 
-Camera-derived target-distance calculation and automatic ballistic handoff are intentionally not implemented. Target distance remains a separately confirmed manual or laser measurement. Milestone 7 AR/training-video work, match plans, Watch7 shot progression, full-screen fixed-camera sequencing and pistol-drill cues remain future work.
+Milestone 7 remains in review until the two pending deliverable/acceptance items and both complete gates pass. Match plans, Watch7 shot progression, full-screen fixed-camera sequencing and pistol-drill cues remain future milestones.

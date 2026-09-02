@@ -63,6 +63,7 @@ import za.co.dope.ballistics.ui.screens.SessionScreen
 import za.co.dope.ballistics.ui.screens.SetupDraftState
 import za.co.dope.ballistics.ui.screens.SplashScreen
 import za.co.dope.ballistics.ui.screens.TargetRangeScreen
+import za.co.dope.ballistics.ui.screens.TrainingVideoScreen
 import za.co.dope.ballistics.ui.screens.WindFormState
 import za.co.dope.ballistics.ui.screens.WindScreen
 import za.co.dope.ballistics.ui.screens.ZeroSetupScreen
@@ -101,7 +102,7 @@ fun DopeApp(
         val backStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = backStackEntry?.destination
         val currentRoute = currentDestination?.route
-        val showBottomBar = currentRoute != null && currentRoute != "splash"
+        val showBottomBar = currentRoute != null && currentRoute != "splash" && currentRoute != "training_video"
         val openRoute: (String) -> Unit = { route ->
             navController.navigate(route) { launchSingleTop = true }
         }
@@ -211,6 +212,9 @@ private fun DopeNavHost(
         }
         composable("comparison") { ComparisonScreen(profileRepository, windState) }
         composable("camera_calibration") { CameraCalibrationScreen() }
+        composable("training_video") {
+            TrainingVideoScreen(profileRepository = profileRepository, onClose = { navController.popBackStack() })
+        }
         composable("target_range") { TargetRangeScreen(profileRepository) }
         composable("more") { MoreScreen(onOpen = openRoute, onThemeChange = onThemeChange) }
     }
@@ -246,7 +250,7 @@ fun DopeGoldenScreen(
                         androidx.compose.foundation.layout.WindowInsetsSides.Top,
                 ),
             bottomBar = {
-                if (route != "splash") {
+                if (route != "splash" && route != "training_video") {
                     DopeBottomNavigation(selectedRoute = route, onSelect = {})
                 }
             },
@@ -264,6 +268,7 @@ fun DopeGoldenScreen(
                     "comparison" -> ComparisonScreen(null, windState)
                     "target_range" -> TargetRangeScreen()
                     "camera_calibration" -> CameraCalibrationScreen(previewMode = true)
+                    "training_video" -> TrainingVideoScreen(onClose = {}, previewMode = true)
                     else -> DashboardScreen(null, SetupDraftState(), windState, onOpen = {})
                 }
             }

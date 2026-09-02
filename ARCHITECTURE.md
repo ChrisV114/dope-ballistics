@@ -1,15 +1,18 @@
 # Architecture
 
-## Milestone 5
+## Milestone 7
 
-`:ballistics` remains pure Kotlin/JVM and now also owns the tested wind convention. `:app` maps verified persisted records into engine inputs, builds range-card documents, renders offline files and stores immutable session evidence in Room version 4. Session and verified-DOPE DAO surfaces expose insert/query only; corrections append a superseding verified record rather than changing historical evidence.
+`:ballistics` remains pure Kotlin/JVM and unchanged. Milestone 7 adds app-layer, informational orientation and local training-video components without connecting the camera/sensor stream to ballistic calculation.
 
 ```text
 Android app (:app)
   -> Compose profile and environment screens
   -> ProfileRepository, SessionRepository and versioned export codecs
-  -> Room database version 4 and migrations 1 -> 2 -> 3 -> 4
+  -> Room database version 9 and migrations 1 -> ... -> 9
   -> Android SensorManager and foreground LocationManager adapters
+  -> continuous orientation tracker with rotation-vector and accelerometer/magnetometer paths
+  -> optional ARCore capability/Depth adapter with sensor-only fallback
+  -> CameraX video recorder, local recording metadata and synchronized sensor CSV
   -> Explicit Open-Meteo adapter behind OPEN_METEO_ENABLED
   -> Pure environmental math, source policy and profile rules
   -> BallisticsInputMapper validation boundary
