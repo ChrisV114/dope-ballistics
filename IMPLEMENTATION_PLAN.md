@@ -21,6 +21,6 @@ Milestone 6 — camera capability and calibration review.
 - [x] Complete owner physical Galaxy S25 Ultra camera/lens/resolution/zoom acceptance, including the observed 10× CameraX maximum.
 - [x] Remove calibration from Target Range and retain it only as clearly labelled advanced camera diagnostics that do not produce a range.
 - [x] Run the complete local gate for the final `0.6.2-m6-review` cleanup.
-- [ ] Run the protected GitHub quality and emulator jobs for `0.6.2-m6-review`.
+- [x] Run the protected GitHub quality and emulator jobs for `0.6.2-m6-review`.
 
 Camera-derived target-distance calculation and automatic ballistic handoff are intentionally not implemented. Target distance remains a separately confirmed manual or laser measurement. Milestone 7 AR/training-video work, match plans, Watch7 shot progression, full-screen fixed-camera sequencing and pistol-drill cues remain future work.

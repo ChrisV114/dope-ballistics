@@ -189,4 +189,5 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - `aapt2` confirmed application ID `za.co.bdstudio.dope`, version code `14` and version name `0.6.2-m6-review`.
 - `apksigner` confirmed the approved private review certificate SHA-256 `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`.
 - APK SHA-256: `07A5CA4990A0DD4F9B6767A06EADAE08AD57F68F51EC0B4D535E1107582FCB9A`.
-- The build retains the experimental screenshot-testing and Gradle 10 deprecation warnings. Protected GitHub quality and API 35 instrumentation are pending for this commit.
+- The build retains the experimental screenshot-testing and Gradle 10 deprecation warnings.
+- GitHub Actions run `33638857114` passed `build-and-test` in 7m07s and the KVM-accelerated API 35 `instrumentation` job in 5m06s.
