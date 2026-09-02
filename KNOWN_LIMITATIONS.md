@@ -1,6 +1,6 @@
 # Known Limitations
 
-- Milestone 6 adds camera capability inspection, app-private still capture, manual calibration anchors, local calibration fitting and configuration warnings. Camera-derived target ranging, AR, Range Analyst, voice, Wear OS and ML remain deferred.
+- Milestone 6 adds optional advanced camera capability inspection, app-private still capture, manual calibration anchors, local calibration fitting and configuration warnings. These diagnostics are intentionally absent from normal Target Range because they do not produce a range. Camera-derived target ranging, AR, Range Analyst, voice, Wear OS and ML remain deferred.
 - Camera anchor measurements do not calculate or recommend a target distance and cannot feed the ballistic calculator. Use a separately measured and confirmed manual distance in Target Range.
 - Android may expose a logical rear camera rather than a directly selectable physical lens. A requested zoom ratio does not by itself prove which physical S25 Ultra lens produced every frame; the in-app metadata and physical checklist make that uncertainty visible.
 - Samsung Camera advertises up to 100× digital zoom on the Galaxy S25 Ultra, but a third-party CameraX app may receive a lower maximum. DOPE exposes only the runtime-reported range; high digital zoom adds no optical detail and is not evidence of accurate distance measurement.
@@ -37,7 +37,7 @@
 - Actual elevation can be handed from Calculations into a new immutable verified record. Correcting an already-saved record remains a later append-only `supersedesRecordId` workflow.
 - Match plans, Wear OS display/shot counting, fixed-camera target sequencing and pistol drill cues are documented future requirements only.
 - Automatic acoustic shot counting is not implemented and will require confidence, manual correction and physical range testing.
-- GitHub API 35 emulator instrumentation passed for Milestones 1 through 6. The Milestone 6 job now uses the emulator runner's documented KVM permissions. No physical Samsung Galaxy S25 Ultra acceptance is claimed.
+- GitHub API 35 emulator instrumentation passed for Milestones 1 through 6. The Milestone 6 job now uses the emulator runner's documented KVM permissions. Owner physical S25 Ultra acceptance covers the reviewed CameraX diagnostics through its exposed 10× maximum; it does not validate camera-derived ranging.
 - The application ID is owner-approved as `za.co.bdstudio.dope`; release signing, keystore custody and public distribution remain undecided.
 - Android Compose Screenshot Testing is an isolated alpha16 build-time dependency because no stable AGP 9-compatible Android tool currently satisfies the required golden-test gate.
 

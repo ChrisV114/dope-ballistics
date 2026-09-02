@@ -178,3 +178,15 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - An earlier run on the same app source exposed a missing KVM-permissions step: the first unaccelerated attempt failed immediately after a 461-second boot and its unchanged retry lost package/activity services during APK installation, starting 0 tests. Adding the emulator runner's documented Ubuntu KVM setup corrected the CI infrastructure rather than changing application code.
 - Owner physical review confirmed that the CameraX zoom controls work through the displayed 10× maximum on the Samsung Galaxy S25 Ultra.
 - Full physical Milestone 6 acceptance remains pending for preview stability, still capture, anchor dragging, multi-sample calibration save, configuration warnings and installed-update behaviour.
+
+## Milestone 6 final diagnostics cleanup — 2026-09-02
+
+- Owner physical review completed the remaining permission, rear-camera selection, stable-preview, still-capture, anchor-dragging, multi-sample calibration, configuration-warning and installed-update checks on the Samsung Galaxy S25 Ultra. The observed CameraX maximum remains 10×.
+- Removed the camera-calibration entry point from Target Range. The retained tool is clearly labelled Camera diagnostics under More > Advanced diagnostics and states that it does not measure distance.
+- The complete local gate passed in one invocation after the cleanup: Spotless, Android lint, Detekt, all JVM tests, screenshot validation, signed debug APK assembly and debug instrumentation-test APK assembly.
+- JVM tests: 48 run, 0 failures, 0 errors and 0 skipped; 17 are pure `:ballistics` tests and 31 are app tests.
+- Twelve screenshot goldens passed with 0 errors, failures or skipped tests. The renamed camera-diagnostics golden keeps app navigation clear of Android system controls.
+- `aapt2` confirmed application ID `za.co.bdstudio.dope`, version code `14` and version name `0.6.2-m6-review`.
+- `apksigner` confirmed the approved private review certificate SHA-256 `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`.
+- APK SHA-256: `07A5CA4990A0DD4F9B6767A06EADAE08AD57F68F51EC0B4D535E1107582FCB9A`.
+- The build retains the experimental screenshot-testing and Gradle 10 deprecation warnings. Protected GitHub quality and API 35 instrumentation are pending for this commit.

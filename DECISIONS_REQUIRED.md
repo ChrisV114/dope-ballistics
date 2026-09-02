@@ -38,9 +38,8 @@
 
 ## DR-006 — Milestone 6 Galaxy S25 Ultra camera acceptance
 
-- Status: partially reviewed on 2026-09-02; CameraX zoom controls work up to a physically observed maximum of 10×. Remaining preview/capture/calibration checks are pending.
-- On the Galaxy S25 Ultra in the landscape stand, confirm camera permission, rear-camera selection, stable preview, still capture, anchor dragging and two-or-more-sample calibration save.
-- Confirm the displayed maximum zoom, 1×/3×/5×/10×/Max shortcuts and slider all behave correctly. Record the maximum CameraX actually exposes; do not assume it is Samsung Camera's 100× mode.
-- Confirm the displayed camera ID, focal length and captured resolution remain the same between samples and after reopening the calibration screen.
-- Confirm the saved-calibration warning appears after selecting a different camera/configuration where the device exposes one.
+- Status: resolved by owner review on 2026-09-02.
+- On the Galaxy S25 Ultra, the owner reported that camera permission, rear-camera selection, stable preview, still capture, anchor dragging, multi-sample calibration, configuration warnings and installed-update behaviour all worked.
+- CameraX exposed and applied a maximum of 10× in the reviewed configuration; the slider and supported shortcuts worked. This is not a claim that third-party CameraX can access Samsung Camera's marketed 100× mode.
+- Calibration is removed from the normal Target Range workflow and retained only as advanced camera/lens diagnostics.
 - This acceptance does not validate camera-derived target range, hit detection, aiming overlays or ballistic handoff; those are not implemented.

@@ -14,7 +14,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddAPhoto
 import androidx.compose.material.icons.outlined.Calculate
-import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Explore
@@ -880,10 +879,7 @@ fun EnvironmentScreen(
 
 @Composable
 @Suppress("LongMethod")
-fun TargetRangeScreen(
-    onOpen: (String) -> Unit,
-    repository: ProfileRepository? = null,
-) {
+fun TargetRangeScreen(repository: ProfileRepository? = null) {
     var selected by remember { mutableStateOf(TargetPresets.first()) }
     var targetName by remember { mutableStateOf("") }
     var width by remember { mutableStateOf("") }
@@ -958,12 +954,6 @@ fun TargetRangeScreen(
             },
             Modifier.fillMaxWidth(),
             Icons.Outlined.CheckCircle,
-        )
-        DopeSecondaryButton(
-            "Open camera calibration",
-            { onOpen("camera_calibration") },
-            Modifier.fillMaxWidth(),
-            Icons.Outlined.CameraAlt,
         )
     }
 }
@@ -1079,11 +1069,14 @@ fun MoreScreen(
     ScreenShell(title = "More", eyebrow = "TOOLS & DISPLAY") {
         UtilityRow("Results shell", "Invalid inputs stay visibly blocked") { onOpen("results") }
         UtilityRow("Range cards", "Offline CSV, PDF and PNG") { onOpen("range_card") }
-        UtilityRow("Camera calibration", "Physical-lens capability flow") { onOpen("camera_calibration") }
         UtilityRow("Target range", "Target presets or manual dimensions") { onOpen("target_range") }
         UtilityRow("Wind wheel", "True/magnetic wind-from convention") { onOpen("wind") }
         UtilityRow("Comparison", "Non-destructive what-if calculation") { onOpen("comparison") }
         DopeSecondaryButton("Cycle display mode", onThemeChange, Modifier.fillMaxWidth())
+        SectionHeading("Advanced diagnostics")
+        UtilityRow("Camera diagnostics", "Lens checks only · does not calculate range") {
+            onOpen("camera_calibration")
+        }
     }
 }
 

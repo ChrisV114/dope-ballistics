@@ -127,7 +127,7 @@ fun SessionLogPreview() {
 
 @PreviewTest
 @Preview(
-    name = "Camera calibration",
+    name = "Camera diagnostics",
     device = "spec:width=360dp,height=780dp,dpi=480",
     showSystemUi = true,
 )

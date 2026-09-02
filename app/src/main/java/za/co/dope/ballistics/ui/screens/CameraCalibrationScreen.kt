@@ -137,7 +137,13 @@ fun CameraCalibrationScreen(previewMode: Boolean = false) {
         }
     }
 
-    ScreenShell(title = "Camera calibration", eyebrow = "STATIC TARGETS ONLY") {
+    ScreenShell(title = "Camera diagnostics", eyebrow = "ADVANCED · NO RANGE RESULT") {
+        DopeCard {
+            Text(
+                "This optional diagnostic records camera and lens consistency. It does not measure " +
+                    "target distance. Use a confirmed manual or laser range in Target Range.",
+            )
+        }
         StatusChip(
             if (permissionGranted) "Camera permission granted" else "Camera permission required",
             if (permissionGranted) DopeStatus.READY else DopeStatus.WARNING,

@@ -211,7 +211,7 @@ private fun DopeNavHost(
         }
         composable("comparison") { ComparisonScreen(profileRepository, windState) }
         composable("camera_calibration") { CameraCalibrationScreen() }
-        composable("target_range") { TargetRangeScreen(openRoute, profileRepository) }
+        composable("target_range") { TargetRangeScreen(profileRepository) }
         composable("more") { MoreScreen(onOpen = openRoute, onThemeChange = onThemeChange) }
     }
 }
@@ -262,7 +262,7 @@ fun DopeGoldenScreen(
                     "results" -> ResultsScreen(null, null, windState, sessionDraftState, {}, previewMode = true)
                     "session" -> SessionScreen(null, null, windState, sessionDraftState, {})
                     "comparison" -> ComparisonScreen(null, windState)
-                    "target_range" -> TargetRangeScreen(onOpen = {})
+                    "target_range" -> TargetRangeScreen()
                     "camera_calibration" -> CameraCalibrationScreen(previewMode = true)
                     else -> DashboardScreen(null, SetupDraftState(), windState, onOpen = {})
                 }

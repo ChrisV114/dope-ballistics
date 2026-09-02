@@ -1,10 +1,10 @@
 # Camera Calibration
 
-Milestone 6 provides CameraX capability inspection, app-private still capture, manual anchors and locally stored multi-distance calibration evidence for known static paper/cardboard or steel references. Camera-derived distance calculation remains unavailable; users must enter and confirm a separately measured distance.
+Milestone 6 provides optional advanced CameraX capability inspection, app-private still capture, manual anchors and locally stored multi-distance calibration evidence for known static paper/cardboard or steel references. It is available only under More > Advanced diagnostics and is not part of the normal Target Range workflow. Camera-derived distance calculation remains unavailable; users must enter and confirm a separately measured manual or laser distance.
 
 The owner confirmed a Samsung Galaxy S25 Ultra. The preview requests only zoom values within the runtime range CameraX reports for the selected camera and provides 1×, 3×, 5×, 10× and maximum shortcuts where supported. Samsung Camera's advertised 100× digital mode is not assumed to be available to third-party CameraX capture. The UI displays both the active zoom and runtime range so physical acceptance can record the actual limit.
 
-Physical owner review on 2026-09-02 confirmed that zoom works through the 10× maximum exposed by CameraX for the selected S25 Ultra camera configuration.
+Physical owner review on 2026-09-02 confirmed that zoom works through the 10× maximum exposed by CameraX for the selected S25 Ultra camera configuration and that the Milestone 6 permission, preview, capture, anchor, multi-sample, warning and installed-update checks work on the phone.
 
 Calibration binds device, camera ID, focal length, resolution, aspect ratio, zoom and error metrics. Changing camera or zoom clears the current transient still and unsaved samples. It does not alter profiles, DOPE records or saved sessions. Marketing zoom is not calibration; changed configurations warn or invalidate saved evidence.
 

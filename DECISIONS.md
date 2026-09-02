@@ -132,6 +132,10 @@ CameraX may inspect camera capabilities, capture an app-private still, place man
 
 Persist one active camera-calibration profile in private application preferences because it is device-local configuration rather than relational profile/session evidence. Store the device/configuration fingerprint, samples, effective focal length, fit errors, valid range, date and app version. Captured JPEG files remain transient app-cache files and are not exported or added to the media library.
 
+## M6-003 — Advanced diagnostics placement
+
+Camera calibration has no ordinary user-facing ranging purpose until a reviewed camera-derived ranging workflow exists. Remove it from Target Range, retain the underlying capability and calibration evidence only under a clearly labelled Advanced diagnostics section, and state on that screen that it does not measure target distance. Confirmed manual or laser distance remains the normal ranging input.
+
 ## R6-001 — Galaxy S25 Ultra zoom baseline
 
 The owner confirmed the physical phone is a Samsung Galaxy S25 Ultra. Camera preview controls must use the minimum and maximum zoom ratios reported at runtime by CameraX for the selected logical camera, display the active and available zoom, and provide 1×, 3×, 5×, 10× and maximum shortcuts where supported. Do not hard-code or claim Samsung's marketing 100× mode when Android does not expose it to the app. Changing zoom invalidates the current captured still and unsaved calibration samples, but never changes rifle, DOPE or session data.

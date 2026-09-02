@@ -14,6 +14,7 @@
 - Added persistent device/configuration fingerprints and visible wrong-camera, wrong-resolution and changed-zoom warnings.
 - Added a Galaxy S25 landscape physical-acceptance checklist and a locked phone-sized camera-calibration golden.
 - Kept camera calibration isolated from target-distance calculation and ballistic handoff; target distance remains separately measured and confirmed manually.
+- Completed owner physical S25 Ultra review, removed calibration from the normal Target Range workflow and retained it only as clearly labelled advanced camera diagnostics with no range result.
 
 ### Milestone 5
 
