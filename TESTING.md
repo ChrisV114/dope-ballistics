@@ -191,3 +191,17 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - APK SHA-256: `07A5CA4990A0DD4F9B6767A06EADAE08AD57F68F51EC0B4D535E1107582FCB9A`.
 - The build retains the experimental screenshot-testing and Gradle 10 deprecation warnings.
 - GitHub Actions run `33638857114` passed `build-and-test` in 7m07s and the KVM-accelerated API 35 `instrumentation` job in 5m06s.
+
+## Milestone 7 implementation review — 2026-09-02
+
+- The complete local gate passed in one final invocation: Spotless, Android lint, Detekt, JVM tests, screenshot validation, signed debug APK assembly and debug instrumentation-test APK assembly.
+- JVM tests: 51 run, 0 failures, 0 errors and 0 skipped; this includes orientation north-wrap/stability, synchronized playback selection and location-free Sensor CSV coverage.
+- Thirteen screenshot goldens passed with 0 failures, errors or skipped tests. The new S25-equivalent orientation/video golden uses safe drawing insets and omits the normal app bottom bar so its Close and recording controls remain clear of Android system controls.
+- The instrumentation APK compiles two new fallback/permission checks. No local emulator or attached physical device was available, so `connectedDebugAndroidTest` is not claimed.
+- `aapt2` confirmed application ID `za.co.bdstudio.dope`, version code `15` and version name `0.7.0-m7-review`.
+- `apksigner` confirmed the approved private review certificate SHA-256 `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`.
+- APK SHA-256: `7EE51AEBA514F59612CDF68AFBE1E213592B0593A34A7E137647C80ECB12EE54`.
+- The first GitHub review run exposed a timezone-dependent screenshot timestamp. The preview and production overlay now label and format time explicitly in UTC; the corrected local golden gate passed before the follow-up push.
+- The build retains the experimental screenshot-testing, Gradle 10 deprecation and Android metrics-home warnings. Debug packaging reports unstripped ARCore native libraries.
+- Samsung Galaxy S25 Ultra camera/audio/sensor/ARCore/Depth/thermal acceptance and burned-in informational-overlay MP4 export remain pending; the milestone is not marked complete.
+- GitHub Actions run `33654664448` passed `build-and-test` in 4m52s and KVM-accelerated API 35 `instrumentation` in 3m30s. The emulator executed all 14 tests successfully. The corrected UTC screenshot baseline passed on Linux.

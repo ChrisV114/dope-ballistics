@@ -43,3 +43,10 @@
 - CameraX exposed and applied a maximum of 10× in the reviewed configuration; the slider and supported shortcuts worked. This is not a claim that third-party CameraX can access Samsung Camera's marketed 100× mode.
 - Calibration is removed from the normal Target Range workflow and retained only as advanced camera/lens diagnostics.
 - This acceptance does not validate camera-derived target range, hit detection, aiming overlays or ballistic handoff; those are not implemented.
+
+## DR-007 — Milestone 7 physical orientation/video acceptance
+
+- Status: owner review required.
+- Install version code 15 over the existing signed review build and execute `TRAINING_VIDEO.md` on the Samsung Galaxy S25 Ultra.
+- Record ARCore and Depth states, heading/confidence behaviour, portrait/landscape horizon behaviour, video with and without audio, synchronized playback/CSV, 10-minute thermal stability and system-control clearance.
+- Burned-in informational-overlay MP4 export remains an implementation requirement before Milestone 7 is complete. It must contain informational orientation only and preserve the locked no-aim-overlay boundary.

@@ -1,5 +1,11 @@
 # Known Limitations
 
+- Milestone 7 is in review. Burned-in informational-overlay MP4 export is not yet implemented; synchronized in-app overlay playback, original-video sharing and Sensor CSV export are available.
+- Samsung Galaxy S25 Ultra physical acceptance is pending for ARCore/Depth reporting, compass accuracy/calibration, video with and without audio, playback synchronization, thermal behaviour and safe-area controls.
+- Heading is magnetic because no reviewed declination source is connected. Nearby metal and magnetic interference can reduce accuracy; low confidence remains visible.
+- ARCore and Depth are optional. The sensor/video fallback works without them, and Depth is not a long-range rangefinder or a source of ballistic distance.
+- The local training history retains up to 100 metadata/sample records. Removing media outside DOPE may leave an unavailable history entry; a managed delete/reconcile screen is not yet implemented.
+
 - Milestone 6 adds optional advanced camera capability inspection, app-private still capture, manual calibration anchors, local calibration fitting and configuration warnings. These diagnostics are intentionally absent from normal Target Range because they do not produce a range. Camera-derived target ranging, AR, Range Analyst, voice, Wear OS and ML remain deferred.
 - Camera anchor measurements do not calculate or recommend a target distance and cannot feed the ballistic calculator. Use a separately measured and confirmed manual distance in Target Range.
 - Android may expose a logical rear camera rather than a directly selectable physical lens. A requested zoom ratio does not by itself prove which physical S25 Ultra lens produced every frame; the in-app metadata and physical checklist make that uncertainty visible.
@@ -17,7 +23,7 @@
 - One Galaxy S25 cannot provide fixed-stand camera sequencing while it is body-carried for match timing/audio; concurrent operation would require a separate paired camera device and is not planned.
 - No physical Galaxy S25 sensor validation has yet confirmed barometer stability, compass calibration behaviour, GPS vertical accuracy or landscape field ergonomics.
 - Open-Meteo values are model estimates, not on-site measurements. Weather wind never overwrites the manual wind screen.
-- Orientation currently requires a rotation-vector sensor; the accelerometer-plus-magnetometer fallback remains to be added before physical acceptance if the target device lacks rotation vector support.
+- Orientation prefers a rotation-vector sensor and falls back to accelerometer plus magnetic field. Devices lacking both combinations show orientation unavailable while video remains usable.
 - True heading remains unavailable until a reviewed magnetic-declination source is connected; captured headings are labelled magnetic.
 - Cached weather is an offline fallback and displays age/staleness; it must not be mistaken for a current observation.
 - The speed-of-sound method currently applies temperature only; humidity correction remains deferred pending method validation and is shared by environment and trajectory calculations.

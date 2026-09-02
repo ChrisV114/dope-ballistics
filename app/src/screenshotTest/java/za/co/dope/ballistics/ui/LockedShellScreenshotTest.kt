@@ -135,3 +135,14 @@ fun SessionLogPreview() {
 fun CameraCalibrationPreview() {
     DopeGoldenScreen(route = "camera_calibration")
 }
+
+@PreviewTest
+@Preview(
+    name = "Training orientation",
+    device = "spec:width=360dp,height=780dp,dpi=480",
+    showSystemUi = true,
+)
+@Composable
+fun TrainingOrientationPreview() {
+    DopeGoldenScreen(route = "training_video")
+}

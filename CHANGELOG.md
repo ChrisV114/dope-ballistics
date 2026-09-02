@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Milestone 7
+
+- Added an optional runtime ARCore capability check with a visible CameraX/sensor fallback and user-triggered ARCore install/update path.
+- Added optional Depth capability reporting with an explicit near-field-only warning; Depth never produces target range or ballistic input.
+- Added continuous orientation capture using rotation vector where present and accelerometer plus magnetic-field fallback otherwise.
+- Added a user-started training-video surface showing only horizon, magnetic heading, inclination, roll, stability, sensor confidence and recording state.
+- Added optional point-of-use microphone audio, local recording history, synchronized sensor playback, original-video sharing and Sensor CSV export without location or ballistic data.
+- Added unit, instrumentation and S25-equivalent screenshot coverage for orientation wrap/stability, synchronized sampling, privacy and unsupported-device fallback.
+- Incremented the private review build to version code 15 / `0.7.0-m7-review`.
+
 ### Milestone 6
 
 - Added CameraX 1.6.2 preview and app-private still capture with explicit runtime permission.

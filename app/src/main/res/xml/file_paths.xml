@@ -3,4 +3,10 @@
     <cache-path
         name="range_card_exports"
         path="range-card-exports/" />
+    <files-path
+        name="training_video_exports"
+        path="training-video/" />
+    <files-path
+        name="training_sensor_exports"
+        path="exports/" />
 </paths>

@@ -16,6 +16,8 @@ Selected through 2026-08-31 from stable upstream releases.
 | Room | 2.8.4 | Stable Android Room runtime, KTX, compiler and migration testing |
 | KSP | 2.3.10 | KSP2 code generation compatible with AGP 9 and Kotlin 2.4 source projects |
 | kotlinx.serialization JSON | 1.11.0 | Strict profile import/export schema-v1 JSON |
+| CameraX | 1.6.2 | Camera preview, still capture and Milestone 7 local video recording |
+| ARCore | 1.56.0 | Optional runtime capability and Depth-support checks; never an installation requirement |
 | Compose Screenshot Testing | 0.0.1-alpha16 | Required host-side golden testing; documented exception because Android's compatible tool remains experimental |
 | AndroidX Test Core | 1.7.0 | Host-side Android test support |
 | AndroidX Test Ext JUnit | 1.3.0 | Instrumentation JUnit integration |
