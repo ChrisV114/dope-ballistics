@@ -200,6 +200,7 @@ GitHub Actions run #2 subsequently passed both `build-and-test` and `instrumenta
 - The instrumentation APK compiles two new fallback/permission checks. No local emulator or attached physical device was available, so `connectedDebugAndroidTest` is not claimed.
 - `aapt2` confirmed application ID `za.co.bdstudio.dope`, version code `15` and version name `0.7.0-m7-review`.
 - `apksigner` confirmed the approved private review certificate SHA-256 `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`.
-- APK SHA-256: `B122D93E7B8856710D4D741B49DF36D33F848439353BC730F0C3176BDEE29F35`.
+- APK SHA-256: `7EE51AEBA514F59612CDF68AFBE1E213592B0593A34A7E137647C80ECB12EE54`.
+- The first GitHub review run exposed a timezone-dependent screenshot timestamp. The preview and production overlay now label and format time explicitly in UTC; the corrected local golden gate passed before the follow-up push.
 - The build retains the experimental screenshot-testing, Gradle 10 deprecation and Android metrics-home warnings. Debug packaging reports unstripped ARCore native libraries.
 - Samsung Galaxy S25 Ultra camera/audio/sensor/ARCore/Depth/thermal acceptance and burned-in informational-overlay MP4 export remain pending; the milestone is not marked complete.

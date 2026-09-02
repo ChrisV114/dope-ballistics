@@ -97,6 +97,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 import java.util.UUID
 import kotlin.math.cos
 import kotlin.math.sin
@@ -625,7 +626,10 @@ private tailrec fun Context.findActivity(): Activity? =
 
 private fun Double.round(decimals: Int): String = String.format(Locale.US, "%.${decimals}f", this)
 
-private fun Long.timeLabel(): String = SimpleDateFormat("HH:mm:ss", Locale.US).format(Date(this))
+private fun Long.timeLabel(): String =
+    SimpleDateFormat("HH:mm:ss 'UTC'", Locale.US)
+        .apply { timeZone = TimeZone.getTimeZone("UTC") }
+        .format(Date(this))
 
 private fun ArSupportState.display(): String =
     when (this) {

@@ -114,7 +114,7 @@ Milestone-7 orientation/training-video review artifact:
 - Application ID: `za.co.bdstudio.dope`
 - Version code: `15`
 - Version name: `0.7.0-m7-review`
-- SHA-256: `B122D93E7B8856710D4D741B49DF36D33F848439353BC730F0C3176BDEE29F35`
+- SHA-256: `7EE51AEBA514F59612CDF68AFBE1E213592B0593A34A7E137647C80ECB12EE54`
 - Signing certificate SHA-256: `5AD535D1D96C0A79A6D77BE223BCB6D659CCE53180C3910C48DD456D664232A3`
 - Signing: approved private review key; intended to update the installed version-code-14 review build without a clean install.
 - Status: local review artifact only; physical S25 Ultra acceptance and burned-in overlay-video export remain pending.
